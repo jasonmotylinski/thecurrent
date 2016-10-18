@@ -1,4 +1,4 @@
-"""Parses the playlist for a given hour for http://thecurrent.org."""
+
 import urllib2
 
 from BeautifulSoup import BeautifulSoup
