@@ -2,6 +2,7 @@
 import urllib2
 
 from BeautifulSoup import BeautifulSoup
+from datetime import datetime
 
 url = "http://www.thecurrent.org/playlist/{year}-{month}-{day}/{hour}?isajax=1"
 
@@ -17,12 +18,17 @@ class Article(object):
     @property
     def date(self):
         """Parse the date of the article."""
-        return dict(self.node.find("time").attrs)["datetime"]
+        return self._date
 
     @property
     def time(self):
         """Parse the time of the article."""
-        return self.node.find("time").contents[0]
+        return self.node.find("time").contents[0].strip()
+
+    @property
+    def datetime(self):
+        """Parse the date and time of the article."""
+        return datetime.strptime(self.date.strftime("%Y%m%d") + " " + self.time, "%Y%m%d %I:%M")
 
     @property
     def title(self):
@@ -34,9 +40,10 @@ class Article(object):
         """Parse the artist of the article."""
         return self.node.find("h5", {"class": "artist"}).contents[0].strip()
 
-    def __init__(self, node):
+    def __init__(self, node, date):
         """Constructor. Sets the node of the article retrieved from the HTML."""
         self.node = node
+        self._date = date
 
 
 def get_hour(year, month, day, hour):
@@ -45,4 +52,4 @@ def get_hour(year, month, day, hour):
     page = urllib2.urlopen(u).read()
     soup = BeautifulSoup(page)
     for node in soup.findAll("article", {"class": "row song"}):
-        yield Article(node)
+        yield Article(node, datetime(year, month, day))
