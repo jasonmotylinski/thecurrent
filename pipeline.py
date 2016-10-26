@@ -18,9 +18,11 @@ class GetHourTask(luigi.Task):
         with self.output().open('w') as f:
             list(f.write(",".join([r.id, r.datetime.isoformat(), r.artist, r.title]) + "\n") for r in results)
 
+
 class GetDayTask(luigi.Task):
+    """Get a days worth of playists."""
     date = luigi.DateParameter()
 
     def requires(self):
-        for i in range(0,24):
+        for i in range(0, 24):
             yield GetHourTask(self.date, "{0:02d}".format(i))
