@@ -1,4 +1,4 @@
-
+import md5
 import urllib2
 
 from BeautifulSoup import BeautifulSoup
@@ -12,8 +12,10 @@ class Article(object):
 
     @property
     def id(self):
-        """Parse the id of the article."""
-        return dict(self.node.attrs)["id"]
+        """Generate the id of the article."""
+        m = md5.new()
+        m.update("{0}{1}{2}".format(self.datetime, self.artist, self.title))
+        return m.hexdigest()
 
     @property
     def date(self):
