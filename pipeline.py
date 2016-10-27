@@ -3,11 +3,11 @@ import luigi
 from calendar import monthrange
 from datetime import datetime
 from models import Article
-from playlist import get_hour
+from playlist import get_hour, get_day
 
 from elasticsearch_dsl.connections import connections
 
-connections.create_connection(hosts=['localhost'])
+connections.create_connection(hosts=['localhost'], timeout=60)
 Article.init()
 
 
@@ -44,13 +44,10 @@ class SaveHourToElasticsearch(luigi.Task):
 
     def run(self):
         """Run."""
-        try:
-            results = get_hour(self.date.year, self.date.month, self.date.day, self.hour)
-            for r in results:
-                article = Article(meta={'_id': r.id}, artist=r.artist, title=r.title, datetime=r.datetime)
-                article.save()
-        except:
-            pass
+        results = get_hour(self.date.year, self.date.month, self.date.day, self.hour)
+        for r in results:
+            article = Article(meta={'_id': r.id}, artist=r.artist, title=r.title, datetime=r.datetime)
+            article.save()
         self._is_completed = True
 
     def complete(self):
@@ -62,10 +59,15 @@ class SaveDayToElasticsearch(luigi.Task):
     date = luigi.DateParameter()
     _is_completed = False
 
-    def requires(self):
-        for i in range(0, 24):
-            yield SaveHourToElasticsearch(self.date, "{0:02d}".format(i))
-        self._is_completed = True
+    def run(self):
+        try:
+            results = get_day(self.date.year, self.date.month, self.date.day)
+            for r in results:
+                article = Article(meta={'_id': r.id}, artist=r.artist, title=r.title, datetime=r.datetime)
+                article.save()
+            self._is_completed = True
+        except:
+            pass
 
     def complete(self):
         return self._is_completed
@@ -79,7 +81,7 @@ class SaveMonthToElasticsearch(luigi.Task):
 
     def requires(self):
         month_days = monthrange(int(self.year), int(self.month))
-        for i in range(month_days[0], month_days[1]):
+        for i in range(1, month_days[1] + 1):
             yield SaveDayToElasticsearch(datetime(int(self.year), int(self.month), i))
         self._is_completed = True
 
