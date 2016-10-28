@@ -1,7 +1,8 @@
 import md5
 import urllib2
-from datetime import datetime
+import unicodedata
 
+from datetime import datetime
 from BeautifulSoup import BeautifulSoup
 from pytz import timezone
 
@@ -32,6 +33,7 @@ HOUR_MAP = {
     "3:00 am to  4:00 am":   3,
     "2:00 am to  3:00 am":   2,
     "1:00 am to  2:00 am":   1,
+    "1:00 am to  3:00 am":   1,
     "12:00 am to  1:00 am":  0
 }
 
@@ -43,7 +45,7 @@ class Article(object):
     def id(self):
         """Generate the id of the article."""
         m = md5.new()
-        m.update("{0}{1}{2}".format(self.datetime, self.artist, self.title))
+        m.update("{0}{1}{2}".format(self.datetime, unicodedata.normalize('NFKD', self.artist).encode('ascii','ignore'), unicodedata.normalize('NFKD', self.title).encode('ascii','ignore')))
         return m.hexdigest()
 
     @property
@@ -94,9 +96,17 @@ def get_hour(year, month, day, hour):
 
 def get_day(year, month, day):
     """Get the articles for a given year, month, day, hour."""
+    yield get_articles(get_day_html(year, month, day), year, month, day)
+
+
+def get_day_html(year, month, day):
+    """Get the HTML for the given day."""
     u = DAY_URL.format(year=year, month=str(month).zfill(2), day=str(day).zfill(2))
-    page = urllib2.urlopen(u, timeout=60).read()
-    soup = BeautifulSoup(page)
+    return urllib2.urlopen(u, timeout=60).read()
+
+
+def get_articles(html, year, month, day):
+    soup = BeautifulSoup(html)
     for node in soup.findAll("article", {"class": "row song"}):
         hour_node = node.findPreviousSibling("div", {"class": "hour"})
         hour_str = hour_node.find("span", {"class": "hour-header open"}).contents[0].strip()

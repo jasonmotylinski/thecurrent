@@ -2,16 +2,17 @@
 import luigi
 from calendar import monthrange
 from datetime import datetime
+from luigi.format import UTF8
 from models import Article
-from playlist import get_hour, get_day
+from playlist import get_hour, get_day, get_day_html, get_articles
 
 from elasticsearch_dsl.connections import connections
 
 connections.create_connection(hosts=['localhost'], timeout=60)
 Article.init()
 
-
-class GetHourTask(luigi.Task):
+ 
+class SaveHourToLocal(luigi.Task):
     """Get an hour of playlist."""
     date = luigi.DateParameter()
     hour = luigi.Parameter()
@@ -27,13 +28,68 @@ class GetHourTask(luigi.Task):
             list(f.write(",".join([r.id, r.datetime.isoformat(), r.artist, r.title]) + "\n") for r in results)
 
 
-class GetDayTask(luigi.Task):
+class SaveDayToLocal(luigi.Task):
     """Get a days worth of playists."""
     date = luigi.DateParameter()
 
     def requires(self):
         for i in range(0, 24):
-            yield GetHourTask(self.date, "{0:02d}".format(i))
+            yield SaveHourToLocal(self.date, "{0:02d}".format(i))
+
+
+class SaveDayHtmlToLocal(luigi.Task):
+    """Save the HTML for a given day locally."""
+    date = luigi.DateParameter()
+
+    def output(self):
+        """Output."""
+        return luigi.LocalTarget('output/html/{0}/{1}/playlist_{2}.html'.format(self.date.strftime("%Y"), self.date.strftime("%m"), self.date.strftime("%Y%m%d")))
+
+    def run(self):
+        with self.output().open('w') as f:
+            f.write(get_day_html(self.date.year, self.date.month, self.date.day))
+
+
+class DayHtmlToArticlesCsv(luigi.Task):
+    """Parse the articles from the HTML for the given day."""
+    date = luigi.DateParameter()
+
+    def output(self):
+        """Output."""
+        return luigi.LocalTarget('output/csv/{0}/{1}/{2}.csv'.format(self.date.strftime("%Y"), self.date.strftime("%m"), self.date.strftime("%Y%m%d")),format=UTF8)
+
+    def run(self):
+        """Run."""
+        with self.input()[0].open('r') as i:
+            with self.output().open('w') as f:
+                results = get_articles(i.read(), self.date.year, self.date.month, self.date.day)
+                list(f.write(",".join([r.id, r.datetime.isoformat(), r.artist, r.title]) + "\n") for r in results)
+
+    def requires(self):
+        """Requires."""
+        yield SaveDayHtmlToLocal(self.date)
+
+
+class SaveMonthHtmlToLocal(luigi.Task):
+    """Save the HTML for a given month locally."""
+    year = luigi.Parameter()
+    month = luigi.Parameter()
+
+    def requires(self):
+        month_days = monthrange(int(self.year), int(self.month))
+        for i in range(1, month_days[1] + 1):
+            yield SaveDayHtmlToLocal(datetime(int(self.year), int(self.month), i))
+
+
+class MonthHtmlToArticlesCsv(luigi.Task):
+    """Parse the articles from the HTML for the given month."""
+    year = luigi.Parameter()
+    month = luigi.Parameter()
+
+    def requires(self):
+        month_days = monthrange(int(self.year), int(self.month))
+        for i in range(1, month_days[1] + 1):
+            yield DayHtmlToArticlesCsv(datetime(int(self.year), int(self.month), i))
 
 
 class SaveHourToElasticsearch(luigi.Task):
