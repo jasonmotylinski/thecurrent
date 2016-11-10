@@ -63,7 +63,16 @@ class DayHtmlToArticlesCsv(luigi.Task):
         with self.input()[0].open('r') as i:
             with self.output().open('w') as f:
                 results = get_articles(i.read(), self.date.year, self.date.month, self.date.day)
-                list(f.write(",".join([r.id, r.datetime.isoformat(), r.artist, r.title]) + "\n") for r in results)
+                list(f.write(",".join([r.id,
+                                       r.datetime.isoformat(),
+                                       r.artist,
+                                       r.title,
+                                       r.datetime.strftime("%Y"), 
+                                       r.datetime.strftime("%m"), 
+                                       r.datetime.strftime("%d"),
+                                       r.datetime.strftime("%A"),
+                                       r.datetime.strftime("%U"),
+                                       r.datetime.strftime("%H")]) + "\n") for r in results)
 
     def requires(self):
         """Requires."""
@@ -108,6 +117,37 @@ class SaveHourToElasticsearch(luigi.Task):
 
     def complete(self):
         return self._is_completed
+
+
+class CsvDayToElasticsearch(luigi.Task):
+    """Save a days worth of playists to Elasticsearch."""
+    date = luigi.DateParameter()
+    _is_completed = False
+
+    def run(self):
+        with self.input()[0].open('r') as i:
+            for line in i:
+                parts = line.split(',')
+                article = Article(meta={'_id': parts[0]}, artist=parts[2], title=parts[3], datetime=parts[1])
+                article.save()
+        self._is_completed = True
+
+    def requires(self):
+        yield DayHtmlToArticlesCsv(self.date)
+
+    def complete(self):
+        return self._is_completed
+
+
+class CsvMonthToElasticsearch(luigi.Task):
+    """Save a months worth of playists to Elasticsearch."""
+    year = luigi.Parameter()
+    month = luigi.Parameter()
+
+    def requires(self):
+        month_days = monthrange(int(self.year), int(self.month))
+        for i in range(1, month_days[1] + 1):
+            yield CsvDayToElasticsearch(datetime(int(self.year), int(self.month), i))
 
 
 class SaveDayToElasticsearch(luigi.Task):
