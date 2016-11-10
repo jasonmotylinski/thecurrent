@@ -91,7 +91,7 @@ class SaveMonthHtmlToLocal(luigi.Task):
             yield SaveDayHtmlToLocal(datetime(int(self.year), int(self.month), i))
 
 
-class MonthHtmlToArticlesCsv(luigi.Task):
+class MonthHtmlToArticlesCsv(luigi.WrapperTask):
     """Parse the articles from the HTML for the given month."""
     year = luigi.Parameter()
     month = luigi.Parameter()
@@ -102,7 +102,7 @@ class MonthHtmlToArticlesCsv(luigi.Task):
             yield DayHtmlToArticlesCsv(datetime(int(self.year), int(self.month), i))
 
 
-class YearHtmlToArticlesCsv(luigi.Task):
+class YearHtmlToArticlesCsv(luigi.WrapperTask):
     """Parse the articles from the HTML for the given year."""
     year = luigi.Parameter()
 
@@ -114,3 +114,25 @@ class YearHtmlToArticlesCsv(luigi.Task):
 class CombineYearArticlesCsv(luigi.Task):
     """Combine all files for a given year into a single CSV."""
     year = luigi.Parameter()
+
+    def output(self):
+        """Output."""
+        return luigi.LocalTarget('output/csv/{0}.csv'.format(self.year), format=UTF8)
+
+    def run(self):
+        """Run."""
+        with open(self.output().path, "w") as y:
+            writer = csv.writer(y, delimiter=',', quoting=csv.QUOTE_ALL)
+            writer.writerow(['id', 'datetime', 'artist', 'title', 'year', 'month', 'day', 'day_of_week', 'week', 'hour'])
+            for month in range(1, 13):
+                month_days = monthrange(int(self.year), int(month))
+                for day in range(1, month_days[1] + 1):
+                    with open('output/csv/{0}/{1}/{0}{1}{2}.csv'.format(self.year, "{0:02d}".format(month), "{0:02d}".format(day)),"r") as f:
+                        reader = csv.reader(f, delimiter=',')
+                        next(reader, None)
+                        for row in reader:
+                            writer.writerow(row)
+
+    def requires(self):
+        """requires."""
+        return YearHtmlToArticlesCsv(str(self.year))
