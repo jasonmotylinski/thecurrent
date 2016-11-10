@@ -1,15 +1,11 @@
 """Pipeline for ingesting the current playlist."""
+import csv
 import luigi
+import os
 from calendar import monthrange
 from datetime import datetime
 from luigi.format import UTF8
-from models import Article
-from playlist import get_hour, get_day, get_day_html, get_articles
-
-from elasticsearch_dsl.connections import connections
-
-# connections.create_connection(hosts=['localhost'], timeout=60)
-# Article.init()
+from playlist import get_hour, get_day_html, get_articles
 
  
 class SaveHourToLocal(luigi.Task):
@@ -61,18 +57,23 @@ class DayHtmlToArticlesCsv(luigi.Task):
     def run(self):
         """Run."""
         with self.input()[0].open('r') as i:
-            with self.output().open('w') as f:
+            d = os.path.dirname(self.output().path)
+            if not os.path.exists(d):
+                os.makedirs(d)
+            with open(self.output().path, 'wb') as f:
                 results = get_articles(i.read(), self.date.year, self.date.month, self.date.day)
-                list(f.write(",".join([r.id,
-                                       r.datetime.isoformat(),
-                                       r.artist,
-                                       r.title,
-                                       r.datetime.strftime("%Y"), 
-                                       r.datetime.strftime("%m"), 
-                                       r.datetime.strftime("%d"),
-                                       r.datetime.strftime("%A"),
-                                       r.datetime.strftime("%U"),
-                                       r.datetime.strftime("%H")]) + "\n") for r in results)
+                writer = csv.writer(f, delimiter=',', quoting=csv.QUOTE_ALL)
+                writer.writerow(['id', 'datetime', 'artist', 'title', 'year', 'month', 'day', 'day_of_week', 'week', 'hour'])
+                list(writer.writerow([r.id,
+                                      r.datetime.isoformat(),
+                                      r.artist.encode("utf-8"),
+                                      r.title.encode("utf-8"),
+                                      r.datetime.strftime("%Y"),
+                                      r.datetime.strftime("%m"),
+                                      r.datetime.strftime("%d"),
+                                      r.datetime.strftime("%A"),
+                                      r.datetime.strftime("%U"),
+                                      r.datetime.strftime("%H")]) for r in results)
 
     def requires(self):
         """Requires."""
@@ -110,99 +111,6 @@ class YearHtmlToArticlesCsv(luigi.Task):
             yield MonthHtmlToArticlesCsv(self.year, i)
 
 
-class SaveHourToElasticsearch(luigi.Task):
-    """Save articles for a given hour to Elasticsearch."""
-    date = luigi.DateParameter()
-    hour = luigi.Parameter()
-    _is_completed = False
-
-    def run(self):
-        """Run."""
-        results = get_hour(self.date.year, self.date.month, self.date.day, self.hour)
-        for r in results:
-            article = Article(meta={'_id': r.id}, artist=r.artist, title=r.title, datetime=r.datetime)
-            article.save()
-        self._is_completed = True
-
-    def complete(self):
-        return self._is_completed
-
-
-class CsvDayToElasticsearch(luigi.Task):
-    """Save a days worth of playists to Elasticsearch."""
-    date = luigi.DateParameter()
-    _is_completed = False
-
-    def run(self):
-        with self.input()[0].open('r') as i:
-            for line in i:
-                parts = line.split(',')
-                article = Article(meta={'_id': parts[0]}, artist=parts[2], title=parts[3], datetime=parts[1])
-                article.save()
-        self._is_completed = True
-
-    def requires(self):
-        yield DayHtmlToArticlesCsv(self.date)
-
-    def complete(self):
-        return self._is_completed
-
-
-class CsvMonthToElasticsearch(luigi.Task):
-    """Save a months worth of playists to Elasticsearch."""
+class CombineYearArticlesCsv(luigi.Task):
+    """Combine all files for a given year into a single CSV."""
     year = luigi.Parameter()
-    month = luigi.Parameter()
-
-    def requires(self):
-        month_days = monthrange(int(self.year), int(self.month))
-        for i in range(1, month_days[1] + 1):
-            yield CsvDayToElasticsearch(datetime(int(self.year), int(self.month), i))
-
-
-class SaveDayToElasticsearch(luigi.Task):
-    """Save a days worth of playists to Elasticsearch."""
-    date = luigi.DateParameter()
-    _is_completed = False
-
-    def run(self):
-        try:
-            results = get_day(self.date.year, self.date.month, self.date.day)
-            for r in results:
-                article = Article(meta={'_id': r.id}, artist=r.artist, title=r.title, datetime=r.datetime)
-                article.save()
-            self._is_completed = True
-        except:
-            pass
-
-    def complete(self):
-        return self._is_completed
-
-
-class SaveMonthToElasticsearch(luigi.Task):
-    """Save a days worth of playists to Elasticsearch."""
-    year = luigi.Parameter()
-    month = luigi.Parameter()
-    _is_completed = False
-
-    def requires(self):
-        month_days = monthrange(int(self.year), int(self.month))
-        for i in range(1, month_days[1] + 1):
-            yield SaveDayToElasticsearch(datetime(int(self.year), int(self.month), i))
-        self._is_completed = True
-
-    def complete(self):
-        return self._is_completed
-
-
-class SaveYearToElasticsearch(luigi.Task):
-    """Save a days worth of playists to Elasticsearch."""
-    year = luigi.Parameter()
-    _is_completed = False
-
-    def requires(self):
-        for i in range(1, 13):
-            yield SaveMonthToElasticsearch(self.year, i)
-        self._is_completed = True
-
-    def complete(self):
-        return self._is_completed
