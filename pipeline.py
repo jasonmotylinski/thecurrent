@@ -8,8 +8,8 @@ from playlist import get_hour, get_day, get_day_html, get_articles
 
 from elasticsearch_dsl.connections import connections
 
-connections.create_connection(hosts=['localhost'], timeout=60)
-Article.init()
+# connections.create_connection(hosts=['localhost'], timeout=60)
+# Article.init()
 
  
 class SaveHourToLocal(luigi.Task):
@@ -99,6 +99,15 @@ class MonthHtmlToArticlesCsv(luigi.Task):
         month_days = monthrange(int(self.year), int(self.month))
         for i in range(1, month_days[1] + 1):
             yield DayHtmlToArticlesCsv(datetime(int(self.year), int(self.month), i))
+
+
+class YearHtmlToArticlesCsv(luigi.Task):
+    """Parse the articles from the HTML for the given year."""
+    year = luigi.Parameter()
+
+    def requires(self):
+        for i in range(1, 13):
+            yield MonthHtmlToArticlesCsv(self.year, i)
 
 
 class SaveHourToElasticsearch(luigi.Task):
