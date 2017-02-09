@@ -26,6 +26,12 @@ export PYTHONPATH=.
 luigi --module pipeline DayHtmlToArticlesCsv --date=2016-01-01 --local-scheduler
 ```
 
+To save an entire year's worth of playlist to CSV:
+```
+export PYTHONPATH=.
+luigi --module pipeline CombineYearArticlesCsv --year=2016 --local-scheduler --workers=10
+```
+
 ## Running the analysis
  1. Download Spark 2.0.1 from here: http://d3kbcqa49mib13.cloudfront.net/spark-2.0.1-bin-hadoop2.7.tgz
  1. Untar it to the location /opt/spark-2.0.1-bin-hadoop2.7
