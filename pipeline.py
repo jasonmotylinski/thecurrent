@@ -2,12 +2,14 @@
 import csv
 import luigi
 import os
+
 from calendar import monthrange
-from datetime import datetime
+from chartshow import get_chartshow_html, get_chartshow, get_chartshow_csv
+from datetime import datetime, date, timedelta
 from luigi.format import UTF8
 from playlist import get_hour, get_day_html, get_articles
 
- 
+
 class SaveHourToLocal(luigi.Task):
     """Get an hour of playlist."""
     date = luigi.DateParameter()
@@ -127,7 +129,7 @@ class CombineYearArticlesCsv(luigi.Task):
             for month in range(1, 13):
                 month_days = monthrange(int(self.year), int(month))
                 for day in range(1, month_days[1] + 1):
-                    with open('output/csv/{0}/{1}/{0}{1}{2}.csv'.format(self.year, "{0:02d}".format(month), "{0:02d}".format(day)),"r") as f:
+                    with open('output/csv/{0}/{1}/{0}{1}{2}.csv'.format(self.year, "{0:02d}".format(month), "{0:02d}".format(day)), "r") as f:
                         reader = csv.reader(f, delimiter=',')
                         next(reader, None)
                         for row in reader:
@@ -136,3 +138,123 @@ class CombineYearArticlesCsv(luigi.Task):
     def requires(self):
         """requires."""
         return YearHtmlToArticlesCsv(str(self.year))
+
+
+class SaveChartshowHtmlToLocal(luigi.Task):
+    """Save the HTML for a given day locally."""
+    date = luigi.DateParameter()
+
+    def output(self):
+        """Output."""
+        return luigi.LocalTarget('output/html/chartshow/{0}/chartshow_{2}.html'.format(self.date.strftime("%Y"), self.date.strftime("%m"), self.date.strftime("%Y%m%d")))
+
+    def run(self):
+        with self.output().open('w') as f:
+            try:
+                f.write(get_chartshow_html(self.date.year, self.date.month, self.date.day))
+            except:
+                pass
+
+
+class SaveAllChartshowHtmlForYearToLocal(luigi.Task):
+    """Save the HTML for all Chart Show's for a given year."""
+    year = luigi.IntParameter()
+
+    def last_wednesday(self):
+        today = date(self.year, 12, 31)
+        if today >= date.today():
+            today = date.today()
+        offset = (today.weekday() - 2) % 7
+        return today - timedelta(days=offset)
+
+    def requires(self):
+        """requires."""
+        d = self.last_wednesday()
+        while d.year == self.year and d <= date.today():
+            yield SaveChartshowHtmlToLocal(d)
+            d -= timedelta(days=7)
+
+
+class ChartshowHtmlToChartshowRaw(luigi.Task):
+    """Parse the chartshow from the HTML for the given day."""
+    date = luigi.DateParameter()
+
+    def output(self):
+        """Output."""
+        return luigi.LocalTarget('output/raw/chartshow/{0}/{1}.csv'.format(self.date.strftime("%Y"), self.date.strftime("%Y%m%d")), format=UTF8)
+
+    def run(self):
+        """Run."""
+        with self.input()[0].open('r') as i:
+            d = os.path.dirname(self.output().path)
+            if not os.path.exists(d):
+                os.makedirs(d)
+            with open(self.output().path, 'wb') as f:
+                results = get_chartshow(i.read(), self.date.year, self.date.month, self.date.day)
+                f.write(results)
+
+    def requires(self):
+        """Requires."""
+        yield SaveChartshowHtmlToLocal(self.date)
+
+
+class SaveAllChartshowForYearRaw(luigi.Task):
+    """Extract all raw data for all Chart Show's for a given year."""
+    year = luigi.IntParameter()
+
+    def last_wednesday(self):
+        today = date(self.year, 12, 31)
+        if today >= date.today():
+            today = date.today()
+        offset = (today.weekday() - 2) % 7
+        return today - timedelta(days=offset)
+
+    def requires(self):
+        """requires."""
+        d = self.last_wednesday()
+        while d.year == self.year and d <= date.today():
+            yield ChartshowHtmlToChartshowRaw(d)
+            d -= timedelta(days=7)
+
+
+class ChartshowRawToCsv(luigi.Task):
+    """Convert the raw chartshow data to CSV."""
+    date = luigi.DateParameter()
+
+    def output(self):
+        """Output."""
+        return luigi.LocalTarget('output/csv/chartshow/{0}/{1}.csv'.format(self.date.strftime("%Y"), self.date.strftime("%Y%m%d")), format=UTF8)
+
+    def run(self):
+        """Run."""
+        with self.input()[0].open('r') as i:
+            d = os.path.dirname(self.output().path)
+            if not os.path.exists(d):
+                os.makedirs(d)
+            with open(self.output().path, 'wb') as f:
+                results = get_chartshow_csv(i.read())
+                f.write(results)
+
+    def requires(self):
+        """requires."""
+        yield ChartshowHtmlToChartshowRaw(self.date)
+
+
+class SaveAllChartshowRawForYearToCsv(luigi.Task):
+    """Convert the raw chartshow data to CSV for a given year."""
+    year = luigi.IntParameter()
+
+    def last_wednesday(self):
+        today = date(self.year, 12, 31)
+        if today >= date.today():
+            today = date.today()
+        offset = (today.weekday() - 2) % 7
+        return today - timedelta(days=offset)
+
+    def requires(self):
+        """requires."""
+        d = self.last_wednesday()
+        while d.year == self.year and d <= date.today():
+            yield ChartshowRawToCsv(d)
+            d -= timedelta(days=7)
+

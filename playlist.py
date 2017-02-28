@@ -8,33 +8,32 @@ from pytz import timezone
 
 HOUR_URL = "http://www.thecurrent.org/playlist/{year}-{month}-{day}/{hour}"
 DAY_URL = "http://www.thecurrent.org/playlist/{year}-{month}-{day}/"
-
 HOUR_MAP = {
     "11:00 pm to 12:00 am": 23,
     "10:00 pm to 11:00 pm": 22,
-    "9:00 pm to 10:00 pm":  21,
-    "8:00 pm to  9:00 pm":   20,
-    "7:00 pm to  8:00 pm":   19,
-    "6:00 pm to  7:00 pm":   18,
-    "5:00 pm to  6:00 pm":   17,
-    "4:00 pm to  5:00 pm":   16,
-    "3:00 pm to  4:00 pm":   15,
-    "2:00 pm to  3:00 pm":   14,
-    "1:00 pm to  2:00 pm":   13,
-    "12:00 pm to  1:00 pm":  12,
+    "9:00 pm to 10:00 pm": 21,
+    "8:00 pm to  9:00 pm": 20,
+    "7:00 pm to  8:00 pm": 19,
+    "6:00 pm to  7:00 pm": 18,
+    "5:00 pm to  6:00 pm": 17,
+    "4:00 pm to  5:00 pm": 16,
+    "3:00 pm to  4:00 pm": 15,
+    "2:00 pm to  3:00 pm": 14,
+    "1:00 pm to  2:00 pm": 13,
+    "12:00 pm to  1:00 pm": 12,
     "11:00 am to 12:00 pm": 11,
     "10:00 am to 11:00 am": 10,
-    "9:00 am to 10:00 am":  9,
-    "8:00 am to  9:00 am":   8,
-    "7:00 am to  8:00 am":   7,
-    "6:00 am to  7:00 am":   6,
-    "5:00 am to  6:00 am":   5,
-    "4:00 am to  5:00 am":   4,
-    "3:00 am to  4:00 am":   3,
-    "2:00 am to  3:00 am":   2,
-    "1:00 am to  2:00 am":   1,
-    "1:00 am to  3:00 am":   1,
-    "12:00 am to  1:00 am":  0
+    "9:00 am to 10:00 am": 9,
+    "8:00 am to  9:00 am": 8,
+    "7:00 am to  8:00 am": 7,
+    "6:00 am to  7:00 am": 6,
+    "5:00 am to  6:00 am": 5,
+    "4:00 am to  5:00 am": 4,
+    "3:00 am to  4:00 am": 3,
+    "2:00 am to  3:00 am": 2,
+    "1:00 am to  2:00 am": 1,
+    "1:00 am to  3:00 am": 1,
+    "12:00 am to  1:00 am": 0
 }
 
 
@@ -67,7 +66,6 @@ class Article(object):
         d = datetime.strptime(self.date.strftime("%Y%m%d") + " " + self.time + " " + am_pm, "%Y%m%d %I:%M %p")
         d.replace(tzinfo=timezone('US/Central'))
         return d
-
 
     @property
     def title(self):
