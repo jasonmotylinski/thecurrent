@@ -30,23 +30,29 @@ def get_chartshow(html, year, month, day):
     return results
 
 
+def parse_artist_title(line, match, result):
+    """Attempt to parse the artist and title from the messed up HTML."""
+    n = re.search("[a-z][A-Z]", match.group(2))
+    if n is not None:
+        index = line.find(n.group(0)) + 1
+        result["artist"] = line[:index].replace(match.group(1), "")
+        result["title"] = line[index:]
+
+
 def get_chartshow_csv(data):
     """Parse the raw data into CSV."""
-    results = ""
+    results = []
     rank = 1
     for line in data.split("\n"):
         if len(line.strip()) > 0:
             if len(line.split(",")) == 3:
-                results = results + line + "\n"
+                parts = line.split(",")
+                results.append({"rank": parts[0], "artist": parts[1], "title": parts[2]})
             else:
-                m = re.match("^([0-9X]+)(.*)", line)
-                n = re.search("[a-z][A-Z]", m.group(2))
-                artist_song = m.group(2) + ","
-                if n is not None:
-                    index = line.find(n.group(0)) + 1
-                    artist_song = line[:index].replace(m.group(1), "") + "," + line[index:]
-
-                results = results + str(rank) + "," + artist_song + "\n"
+                m = re.match("^([0-9XR]+)(.*)", line)
+                result = {"rank": rank, "artist": m.group(2), "title": ""}
+                parse_artist_title(line, m, result)
+                results.append(result)
                 rank = rank + 1
     return results
 

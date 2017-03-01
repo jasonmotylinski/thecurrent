@@ -232,8 +232,13 @@ class ChartshowRawToCsv(luigi.Task):
             if not os.path.exists(d):
                 os.makedirs(d)
             with open(self.output().path, 'wb') as f:
+                writer = csv.writer(f, delimiter=',', quoting=csv.QUOTE_ALL)
                 results = get_chartshow_csv(i.read())
-                f.write(results)
+                writer.writerow(['rank', 'date', 'artist', 'title'])
+                list(writer.writerow([r["rank"],
+                                      self.date.isoformat(),
+                                      r["artist"].encode("utf-8"),
+                                      r["title"].encode("utf-8")]) for r in results)
 
     def requires(self):
         """requires."""
@@ -257,4 +262,3 @@ class SaveAllChartshowRawForYearToCsv(luigi.Task):
         while d.year == self.year and d <= date.today():
             yield ChartshowRawToCsv(d)
             d -= timedelta(days=7)
-
