@@ -99,8 +99,12 @@ class MonthHtmlToArticlesCsv(luigi.WrapperTask):
     month = luigi.Parameter()
 
     def requires(self):
-        month_days = monthrange(int(self.year), int(self.month))
-        for i in range(1, month_days[1] + 1):
+        max_days = monthrange(int(self.year), int(self.month))[0]
+        if self.year == datetime.now().year \
+           and self.month == datetime.now().month \
+           and max_days > datetime.now().day:
+            max_days = datetime.now().day
+        for i in range(1, max_days):
             yield DayHtmlToArticlesCsv(datetime(int(self.year), int(self.month), i))
 
 
@@ -109,7 +113,10 @@ class YearHtmlToArticlesCsv(luigi.WrapperTask):
     year = luigi.Parameter()
 
     def requires(self):
-        for i in range(1, 13):
+        max_month = 13
+        if int(self.year) == datetime.now().year:
+            max_month = datetime.now().month
+        for i in range(1, max_month):
             yield MonthHtmlToArticlesCsv(self.year, i)
 
 
@@ -126,9 +133,15 @@ class CombineYearArticlesCsv(luigi.Task):
         with open(self.output().path, "w") as y:
             writer = csv.writer(y, delimiter=',', quoting=csv.QUOTE_ALL)
             writer.writerow(['id', 'datetime', 'artist', 'title', 'year', 'month', 'day', 'day_of_week', 'week', 'hour'])
-            for month in range(1, 13):
-                month_days = monthrange(int(self.year), int(month))
-                for day in range(1, month_days[1] + 1):
+
+            max_month = 13
+            if self.year == datetime.now().year:
+                max_month = datetime.now().month + 1
+            for month in range(1, max_month):
+                max_days = monthrange(int(self.year), int(month))[0] + 1
+                if max_days > datetime.now().day:
+                    max_days = datetime.now().day
+                for day in range(1, max_days):
                     with open('output/csv/{0}/{1}/{0}{1}{2}.csv'.format(self.year, "{0:02d}".format(month), "{0:02d}".format(day)), "r") as f:
                         reader = csv.reader(f, delimiter=',')
                         next(reader, None)
