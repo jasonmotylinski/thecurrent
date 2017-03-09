@@ -54,7 +54,7 @@ class DayHtmlToArticlesCsv(luigi.Task):
 
     def output(self):
         """Output."""
-        return luigi.LocalTarget('output/csv/{0}/{1}/{2}.csv'.format(self.date.strftime("%Y"), self.date.strftime("%m"), self.date.strftime("%Y%m%d")),format=UTF8)
+        return luigi.LocalTarget('output/csv/{0}/{1}/{2}.csv'.format(self.date.strftime("%Y"), self.date.strftime("%m"), self.date.strftime("%Y%m%d")), format=UTF8)
 
     def run(self):
         """Run."""
@@ -99,9 +99,9 @@ class MonthHtmlToArticlesCsv(luigi.WrapperTask):
     month = luigi.Parameter()
 
     def requires(self):
-        max_days = monthrange(int(self.year), int(self.month))[0]
-        if self.year == datetime.now().year \
-           and self.month == datetime.now().month \
+        max_days = monthrange(int(self.year), int(self.month))[1] + 1
+        if int(self.year) == datetime.now().year \
+           and int(self.month) == datetime.now().month \
            and max_days > datetime.now().day:
             max_days = datetime.now().day
         for i in range(1, max_days):
@@ -136,9 +136,9 @@ class CombineYearArticlesCsv(luigi.Task):
 
             max_month = 13
             if self.year == datetime.now().year:
-                max_month = datetime.now().month + 1
+                max_month = datetime.now().month
             for month in range(1, max_month):
-                max_days = monthrange(int(self.year), int(month))[0] + 1
+                max_days = monthrange(int(self.year), int(month))[1] + 1
                 if max_days > datetime.now().day:
                     max_days = datetime.now().day
                 for day in range(1, max_days):
