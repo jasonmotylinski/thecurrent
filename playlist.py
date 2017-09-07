@@ -86,7 +86,9 @@ class Article(object):
 def get_hour(year, month, day, hour):
     """Get the articles for a given year, month, day, hour."""
     u = HOUR_URL.format(year=year, month=str(month).zfill(2), day=str(day).zfill(2), hour=hour)
-    page = urllib2.urlopen(u, timeout=60).read()
+    request = urllib2.Request(u)
+    request.add_header('Pragma', 'no-cache')
+    page = urllib2.build_opener().open(request).read()
     soup = BeautifulSoup(page)
     for node in soup.findAll("article", {"class": "row song"}):
         yield Article(node, datetime(year, month, day, int(hour)))

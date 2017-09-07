@@ -110,7 +110,7 @@ class YearHtmlToArticlesCsv(luigi.WrapperTask):
 
     def requires(self):
         for i in range(1, 13):
-            yield MonthHtmlToArticlesCsv(self.year, i)
+            yield MonthHtmlToArticlesCsv(str(self.year), str(i))
 
 
 class CombineYearArticlesCsv(luigi.Task):
