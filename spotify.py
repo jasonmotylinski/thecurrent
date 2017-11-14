@@ -20,8 +20,15 @@ def get_playlist(user, playlist_id):
     results = sp.user_playlist(user, playlist_id)
     return results
 
+def get_playlist_tracks(user, playlist_id):
+    results = sp.user_playlist_tracks(user, playlist_id)
+    return results
+
 def add_tracks(user, playlist_id, track_uris, position=None):
     sp.user_playlist_add_tracks(user, playlist_id, track_uris, position=position)
 
 def replace_tracks(user, playlist_id, track_uris):
     sp.user_playlist_replace_tracks(user, playlist_id, track_uris)
+
+def remove_tracks(user, playlist_id, track_positions):
+    sp.user_playlist_remove_specific_occurrences_of_tracks(user, playlist_id, track_positions)
