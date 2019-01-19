@@ -65,3 +65,5 @@ target/
 .ipynb_checkpoints
 output
 metastore_db
+
+.vscode/

@@ -44,7 +44,7 @@ class Article(object):
     def id(self):
         """Generate the id of the article."""
         m = md5.new()
-        m.update("{0}{1}{2}".format(self.datetime, unicodedata.normalize('NFKD', self.artist).encode('ascii','ignore'), unicodedata.normalize('NFKD', self.title).encode('ascii','ignore')))
+        m.update("{0}{1}{2}".format(self.datetime, self.artist.encode('utf-8','ignore'), self.title.encode('utf-8','ignore')))
         return m.hexdigest()
 
     @property
@@ -75,7 +75,11 @@ class Article(object):
     @property
     def artist(self):
         """Parse the artist of the article."""
-        return self.node.find("h5", {"class": "artist"}).contents[0].strip()
+        contents = self.node.find("h5", {"class": "artist"}).contents
+        if len(contents) > 0:
+            return self.node.find("h5", {"class": "artist"}).contents[0].strip()
+        else:
+            return ""
 
     def __init__(self, node, date):
         """Constructor. Sets the node of the article retrieved from the HTML."""
