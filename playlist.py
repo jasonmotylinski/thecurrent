@@ -6,6 +6,7 @@ from datetime import datetime
 from BeautifulSoup import BeautifulSoup
 from pytz import timezone
 
+
 HOUR_URL = "http://www.thecurrent.org/playlist/{year}-{month}-{day}/{hour}"
 DAY_URL = "http://www.thecurrent.org/playlist/{year}-{month}-{day}/"
 HOUR_MAP = {
@@ -104,7 +105,11 @@ def get_day(year, month, day):
 def get_day_html(year, month, day):
     """Get the HTML for the given day."""
     u = DAY_URL.format(year=year, month=str(month).zfill(2), day=str(day).zfill(2))
-    return urllib2.urlopen(u, timeout=60).read()
+    try:
+        return urllib2.urlopen(u, timeout=60).read()
+    except urllib2.HTTPError as e:
+        return e.read()
+
 
 
 def get_articles(html, year, month, day):
