@@ -83,7 +83,7 @@ class CreateMonthCsv(luigi.WrapperTask):
             yield ConvertDayHtmlToCsv(datetime(int(self.year), int(self.month), i))
 
 
-class CreateYearCsv(luigi.WrapperTask):
+class CreateMonthCsvByYear(luigi.WrapperTask):
     """Parse the articles from the HTML for the given year."""
     year = luigi.IntParameter()
 
@@ -91,7 +91,7 @@ class CreateYearCsv(luigi.WrapperTask):
         for i in range(1, 13):
             yield CreateMonthCsv(self.year, i)
 
-class CreateYearRangeCsv(luigi.WrapperTask):
+class CreateMonthCsvByYearRange(luigi.WrapperTask):
     """Parse the articles from the HTML for the given year."""
     beginyear = luigi.IntParameter()
     endyear = luigi.IntParameter()
@@ -100,3 +100,39 @@ class CreateYearRangeCsv(luigi.WrapperTask):
         for year in range(self.beginyear, self.endyear + 1):
             for i in range(1, 13):
                 yield CreateMonthCsv(year, i)
+
+
+class CreateYearCsv(luigi.Task):
+    """Combine all files for a given year into a single CSV."""
+    year = luigi.IntParameter()
+
+    def output(self):
+        """Output."""
+        return luigi.LocalTarget('output/csv/{0}.csv'.format(self.year), format=UTF8)
+
+    def run(self):
+        """Run."""
+        with open(self.output().path, "w") as y:
+            writer = csv.writer(y, delimiter=',', quoting=csv.QUOTE_ALL)
+            writer.writerow(CSV_HEADER_ROW)
+            for month in range(1, 13):
+                month_days = monthrange(int(self.year), int(month))
+                for day in range(1, month_days[1] + 1):
+                    with open('output/csv/{0}/{1}/{0}{1}{2}.csv'.format(self.year, "{0:02d}".format(month), "{0:02d}".format(day)), "r") as f:
+                        reader = csv.reader(f, delimiter=',')
+                        next(reader, None)
+                        for row in reader:
+                            writer.writerow(row)
+
+    def requires(self):
+        """requires."""
+        return CreateMonthCsvByYear(self.year)
+    
+    class CreateYearCsvByYearRange(luigi.WrapperTask):
+        """Create multiple year CSV files within the given range."""
+        beginyear = luigi.IntParameter()
+        endyear = luigi.IntParameter()
+
+        def requires(self):
+            for year in range(self.beginyear, self.endyear + 1):
+                yield CreateYearCsv(year)
