@@ -1,5 +1,6 @@
-beautifulsoup==3.2.1
-luigi==2.3.2
+beautifulsoup4
+luigi
 elasticsearch-dsl==2.1.0
 pytz==2016.7
 plotly==2.0.1
+requests

@@ -1,7 +1,8 @@
 import re
-import urllib2
 
-from BeautifulSoup import BeautifulSoup
+from urllib.request import urlopen
+
+from bs4 import BeautifulSoup
 
 CHARTSHOW_URL = "http://www.thecurrent.org/feature/{year}/{month}/{day}/chart-show"
 
@@ -9,7 +10,7 @@ CHARTSHOW_URL = "http://www.thecurrent.org/feature/{year}/{month}/{day}/chart-sh
 def get_chartshow_html(year, month, day):
     """Get the HTML for the given year, month day."""
     u = CHARTSHOW_URL.format(year=year, month=str(month).zfill(2), day=str(day).zfill(2))
-    return urllib2.urlopen(u, timeout=60).read()
+    return urlopen(u, timeout=60).read()
 
 
 def get_chartshow(html, year, month, day):

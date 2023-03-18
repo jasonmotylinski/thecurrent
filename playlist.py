@@ -1,120 +1,36 @@
-import md5
-import urllib2
-import unicodedata
+import json
+import requests
 
-from datetime import datetime
-from BeautifulSoup import BeautifulSoup
-from pytz import timezone
+from bs4 import BeautifulSoup
+from dateutil import parser
+from hashlib import sha256
 
-
-HOUR_URL = "http://www.thecurrent.org/playlist/{year}-{month}-{day}/{hour}"
-DAY_URL = "http://www.thecurrent.org/playlist/{year}-{month}-{day}/"
-HOUR_MAP = {
-    "11:00 pm to 12:00 am": 23,
-    "10:00 pm to 11:00 pm": 22,
-    "9:00 pm to 10:00 pm": 21,
-    "8:00 pm to  9:00 pm": 20,
-    "7:00 pm to  8:00 pm": 19,
-    "6:00 pm to  7:00 pm": 18,
-    "5:00 pm to  6:00 pm": 17,
-    "4:00 pm to  5:00 pm": 16,
-    "3:00 pm to  4:00 pm": 15,
-    "2:00 pm to  3:00 pm": 14,
-    "1:00 pm to  2:00 pm": 13,
-    "12:00 pm to  1:00 pm": 12,
-    "11:00 am to 12:00 pm": 11,
-    "10:00 am to 11:00 am": 10,
-    "9:00 am to 10:00 am": 9,
-    "8:00 am to  9:00 am": 8,
-    "7:00 am to  8:00 am": 7,
-    "6:00 am to  7:00 am": 6,
-    "5:00 am to  6:00 am": 5,
-    "4:00 am to  5:00 am": 4,
-    "3:00 am to  4:00 am": 3,
-    "2:00 am to  3:00 am": 2,
-    "1:00 am to  2:00 am": 1,
-    "1:00 am to  3:00 am": 1,
-    "12:00 am to  1:00 am": 0
-}
+HOUR_URL="https://www.thecurrent.org/playlist/{year}-{month:02d}-{day:02d}/{hour:02d}"
+DAY_URL="https://www.thecurrent.org/playlist/{year}-{month:02d}-{day:02d}/"
 
 
-class Article(object):
-    """An article, which represents a play."""
+def create_id(song): 
+    key = "{0}{1}{2}".format(song["played_at"], song["artist"], song["title"])
+    m = sha256()
+    m.update(key.encode("UTF-8"))
+    return m.hexdigest()
 
-    @property
-    def id(self):
-        """Generate the id of the article."""
-        m = md5.new()
-        m.update("{0}{1}{2}".format(self.datetime, self.artist.encode('utf-8','ignore'), self.title.encode('utf-8','ignore')))
-        return m.hexdigest()
-
-    @property
-    def date(self):
-        """Parse the date of the article."""
-        return self._date
-
-    @property
-    def time(self):
-        """Parse the time of the article."""
-        return self.node.find("time").contents[0].strip()
-
-    @property
-    def datetime(self):
-        """Parse the date and time of the article."""
-        am_pm = "AM"
-        if self._date.hour > 11:
-            am_pm = "PM"
-        d = datetime.strptime(self.date.strftime("%Y%m%d") + " " + self.time + " " + am_pm, "%Y%m%d %I:%M %p")
-        d.replace(tzinfo=timezone('US/Central'))
-        return d
-
-    @property
-    def title(self):
-        """Parse the title of the article."""
-        return self.node.find("h5", {"class": "title"}).contents[0].strip()
-
-    @property
-    def artist(self):
-        """Parse the artist of the article."""
-        contents = self.node.find("h5", {"class": "artist"}).contents
-        if len(contents) > 0:
-            return self.node.find("h5", {"class": "artist"}).contents[0].strip()
-        else:
-            return ""
-
-    def __init__(self, node, date):
-        """Constructor. Sets the node of the article retrieved from the HTML."""
-        self.node = node
-        self._date = date
-
-
-def get_hour(year, month, day, hour):
+def get_songs(html):
     """Get the articles for a given year, month, day, hour."""
-    u = HOUR_URL.format(year=year, month=str(month).zfill(2), day=str(day).zfill(2), hour=hour)
-    page = urllib2.urlopen(u, timeout=60).read()
-    soup = BeautifulSoup(page)
-    for node in soup.findAll("article", {"class": "row song"}):
-        yield Article(node, datetime(year, month, day, int(hour)))
+    bs=BeautifulSoup(html, "html.parser")
+    data=json.loads(bs.find("script", {"id":"__NEXT_DATA__"}).string)
+    for s in data["props"]["pageProps"]["data"]["songs"]:
+        s["id"] = create_id(s)
+        s["played_at_dt"] = parser.parse(s["played_at"])
+        yield(s)
+
+def get_hour_html(year:int, month:int, day:int, hour:int):
+    url=HOUR_URL.format(year=year, month=month, day=day, hour=hour)
+    r=requests.get(url)
+    return r.text
 
 
-def get_day(year, month, day):
-    """Get the articles for a given year, month, day, hour."""
-    yield get_articles(get_day_html(year, month, day), year, month, day)
-
-
-def get_day_html(year, month, day):
-    """Get the HTML for the given day."""
-    u = DAY_URL.format(year=year, month=str(month).zfill(2), day=str(day).zfill(2))
-    try:
-        return urllib2.urlopen(u, timeout=60).read()
-    except urllib2.HTTPError as e:
-        return e.read()
-
-
-
-def get_articles(html, year, month, day):
-    soup = BeautifulSoup(html)
-    for node in soup.findAll("article", {"class": "row song"}):
-        hour_node = node.findPreviousSibling("div", {"class": "hour"})
-        hour_str = hour_node.find("span", {"class": "hour-header open"}).contents[0].strip()
-        yield Article(node, datetime(year, month, day, HOUR_MAP[hour_str]))
+def get_day_html(year:int, month:int, day:int):
+    url=DAY_URL.format(year=year, month=month, day=day)
+    r=requests.get(url)
+    return r.text
