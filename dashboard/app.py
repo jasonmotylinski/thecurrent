@@ -62,20 +62,20 @@ def serve_layout():
        [
               dbc.Row(
                             dbc.Col([
-                                   html.H1("89.3 The Current Trends", className="display-3")
+                                   html.H1("89.3 The Current Trends", className="display-3 text-center"),
+                                     html.H3("Top 5 Most Popular Artists of All-Time", className="text-center"),
                             ])
                      ),
               dbc.Row(
                      [
                             dbc.Col([
-                                   html.H3("Top 5 Most Popular Artists of All-Time"),
                                    dash_table.DataTable(df.to_dict('records'), [{"name": i, "id": i} for i in df.columns],style_cell={'font-family':'sans-serif'})
                             ]),
                             dbc.Col([dcc.Graph(figure=fig)])
                      ]),
               dbc.Row(
                      dbc.Col([
-                            html.H3("Top 5 Most Popular Artists Played on {day_of_week} at {hour_label}".format(day_of_week=day_of_week, hour_label=hour_label)),
+                            html.H3("Top 5 Most Popular Artists Played on {day_of_week} at {hour_label}".format(day_of_week=day_of_week, hour_label=hour_label), className="text-center"),
                             dash_table.DataTable(df_now.to_dict('records'), [{"name": i, "id": i} for i in df.columns],style_cell={'font-family':'sans-serif'})
                      ])
               )
