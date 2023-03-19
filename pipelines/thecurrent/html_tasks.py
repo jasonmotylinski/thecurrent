@@ -1,10 +1,11 @@
 
+import config
 import luigi
 
 from calendar import monthrange
 from datetime import datetime
 from luigi.format import UTF8
-from playlist import get_hour_html, get_day_html
+from pipelines.thecurrent.playlist import get_hour_html, get_day_html
 
 class SaveHourHtmlToLocal(luigi.Task):
     """Get an hour of playlist."""
@@ -13,7 +14,7 @@ class SaveHourHtmlToLocal(luigi.Task):
 
     def output(self):
         """Output."""
-        return luigi.LocalTarget('output/html/by_hour/{year}/{month:02d}/{day:02d}/playlist_{year}{month:02d}{day:02d}{hour:02d}.html'.format(year=int(self.date.strftime("%Y")), month=int(self.date.strftime("%m")), day=int(self.date.strftime("%d")), hour=self.hour))
+        return luigi.LocalTarget(config.HOUR_HTML.format(year=int(self.date.strftime("%Y")), month=int(self.date.strftime("%m")), day=int(self.date.strftime("%d")), hour=self.hour))
 
     def run(self):
         """Run."""
@@ -34,7 +35,7 @@ class SaveDayHtmlToLocal(luigi.Task):
 
     def output(self):
         """Output."""
-        return luigi.LocalTarget('output/html/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.html'.format(year=int(self.date.strftime("%Y")), month=int(self.date.strftime("%m")), day=int(self.date.strftime("%d"))))
+        return luigi.LocalTarget(config.DAY_HTML.format(year=int(self.date.strftime("%Y")), month=int(self.date.strftime("%m")), day=int(self.date.strftime("%d"))))
 
     def run(self):
         """Run."""

@@ -1,18 +1,14 @@
 
+import config
 import csv
 import luigi
 import os
 
 from calendar import monthrange
 from datetime import datetime
-from html_tasks import SaveDayHtmlToLocal
+from pipelines.thecurrent.html_tasks import SaveDayHtmlToLocal
 from luigi.format import UTF8
-from playlist import get_songs
-
-CSV_HEADER_ROW = ['id', 'artist', 'title', 'album', 'played_at', 'duration', 'service_id', 'song_id', 'play_id', 
-                  'composer', 'conductor', 'orch_ensemble', 'soloist_1', 'soloist_2', 'soloist_3', 'soloist_4',
-                  'soloist_5', 'soloist_6', 'record_co', 'record_id', 'addl_text', 'broadcast', 'songs_on_album',
-                  'songs_by_artist', 'album_mbid', 'art_url', 'year', 'month', 'day', 'day_of_week', 'week','hour']
+from pipelines.thecurrent.playlist import get_songs
 
 
 class ConvertDayHtmlToCsv(luigi.Task):
@@ -21,7 +17,7 @@ class ConvertDayHtmlToCsv(luigi.Task):
 
     def output(self):
         """Output."""
-        return luigi.LocalTarget('output/csv/{0}/{1}/{2}.csv'.format(self.date.strftime("%Y"), self.date.strftime("%m"), self.date.strftime("%Y%m%d")),format=UTF8)
+        return luigi.LocalTarget(config.DAY_CSV.format(self.date.strftime("%Y"), self.date.strftime("%m"), self.date.strftime("%Y%m%d")),format=UTF8)
 
     def run(self):
         """Run."""
@@ -31,7 +27,7 @@ class ConvertDayHtmlToCsv(luigi.Task):
                 os.makedirs(d)
             with open(self.output().path, 'w') as f:
                 writer = csv.writer(f, delimiter=',', quoting=csv.QUOTE_ALL)
-                writer.writerow(CSV_HEADER_ROW)
+                writer.writerow(config.CSV_HEADER_ROW)
                 songs = get_songs(i.read())
 
                 list(writer.writerow([s["id"], 
@@ -108,17 +104,17 @@ class CreateYearCsv(luigi.Task):
 
     def output(self):
         """Output."""
-        return luigi.LocalTarget('output/csv/{0}.csv'.format(self.year), format=UTF8)
+        return luigi.LocalTarget(config.YEAR_CSV.format(self.year), format=UTF8)
 
     def run(self):
         """Run."""
         with open(self.output().path, "w") as y:
             writer = csv.writer(y, delimiter=',', quoting=csv.QUOTE_ALL)
-            writer.writerow(CSV_HEADER_ROW)
+            writer.writerow(config.CSV_HEADER_ROW)
             for month in range(1, 13):
                 month_days = monthrange(int(self.year), int(month))
                 for day in range(1, month_days[1] + 1):
-                    with open('output/csv/{0}/{1}/{0}{1}{2}.csv'.format(self.year, "{0:02d}".format(month), "{0:02d}".format(day)), "r") as f:
+                    with open(config.DAY_CSV.format(self.year, "{0:02d}".format(month), "{0:02d}".format(day)), "r") as f:
                         reader = csv.reader(f, delimiter=',')
                         next(reader, None)
                         for row in reader:

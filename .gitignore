@@ -69,3 +69,5 @@ metastore_db
 .vscode/
 
 .DS_Store
+
+*.sqlite3

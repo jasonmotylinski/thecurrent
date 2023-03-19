@@ -1,16 +1,14 @@
+import config
 import json
 import os
 import requests
 
 from bs4 import BeautifulSoup
 
-ARTISTS_CSV="artists.csv"
-ARTISTS_GENRES_JSON="artists_genres.json"
-EVERYNOISE_URL="https://everynoise.com/lookup.cgi?who={who}&mode=map"
 
 def get_genres(who):
     genres=[]
-    r = requests.get(EVERYNOISE_URL.format(who=who))
+    r = requests.get(config.EVERYNOISE_URL.format(who=who))
 
     soup = BeautifulSoup(r.text, "html.parser")
 
@@ -30,15 +28,15 @@ def clean_artist(artist):
 
 def load_data():
     artists_genres = {}
-    if os.path.exists(ARTISTS_GENRES_JSON):
-        with open(ARTISTS_GENRES_JSON,'r') as f:
+    if os.path.exists(config.ARTISTS_GENRES_JSON):
+        with open(config.ARTISTS_GENRES_JSON,'r') as f:
             for l in f.readlines():
                 file_data = json.loads(l)
                 artists_genres[file_data["artist"]] = l.strip()
     return artists_genres
 
 
-with open(ARTISTS_CSV, 'r') as f:
+with open(config.ARTISTS_CSV, 'r') as f:
     artists = f.readlines()
 
 artists_genres=load_data()  
@@ -54,6 +52,6 @@ for l in artists:
             break
 
 
-with open(ARTISTS_GENRES_JSON, 'w') as f:
+with open(config.ARTISTS_GENRES_JSON, 'w') as f:
     for key in artists_genres.keys():
         f.writelines("{0}\n".format(artists_genres[key]))

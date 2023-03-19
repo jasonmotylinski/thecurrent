@@ -3,7 +3,7 @@ import csv
 import luigi
 import os
 
-from chartshow import get_chartshow_html, get_chartshow, get_chartshow_csv
+from pipelines.thecurrent.chartshow import get_chartshow_html, get_chartshow, get_chartshow_csv
 from datetime import date, timedelta
 from luigi.format import UTF8
 
