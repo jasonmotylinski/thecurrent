@@ -15,3 +15,17 @@ ARTISTS_GENRES_JSON="output/artists_genres/artists_genres.json"
 EVERYNOISE_URL="https://everynoise.com/lookup.cgi?who={who}&mode=map"
 HOUR_HTML="output/html/by_hour/{year}/{month:02d}/{day:02d}/playlist_{year}{month:02d}{day:02d}{hour:02d}.html"
 DAY_HTML="output/html/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.html"
+
+
+ARTISTS_WIKIPEDIA_JSON="output/artists_wikipedia/artists_wikipedia.json"
+WIKIPEDIA_URL="https://en.wikipedia.org/wiki/{artist}"
+WIKIPEDIA_BAND_URL="https://en.wikipedia.org/wiki/{artist}_(band)"
+WIKIPEDIA_MUSICIAN_URL="https://en.wikipedia.org/wiki/{artist}_(musician)"
+WIKIPEDIA_MUSIC_GROUP_URL="https://en.wikipedia.org/wiki/{artist}_(music_group)"
+
+WIKIPEDIA_URLS ={
+    "bio": WIKIPEDIA_URL, 
+    "band": WIKIPEDIA_BAND_URL,
+    "musician": WIKIPEDIA_MUSICIAN_URL,
+    "music group": WIKIPEDIA_MUSIC_GROUP_URL
+}

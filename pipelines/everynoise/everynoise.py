@@ -1,10 +1,9 @@
 import config
 import json
-import os
 import requests
 
 from bs4 import BeautifulSoup
-
+from file_helpers import load_json_data, write_json_data, load_artists_data
 
 def get_genres(who):
     genres=[]
@@ -17,41 +16,21 @@ def get_genres(who):
     
     return genres
 
-def clean_artist(artist):
-    artist=artist.strip()
-
-    if(artist[0]== '"'):
-        artist=artist[1:]
-        artist=artist[:-1]
-
-    return artist
-
-def load_data():
-    artists_genres = {}
-    if os.path.exists(config.ARTISTS_GENRES_JSON):
-        with open(config.ARTISTS_GENRES_JSON,'r') as f:
-            for l in f.readlines():
-                file_data = json.loads(l)
-                artists_genres[file_data["artist"]] = l.strip()
-    return artists_genres
 
 
-with open(config.ARTISTS_CSV, 'r') as f:
-    artists = f.readlines()
 
-artists_genres=load_data()  
-i=0
+if __name__ == '__main__':
+    artists = load_artists_data(config.ARTISTS_CSV)
 
-for l in artists:
-    a = clean_artist(l)
-    if a not in artists_genres:
-        artists_genres[a] = json.dumps({"artist": a, "genres": get_genres(a)})
-        i=i+1
+    artists_genres=load_json_data(config.ARTISTS_GENRES_JSON)  
+    i=0
 
-        if i==100:
-            break
+    for a in artists:
+        if a not in artists_genres:
+            artists_genres[a] = json.dumps({"artist": a, "genres": get_genres(a)})
+            i=i+1
 
+            if i==100:
+                break
 
-with open(config.ARTISTS_GENRES_JSON, 'w') as f:
-    for key in artists_genres.keys():
-        f.writelines("{0}\n".format(artists_genres[key]))
+    write_json_data(config.ARTISTS_GENRES_JSON, artists_genres)
