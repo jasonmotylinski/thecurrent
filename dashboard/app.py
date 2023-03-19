@@ -84,6 +84,7 @@ def serve_layout():
 
 server = flask.Flask(__name__)
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], server=server)
+app.title = "89.3 The Current Trends"
 app.scripts.config.serve_locally = False
 app.scripts.append_script({"external_url": "https://www.googletagmanager.com/gtag/js?id=G-HB05PVK153"})
 
