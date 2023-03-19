@@ -12,7 +12,7 @@ def get_genres(who):
     genres=[]
     r = requests.get(EVERYNOISE_URL.format(who=who))
 
-    soup = BeautifulSoup(r.text)
+    soup = BeautifulSoup(r.text, "html.parser")
 
     for s in soup("a",{"title": None}):
         genres.append(s.text)
