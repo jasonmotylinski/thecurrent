@@ -5,3 +5,4 @@ requests
 dash
 pandas
 dash-bootstrap-components
+gunicorn

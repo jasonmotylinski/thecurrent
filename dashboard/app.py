@@ -1,6 +1,7 @@
 # app.py
 
 import dash_bootstrap_components as dbc
+import flask
 import pandas as pd
 import plotly.express as px
 import sqlite3
@@ -54,7 +55,8 @@ ORDER BY ct DESC
 LIMIT 5""".format(hour=hour, day_of_week=day_of_week)
 df_now=pd.read_sql(t, con)
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+server = flask.Flask(__name__)
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], server=server)
 app.layout = html.Div(
     dbc.Container(
     [
