@@ -14,7 +14,7 @@ class SaveHourHtmlToLocal(luigi.Task):
 
     def output(self):
         """Output."""
-        return luigi.LocalTarget(config.HOUR_HTML.format(year=int(self.date.strftime("%Y")), month=int(self.date.strftime("%m")), day=int(self.date.strftime("%d")), hour=self.hour))
+        return luigi.LocalTarget(config.THECURRENT_HOUR_HTML.format(year=int(self.date.strftime("%Y")), month=int(self.date.strftime("%m")), day=int(self.date.strftime("%d")), hour=self.hour))
 
     def run(self):
         """Run."""
@@ -35,7 +35,7 @@ class SaveDayHtmlToLocal(luigi.Task):
 
     def output(self):
         """Output."""
-        return luigi.LocalTarget(config.DAY_HTML.format(year=int(self.date.strftime("%Y")), month=int(self.date.strftime("%m")), day=int(self.date.strftime("%d"))))
+        return luigi.LocalTarget(config.THECURRENT_DAY_HTML.format(year=int(self.date.strftime("%Y")), month=int(self.date.strftime("%m")), day=int(self.date.strftime("%d"))))
 
     def run(self):
         """Run."""

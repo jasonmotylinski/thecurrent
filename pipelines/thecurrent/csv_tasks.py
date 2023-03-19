@@ -17,7 +17,7 @@ class ConvertDayHtmlToCsv(luigi.Task):
 
     def output(self):
         """Output."""
-        return luigi.LocalTarget(config.DAY_CSV.format(self.date.strftime("%Y"), self.date.strftime("%m"), self.date.strftime("%Y%m%d")),format=UTF8)
+        return luigi.LocalTarget(config.THECURRENT_DAY_CSV.format(self.date.strftime("%Y"), self.date.strftime("%m"), self.date.strftime("%Y%m%d")),format=UTF8)
 
     def run(self):
         """Run."""
@@ -104,7 +104,7 @@ class CreateYearCsv(luigi.Task):
 
     def output(self):
         """Output."""
-        return luigi.LocalTarget(config.YEAR_CSV.format(self.year), format=UTF8)
+        return luigi.LocalTarget(config.THECURRENT_YEAR_CSV.format(self.year), format=UTF8)
 
     def run(self):
         """Run."""

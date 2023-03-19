@@ -15,8 +15,8 @@ def get_vcard(url):
     return None
 
 if __name__ == '__main__':
-    artists_wikipedia=load_json_data(config.ARTISTS_WIKIPEDIA_JSON)
-    artists = load_artists_data(config.ARTISTS_CSV)
+    artists_wikipedia=load_json_data(config.WIKIPEDIA_ARTISTS_JSON)
+    artists = load_artists_data(config.THECURRENT_ARTISTS_CSV)
 
     i=0
     for artist in artists:    
@@ -37,4 +37,4 @@ if __name__ == '__main__':
             if i==100:
                 break
     
-    write_json_data(config.ARTISTS_WIKIPEDIA_JSON, artists_wikipedia)
+    write_json_data(config.WIKIPEDIA_ARTISTS_JSON, artists_wikipedia)
