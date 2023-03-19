@@ -17,8 +17,6 @@ def get_genres(who):
     return genres
 
 
-
-
 if __name__ == '__main__':
     artists = load_artists_data(config.ARTISTS_CSV)
 
@@ -30,7 +28,7 @@ if __name__ == '__main__':
             artists_genres[a] = json.dumps({"artist": a, "genres": get_genres(a)})
             i=i+1
 
-            if i==100:
+            if i==10:
                 break
 
     write_json_data(config.ARTISTS_GENRES_JSON, artists_genres)
