@@ -50,37 +50,45 @@ t="""SELECT
 FROM songs
 WHERE day_of_week='{day_of_week}'
 AND hour={hour}
+AND artist != ''
 GROUP BY artist
 ORDER BY ct DESC
 LIMIT 5""".format(hour=hour, day_of_week=day_of_week)
 df_now=pd.read_sql(t, con)
 
+def serve_layout():
+    return html.Div(
+       dbc.Container(
+       [
+              dbc.Row(
+                            dbc.Col([
+                                   html.H1("89.3 The Current Trends", className="display-3")
+                            ])
+                     ),
+              dbc.Row(
+                     [
+                            dbc.Col([
+                                   html.H3("Top 5 Most Popular Artists of All-Time"),
+                                   dash_table.DataTable(df.to_dict('records'), [{"name": i, "id": i} for i in df.columns],style_cell={'font-family':'sans-serif'})
+                            ]),
+                            dbc.Col([dcc.Graph(figure=fig)])
+                     ]),
+              dbc.Row(
+                     dbc.Col([
+                            html.H3("Top 5 Most Popular Artists Played on {day_of_week} at {hour_label}".format(day_of_week=day_of_week, hour_label=hour_label)),
+                            dash_table.DataTable(df_now.to_dict('records'), [{"name": i, "id": i} for i in df.columns],style_cell={'font-family':'sans-serif'})
+                     ])
+              )
+       ]
+       ))
+
 server = flask.Flask(__name__)
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], server=server)
-app.layout = html.Div(
-    dbc.Container(
-    [
-       dbc.Row(
-                     dbc.Col([
-                            html.H1("89.3 The Current Trends", className="display-3")
-                     ])
-              ),
-       dbc.Row(
-              [
-                     dbc.Col([
-                            html.H3("Top 5 Most Popular Artists of All-Time"),
-                            dash_table.DataTable(df.to_dict('records'), [{"name": i, "id": i} for i in df.columns],style_cell={'font-family':'sans-serif'})
-                     ]),
-                     dbc.Col([dcc.Graph(figure=fig)])
-              ]),
-       dbc.Row(
-              dbc.Col([
-                     html.H3("Top 5 Most Popular Artists Played on {day_of_week} at {hour_label}".format(day_of_week=day_of_week, hour_label=hour_label)),
-                     dash_table.DataTable(df_now.to_dict('records'), [{"name": i, "id": i} for i in df.columns],style_cell={'font-family':'sans-serif'})
-              ])
-       )
-    ]
-))
+app.scripts.config.serve_locally = False
+app.scripts.append_script({"external_url": "https://www.googletagmanager.com/gtag/js?id=G-HB05PVK153"})
+
+
+app.layout=serve_layout
 
 if __name__ == '__main__':
     app.run_server(debug=False)
