@@ -11,76 +11,84 @@ from datetime import datetime
 
 con = sqlite3.connect('thecurrent.sqlite3')
 
-t = """SELECT artist, COUNT(*) as ct 
-       FROM songs 
-       GROUP BY artist
-       ORDER BY ct DESC
-       LIMIT 5"""
 
-df = pd.read_sql(t, con)
 
-t = """
-SELECT 
-       artist, 
-       year,
-       month,
-       year || "-" || month AS year_month, 
-       COUNT(*) as ct 
-FROM songs 
-WHERE artist IN(
-       SELECT artist
+def popular_all_time_graph(con):
+    t = """
+    SELECT 
+        artist, 
+        year,
+        month,
+        year || "-" || month AS year_month, 
+        COUNT(*) as ct 
+    FROM songs 
+    WHERE artist IN(
+        SELECT artist
         FROM songs 
         GROUP BY artist
         ORDER BY COUNT(*) DESC
         LIMIT 5
-)
-GROUP BY artist, year, month
-ORDER BY year, month ASC
-"""
-df_timeseries = pd.read_sql(t, con)
-fig=px.line(df_timeseries, x="year_month", y="ct", color="artist" )
+    )
+    GROUP BY artist, year, month
+    ORDER BY year, month ASC
+    """
+    df_timeseries = pd.read_sql(t, con)
+    fig=px.line(df_timeseries, x="year_month", y="ct", color="artist" )
+    return dbc.Col([dcc.Graph(figure=fig)])
+      
+def popular_all_time(con):
+    t = """SELECT artist, COUNT(*) as ct 
+        FROM songs 
+        GROUP BY artist
+        ORDER BY ct DESC
+        LIMIT 5"""
+
+    df = pd.read_sql(t, con)
+    return dbc.Row(
+    [
+        dbc.Col([
+            dash_table.DataTable(df.to_dict('records'), [{"name": i, "id": i} for i in df.columns],style_cell={'font-family':'sans-serif'})
+        ]),
+        popular_all_time_graph(con)
+    ])
 
 
-hour=datetime.utcnow().hour
-hour_label=datetime.now().strftime("%-I %p")
-day_of_week=datetime.utcnow().strftime("%A")
-t="""SELECT 
+def popular_day_hour(con):
+    hour=datetime.utcnow().hour
+    hour_label=datetime.now().strftime("%-I %p")
+    day_of_week=datetime.utcnow().strftime("%A")
+    t="""SELECT 
     artist, 
     COUNT(*) as ct
-FROM songs
-WHERE day_of_week='{day_of_week}'
-AND hour={hour}
-AND artist != ''
-GROUP BY artist
-ORDER BY ct DESC
-LIMIT 5""".format(hour=hour, day_of_week=day_of_week)
-df_now=pd.read_sql(t, con)
+    FROM songs
+    WHERE day_of_week='{day_of_week}'
+    AND hour={hour}
+    AND artist != ''
+    GROUP BY artist
+    ORDER BY ct DESC
+    LIMIT 5""".format(hour=hour, day_of_week=day_of_week)
+    df_now=pd.read_sql(t, con)
+
+    return dbc.Col([
+        html.H3("Top 5 Most Popular Artists Played on {day_of_week} at {hour_label}".format(day_of_week=day_of_week, hour_label=hour_label), className="text-center"),
+        dash_table.DataTable(df_now.to_dict('records'), [{"name": i, "id": i} for i in df_now.columns],style_cell={'font-family':'sans-serif'})
+    ])
 
 def serve_layout():
     return html.Div(
-       dbc.Container(
-       [
-              dbc.Row(
-                            dbc.Col([
-                                   html.H1("89.3 The Current Trends", className="display-3 text-center"),
-                                     html.H3("Top 5 Most Popular Artists of All-Time", className="text-center"),
-                            ])
-                     ),
-              dbc.Row(
-                     [
-                            dbc.Col([
-                                   dash_table.DataTable(df.to_dict('records'), [{"name": i, "id": i} for i in df.columns],style_cell={'font-family':'sans-serif'})
-                            ]),
-                            dbc.Col([dcc.Graph(figure=fig)])
-                     ]),
-              dbc.Row(
-                     dbc.Col([
-                            html.H3("Top 5 Most Popular Artists Played on {day_of_week} at {hour_label}".format(day_of_week=day_of_week, hour_label=hour_label), className="text-center"),
-                            dash_table.DataTable(df_now.to_dict('records'), [{"name": i, "id": i} for i in df.columns],style_cell={'font-family':'sans-serif'})
-                     ])
-              )
-       ]
-       ))
+        dbc.Container(
+        [
+            dbc.Row(
+                dbc.Col([
+                    html.H1("89.3 The Current Trends", className="display-3 text-center"),
+                    html.H3("Top 5 Most Popular Artists of All-Time", className="text-center")
+                ])
+            ),
+            popular_all_time(con),
+            popular_day_hour(con)
+        ]
+        )
+    )
 
 server = flask.Flask(__name__)
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], server=server)
