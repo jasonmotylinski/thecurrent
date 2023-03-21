@@ -33,7 +33,8 @@ def popular_all_time_graph():
     con = sqlite3.connect(config.DB)
     df_timeseries = pd.read_sql(t, con)
     fig=px.line(df_timeseries, x="year_month", y="ct", color="artist" )
-    return dbc.Col([dcc.Graph(figure=fig, id='popular_graph')])
+    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+    return dbc.Col([dcc.Graph(figure=fig, id='popular_graph', config={'displayModeBar': False})])
 
 
 def get_popular_all_time_data(start_date=None, end_date=None):
@@ -120,33 +121,6 @@ app.title = "89.3 The Current Trends"
 
 
 app.layout=serve_layout()
-
-@app.callback(
-    Output(component_id='popular_title', component_property='children'),
-    Input(component_id='popular_graph', component_property='relayoutData')
-)
-def handle_graph_callback(relayoutData):
-    title="Top 5 Most Popular Artists of All-Time"
-    
-    if relayoutData and "xaxis.range[0]" in relayoutData:
-        start_date=parser.parse(relayoutData["xaxis.range[0]"]).strftime("%Y-%m-%d")
-        end_date=parser.parse(relayoutData["xaxis.range[1]"]).strftime("%Y-%m-%d")
-        title="Top 5 Most Popular Artists in Selected Range {0} to {1}".format(start_date, end_date)
-
-    return title
-
-@app.callback(
-    Output(component_id='popular_table', component_property='data'),
-    Input(component_id='popular_graph', component_property='relayoutData')
-)
-def handle_graph_callback(relayoutData):
-  
-    if relayoutData and "xaxis.range[0]" in relayoutData:
-        start_date=parser.parse(relayoutData["xaxis.range[0]"]).strftime("%Y-%m-%d")
-        end_date=parser.parse(relayoutData["xaxis.range[1]"]).strftime("%Y-%m-%d")
-        return get_popular_all_time_data(start_date, end_date).to_dict('records')
-    
-    return get_popular_all_time_data().to_dict('records')
 
 @app.callback(Output('popular_day_hour_table', 'data'),
               Input('interval', 'n_intervals'))
