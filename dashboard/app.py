@@ -1,19 +1,17 @@
 # app.py
 
+import config
 import dash_bootstrap_components as dbc
 import flask
 import pandas as pd
 import plotly.express as px
 import sqlite3
 
-from dash import Dash, dash_table, html, dcc
+from dash import Dash, dash_table, html, dcc, Input, Output
 from datetime import datetime
+from dateutil import parser
 
-con = sqlite3.connect('thecurrent.sqlite3')
-
-
-
-def popular_all_time_graph(con):
+def popular_all_time_graph():
     t = """
     SELECT 
         artist, 
@@ -32,31 +30,41 @@ def popular_all_time_graph(con):
     GROUP BY artist, year, month
     ORDER BY year, month ASC
     """
+    con = sqlite3.connect(config.DB)
     df_timeseries = pd.read_sql(t, con)
     fig=px.line(df_timeseries, x="year_month", y="ct", color="artist" )
-    return dbc.Col([dcc.Graph(figure=fig)])
-      
-def popular_all_time(con):
+    return dbc.Col([dcc.Graph(figure=fig, id='popular_graph')])
+
+
+def get_popular_all_time_data(start_date=None, end_date=None):
+    where=""
+
+    if start_date and end_date:
+        where="WHERE played_at >='{0}' AND played_at <='{1}'".format(start_date, end_date)
     t = """SELECT artist, COUNT(*) as ct 
-        FROM songs 
+        FROM songs
+        {where}
         GROUP BY artist
         ORDER BY ct DESC
-        LIMIT 5"""
+        LIMIT 5""".format(where=where)
+    con = sqlite3.connect(config.DB)
+    return pd.read_sql(t, con)
 
-    df = pd.read_sql(t, con)
+
+def popular_all_time():
+    df=get_popular_all_time_data()
     return dbc.Row(
     [
         dbc.Col([
-            dash_table.DataTable(df.to_dict('records'), [{"name": i, "id": i} for i in df.columns],style_cell={'font-family':'sans-serif'})
+            dash_table.DataTable(df.to_dict('records'), [{"name": i, "id": i} for i in df.columns],style_cell={'font-family':'sans-serif'}, id="popular_table")
         ]),
-        popular_all_time_graph(con)
+        popular_all_time_graph()
     ])
 
 
-def popular_day_hour(con):
-    hour=datetime.utcnow().hour
-    hour_label=datetime.now().strftime("%-I %p")
-    day_of_week=datetime.utcnow().strftime("%A")
+def get_popular_day_hour_data(hour, day_of_week):
+    
+    
     t="""SELECT 
     artist, 
     COUNT(*) as ct
@@ -67,11 +75,20 @@ def popular_day_hour(con):
     GROUP BY artist
     ORDER BY ct DESC
     LIMIT 5""".format(hour=hour, day_of_week=day_of_week)
-    df_now=pd.read_sql(t, con)
+    con = sqlite3.connect(config.DB)
+    return pd.read_sql(t, con)
 
+
+def popular_day_hour():
+   
+    hour=datetime.utcnow().hour
+    day_of_week=datetime.utcnow().strftime("%A")
+    hour_label=datetime.now().strftime("%-I %p")
+
+    df_now=get_popular_day_hour_data( hour, day_of_week)
     return dbc.Col([
-        html.H3("Top 5 Most Popular Artists Played on {day_of_week} at {hour_label}".format(day_of_week=day_of_week, hour_label=hour_label), className="text-center"),
-        dash_table.DataTable(df_now.to_dict('records'), [{"name": i, "id": i} for i in df_now.columns],style_cell={'font-family':'sans-serif'})
+        html.H3("Top 5 Most Popular Artists Played on {day_of_week} at {hour_label}".format(day_of_week=day_of_week, hour_label=hour_label), className="text-center", id="popular_day_hour_title"),
+        dash_table.DataTable(df_now.to_dict('records'), [{"name": i, "id": i} for i in df_now.columns],style_cell={'font-family':'sans-serif'}, id="popular_day_hour_table")
     ])
 
 def serve_layout():
@@ -81,11 +98,16 @@ def serve_layout():
             dbc.Row(
                 dbc.Col([
                     html.H1("89.3 The Current Trends", className="display-3 text-center"),
-                    html.H3("Top 5 Most Popular Artists of All-Time", className="text-center")
+                    html.H3("Top 5 Most Popular Artists of All-Time", className="text-center", id='popular_title')
                 ])
             ),
-            popular_all_time(con),
-            popular_day_hour(con)
+            popular_all_time(),
+            popular_day_hour(),
+             dcc.Interval(
+                id='interval',
+                interval=1*100000,
+                n_intervals=0
+            )
         ]
         )
     )
@@ -93,12 +115,53 @@ def serve_layout():
 server = flask.Flask(__name__)
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], server=server)
 app.title = "89.3 The Current Trends"
-app.scripts.config.serve_locally = False
-app.scripts.append_script({"external_url": "https://www.googletagmanager.com/gtag/js?id=G-HB05PVK153"})
+#app.scripts.config.serve_locally = False
+#app.scripts.append_script({"external_url": "https://www.googletagmanager.com/gtag/js?id=G-HB05PVK153"})
 
 
-app.layout=serve_layout
+app.layout=serve_layout()
+
+@app.callback(
+    Output(component_id='popular_title', component_property='children'),
+    Input(component_id='popular_graph', component_property='relayoutData')
+)
+def handle_graph_callback(relayoutData):
+    title="Top 5 Most Popular Artists of All-Time"
+    
+    if relayoutData and "xaxis.range[0]" in relayoutData:
+        start_date=parser.parse(relayoutData["xaxis.range[0]"]).strftime("%Y-%m-%d")
+        end_date=parser.parse(relayoutData["xaxis.range[1]"]).strftime("%Y-%m-%d")
+        title="Top 5 Most Popular Artists in Selected Range {0} to {1}".format(start_date, end_date)
+
+    return title
+
+@app.callback(
+    Output(component_id='popular_table', component_property='data'),
+    Input(component_id='popular_graph', component_property='relayoutData')
+)
+def handle_graph_callback(relayoutData):
+  
+    if relayoutData and "xaxis.range[0]" in relayoutData:
+        start_date=parser.parse(relayoutData["xaxis.range[0]"]).strftime("%Y-%m-%d")
+        end_date=parser.parse(relayoutData["xaxis.range[1]"]).strftime("%Y-%m-%d")
+        return get_popular_all_time_data(start_date, end_date).to_dict('records')
+    
+    return get_popular_all_time_data().to_dict('records')
+
+@app.callback(Output('popular_day_hour_table', 'data'),
+              Input('interval', 'n_intervals'))
+def handle_interval_callback(n):
+    hour=datetime.utcnow().hour
+    day_of_week=datetime.utcnow().strftime("%A")
+    return get_popular_day_hour_data(hour, day_of_week).to_dict('records')
+
+@app.callback(Output('popular_day_hour_title', 'children'),
+              Input('interval', 'n_intervals'))
+def handle_interval_callback_2(n):
+    day_of_week=datetime.utcnow().strftime("%A")
+    hour_label=datetime.now().strftime("%-I %p")
+    return "Top 5 Most Popular Artists Played on {day_of_week} at {hour_label}".format(day_of_week=day_of_week, hour_label=hour_label)
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
 
