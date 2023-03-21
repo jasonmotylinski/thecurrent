@@ -116,8 +116,8 @@ def serve_layout():
 server = flask.Flask(__name__)
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], server=server)
 app.title = "89.3 The Current Trends"
-#app.scripts.config.serve_locally = False
-#app.scripts.append_script({"external_url": "https://www.googletagmanager.com/gtag/js?id=G-HB05PVK153"})
+app.scripts.config.serve_locally = False
+app.scripts.append_script({"external_url": "https://www.googletagmanager.com/gtag/js?id=G-HB05PVK153"})
 
 
 app.layout=serve_layout()
@@ -137,5 +137,5 @@ def handle_interval_callback_2(n):
     return "Top 5 Most Popular Artists Played on {day_of_week} at {hour_label}".format(day_of_week=day_of_week, hour_label=hour_label)
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
 
