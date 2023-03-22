@@ -120,7 +120,7 @@ app.scripts.config.serve_locally = False
 app.scripts.append_script({"external_url": "https://www.googletagmanager.com/gtag/js?id=G-HB05PVK153"})
 
 
-app.layout=serve_layout()
+app.layout=serve_layout
 
 @app.callback(Output('popular_day_hour_table', 'data'),
               Input('interval', 'n_intervals'))
