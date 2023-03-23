@@ -6,3 +6,4 @@ dash
 pandas
 dash-bootstrap-components
 gunicorn
+sqlalchemy
