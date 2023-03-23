@@ -1,4 +1,4 @@
-import os
+from sqlalchemy import String, DateTime, Integer, Boolean
 
 DB="thecurrent.sqlite3"
 CSV_HEADER_ROW = ['id', 'artist', 'title', 'album', 'played_at', 'duration', 'service_id', 'song_id', 'play_id', 
@@ -8,7 +8,7 @@ CSV_HEADER_ROW = ['id', 'artist', 'title', 'album', 'played_at', 'duration', 'se
 
 THECURRENT_HOUR_URL="https://www.thecurrent.org/playlist/{year}-{month:02d}-{day:02d}/{hour:02d}"
 THECURRENT_DAY_URL="https://www.thecurrent.org/playlist/{year}-{month:02d}-{day:02d}/"
-THECURRENT_DAY_CSV="output/thecurrent/csv/{0}/{1}/{0}{1}{2}.csv"
+THECURRENT_DAY_CSV="output/thecurrent/csv/{0}/{1}/{2}.csv"
 THECURRENT_YEAR_CSV="output/thecurrent/csv/{0}.csv"
 THECURRENT_HOUR_HTML="output/thecurrent/html/by_hour/{year}/{month:02d}/{day:02d}/playlist_{year}{month:02d}{day:02d}{hour:02d}.html"
 THECURRENT_DAY_HTML="output/thecurrent/html/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.html"
@@ -32,3 +32,5 @@ WIKIPEDIA_URLS ={
 
 DISCOGS_URL="https://www.discogs.com/search/ac?searchType=artist&q={artist}&type=a_m_r_13"
 DISCOGS_ARTISTS_JSON="output/discogs/artists_discogs.json"
+
+

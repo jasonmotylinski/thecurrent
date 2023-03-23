@@ -67,7 +67,6 @@ class ConvertDayHtmlToCsv(luigi.Task):
         """Requires."""
         yield SaveDayHtmlToLocal(self.date)
 
-
 class CreateMonthCsv(luigi.WrapperTask):
     """Parse the articles from the HTML for the given month."""
     year = luigi.IntParameter()

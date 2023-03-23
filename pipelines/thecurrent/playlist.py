@@ -24,12 +24,12 @@ def get_songs(html):
         yield(s)
 
 def get_hour_html(year:int, month:int, day:int, hour:int):
-    url=config.HOUR_URL.format(year=year, month=month, day=day, hour=hour)
+    url=config.THECURRENT_HOUR_URL.format(year=year, month=month, day=day, hour=hour)
     r=requests.get(url)
     return r.text
 
 
 def get_day_html(year:int, month:int, day:int):
-    url=config.DAY_URL.format(year=year, month=month, day=day)
+    url=config.THECURRENT_DAY_URL.format(year=year, month=month, day=day)
     r=requests.get(url)
     return r.text

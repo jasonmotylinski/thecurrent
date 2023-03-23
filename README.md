@@ -73,7 +73,7 @@ CSV generation requires the HTML has been saved down. If the HTML hasn't been re
 Convert a single day's HTML into the song CSV
 ```bash
 export PYTHONPATH=.
-luigi --module --module csv_tasks ConvertDayHtmlToCsv --year=2016 --local-scheduler --workers=10
+luigi --module --module csv_tasks ConvertDayHtmlToCsv --date=2016-01-01 --local-scheduler --workers=10
 ```
 
 ## Song Dataset Fields
