@@ -55,12 +55,17 @@ def get_popular_all_time_data(start_date=None, end_date=None):
 def popular_all_time():
     df=get_popular_all_time_data()
     return dbc.Row(
-    [
-        dbc.Col([
-            dash_table.DataTable(df.to_dict('records'), [{"name": i, "id": i} for i in df.columns],style_cell={'font-family':'sans-serif'}, id="popular_table")
-        ]),
-        popular_all_time_graph()
-    ])
+        [
+            dbc.Row(html.H3("Top 5 Most Popular Artists of All-Time", className="text-center", id='popular_title')),
+            dbc.Row([
+                dbc.Col([
+            
+                    dash_table.DataTable(df.to_dict('records'), [{"name": i, "id": i} for i in df.columns],style_cell={'font-family':'sans-serif'}, id="popular_table")
+                ]),
+                popular_all_time_graph()
+            ])
+        ])
+    
 
 
 def get_popular_day_hour_data(hour, day_of_week):
@@ -99,7 +104,6 @@ def serve_layout():
             dbc.Row(
                 dbc.Col([
                     html.H1("89.3 The Current Trends", className="display-3 text-center"),
-                    html.H3("Top 5 Most Popular Artists of All-Time", className="text-center", id='popular_title')
                 ])
             ),
             popular_all_time(),
