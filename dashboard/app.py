@@ -122,7 +122,7 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], server=server)
 app.title = "89.3 The Current Trends"
 app.scripts.config.serve_locally = False
 app.scripts.append_script({"external_url": "https://www.googletagmanager.com/gtag/js?id=G-HB05PVK153"})
-
+app.scripts.append_script({"external_url": "assets/gtag.js"})
 
 app.layout=serve_layout
 
