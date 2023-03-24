@@ -8,8 +8,83 @@ import plotly.express as px
 import sqlite3
 
 from dash import Dash, dash_table, html, dcc, Input, Output
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil import parser
+
+def get_yesterday():
+    return datetime.utcnow() - timedelta(days=1)
+
+def get_last_week_range():
+    end_date=datetime.utcnow() - timedelta(days=1)
+    start_date=datetime.utcnow() - timedelta(days=7)
+    return {"start_date": start_date, "end_date": end_date}
+
+def popular_last_week_cell():
+    last_week=get_last_week_range()
+    end_date=last_week["end_date"]
+    start_date=last_week["start_date"]
+    t="""
+    SELECT artist, title, COUNT(*) as ct
+    FROM songs
+    WHERE played_at >= '{start_date.year}-{start_date.month:02d}-{start_date.day:02d}T00:00:00.000-06:00'
+    AND played_at <= '{end_date.year}-{end_date.month:02d}-{end_date.day:02d}T23:59:59.000-06:00'
+    GROUP BY artist, title
+    ORDER BY ct DESC
+    LIMIT 10
+    """.format(start_date=start_date, end_date=end_date)
+
+    con = sqlite3.connect(config.DB)
+    df = pd.read_sql(t, con)
+    return dbc.Col([
+                html.H3("Top 10 Most Popular Songs in the Last Week", className="text-center"),
+                dash_table.DataTable(df.to_dict('records'), 
+                                        [{"name": i, "id": i} for i in df.columns],
+                                        style_cell={'font-family':'sans-serif','textAlign': 'left'},
+                                        style_header={'fontWeight': 'bold', 'background_color': '#ffffff', 'border_top': '0px'},
+                                        style_as_list_view=True)
+            ], md=4)
+
+def new_yesterday_cell():
+    yesterday=get_yesterday()
+    t="""
+    SELECT 
+        a.artist, 
+        a.title, 
+        a.played_at
+    FROM songs a
+    INNER JOIN (
+        SELECT 
+            artist, 
+            title, 
+            played_at, 
+            DENSE_RANK() OVER (
+            PARTITION BY artist, title
+            ORDER BY played_at ASC) AS rank
+        FROM songs
+        WHERE trim(artist) != ''
+        or trim(title) != ''
+    ) b
+    ON a.artist=b.artist
+    AND a.title=b.title
+    AND a.played_at=b.played_at
+    WHERE  b.rank=1
+    AND b.played_at >= '{yesterday.year}-{yesterday.month:02d}-{yesterday.day:02d}T00:00:00.000-06:00'
+    AND b.played_at <= '{yesterday.year}-{yesterday.month:02d}-{yesterday.day:02d}T23:59:59.000-06:00'
+    ORDER BY a.played_at DESC
+    LIMIT 100
+    """.format(yesterday=yesterday)
+
+    con = sqlite3.connect(config.DB)
+    df = pd.read_sql(t, con)
+    return dbc.Col([
+                html.H3("Songs played for the first time yesterday", className="text-center"),
+                dash_table.DataTable(df.to_dict('records'), 
+                                     [{"name": i, "id": i} for i in df.columns],
+                                     style_cell={'font-family':'sans-serif','textAlign': 'left'},
+                                     style_header={'fontWeight': 'bold', 'background_color': '#ffffff', 'border_top': '0px'},
+                                     style_as_list_view=True)
+            ], md=5)
+
 
 def popular_all_time_graph():
     t = """
@@ -60,7 +135,12 @@ def popular_all_time():
             dbc.Row([
                 dbc.Col([
             
-                    dash_table.DataTable(df.to_dict('records'), [{"name": i, "id": i} for i in df.columns],style_cell={'font-family':'sans-serif'}, id="popular_table")
+                    dash_table.DataTable(df.to_dict('records'), 
+                                         [{"name": i, "id": i} for i in df.columns],
+                                         style_cell={'font-family':'sans-serif', 'textAlign': 'left'}, 
+                                         style_header={'fontWeight': 'bold', 'background_color': '#ffffff', 'border_top': '0px'},
+                                         style_as_list_view=True,
+                                         id="popular_table")
                 ]),
                 popular_all_time_graph()
             ])
@@ -94,7 +174,12 @@ def popular_day_hour():
     df_now=get_popular_day_hour_data( hour, day_of_week)
     return dbc.Col([
         html.H3("Top 5 Most Popular Artists Played on {day_of_week} at {hour_label}".format(day_of_week=day_of_week, hour_label=hour_label), className="text-center", id="popular_day_hour_title"),
-        dash_table.DataTable(df_now.to_dict('records'), [{"name": i, "id": i} for i in df_now.columns],style_cell={'font-family':'sans-serif'}, id="popular_day_hour_table")
+        dash_table.DataTable(df_now.to_dict('records'), 
+                             [{"name": i, "id": i} for i in df_now.columns],
+                             style_cell={'font-family':'sans-serif', 'textAlign': 'left'}, 
+                             style_header={'fontWeight': 'bold', 'background_color': '#ffffff', 'border_top': '0px'},
+                             style_as_list_view=True,
+                             id="popular_day_hour_table")
     ])
 
 def serve_layout():
@@ -106,9 +191,13 @@ def serve_layout():
                     html.H1("89.3 The Current Trends", className="display-3 text-center"),
                 ])
             ),
-            popular_all_time(),
+            dbc.Row([
+                popular_last_week_cell(),
+                new_yesterday_cell(),
+            ]),
             popular_day_hour(),
-             dcc.Interval(
+            popular_all_time(),
+            dcc.Interval(
                 id='interval',
                 interval=1*100000,
                 n_intervals=0
