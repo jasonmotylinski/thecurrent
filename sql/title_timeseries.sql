@@ -1,5 +1,5 @@
 SELECT 
-    year || month || day  AS ymd,
+    year || month || week  AS ymw,
     COUNT(*) as ct
 FROM 
     songs
@@ -11,8 +11,8 @@ WHERE
 GROUP BY
     year,
     month,
-    day
+    week
 ORDER BY
     year ASC,
     month ASC,
-    day ASC
+    week ASC
