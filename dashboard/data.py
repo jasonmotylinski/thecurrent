@@ -28,10 +28,26 @@ def get_sql(filename):
         sql=f.read()
     return sql
 
-def get_popular_last_week():
+def get_popular_artist_title_last_week():
     r=get_redis()
     df=None
     key='popular_artist_title_last_week.sql'
+    if r.exists(key):
+        df=pd.read_json(r.get(key).decode())
+    else:
+        last_week=get_last_week_range()
+        end_date=last_week["end_date"]
+        start_date=last_week["start_date"]
+        t=get_sql(key).format(start_date=start_date, end_date=end_date)
+
+        con = sqlite3.connect(config.DB)
+        df=pd.read_sql(t, con)
+    return df
+
+def get_popular_artist_last_week():
+    r=get_redis()
+    df=None
+    key='popular_artist_last_week.sql'
     if r.exists(key):
         df=pd.read_json(r.get(key).decode())
     else:

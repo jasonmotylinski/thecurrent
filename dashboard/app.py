@@ -7,8 +7,8 @@ from dash import Dash, dash_table, html, dcc, Input, Output
 from datetime import datetime
 
 
-def popular_last_week_cell():
-    df=data.get_popular_last_week()
+def popular_artist_title_last_week_cell():
+    df=data.get_popular_artist_title_last_week()
     return dbc.Col([
                 html.H3("Top 10 Most Popular Songs in the Last Week", className="text-center"),
                 dash_table.DataTable(df.to_dict('records'), 
@@ -16,7 +16,18 @@ def popular_last_week_cell():
                                         style_cell={'font-family':'sans-serif','textAlign': 'left'},
                                         style_header={'fontWeight': 'bold', 'background_color': '#ffffff', 'border_top': '0px'},
                                         style_as_list_view=True)
-            ], md=4)
+            ], md=6)
+
+def popular_artist_last_week_cell():
+    df=data.get_popular_artist_last_week()
+    return dbc.Col([
+                html.H3("Top 10 Most Popular Artists in the Last Week", className="text-center"),
+                dash_table.DataTable(df.to_dict('records'), 
+                                        [{"name": i, "id": i} for i in df.columns],
+                                        style_cell={'font-family':'sans-serif','textAlign': 'left'},
+                                        style_header={'fontWeight': 'bold', 'background_color': '#ffffff', 'border_top': '0px'},
+                                        style_as_list_view=True)
+            ], md=6)
 
 def new_yesterday_cell():
     df=data.get_new_yesterday()
@@ -27,7 +38,7 @@ def new_yesterday_cell():
                                      style_cell={'font-family':'sans-serif','textAlign': 'left'},
                                      style_header={'fontWeight': 'bold', 'background_color': '#ffffff', 'border_top': '0px'},
                                      style_as_list_view=True)
-            ], md=5)
+            ], md=6)
 
 def popular_all_time_graph():
     df=data.get_popular_all_time_timeseries()
@@ -70,7 +81,8 @@ def popular_day_hour():
                              style_header={'fontWeight': 'bold', 'background_color': '#ffffff', 'border_top': '0px'},
                              style_as_list_view=True,
                              id="popular_day_hour_table")
-    ])
+    ],
+    md=6)
 
 def serve_layout():
     return html.Div(
@@ -82,10 +94,14 @@ def serve_layout():
                 ])
             ),
             dbc.Row([
-                popular_last_week_cell(),
-                new_yesterday_cell(),
+                popular_artist_title_last_week_cell(),
+                popular_artist_last_week_cell(),
+                
             ]),
-            popular_day_hour(),
+            dbc.Row([
+                new_yesterday_cell(),
+                popular_day_hour()
+            ]),
             popular_all_time(),
             dcc.Interval(
                 id='interval',
