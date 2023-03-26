@@ -12,6 +12,9 @@ def tomorrow_at_105_am_cst_in_utc():
     tomorrow_utc=datetime.utcnow() + timedelta(days=1)
     return datetime(tomorrow_utc.year, tomorrow_utc.month,tomorrow_utc.day, 6, 5)
 
+def in_5_minutes():
+    return datetime.utcnow() + timedelta(minutes=5)
+
 def get_last_week_range():
     end_date=datetime.utcnow() - timedelta(days=1)
     start_date=datetime.utcnow() - timedelta(days=7)
@@ -40,7 +43,7 @@ class UpdateCache(luigi.Task):
                 sql=f.read()
 
             sql=self.inject_variables(sql)
-            
+            print(sql)
             con = sqlite3.connect(config.DB)
             value=pd.read_sql(sql, con).to_json()
             
@@ -74,6 +77,16 @@ class UpdateNewYesterdayCache(UpdateCache):
     def inject_variables(self, sql):
         yesterday=get_yesterday()
         return sql.format(yesterday=yesterday)
+    
+class UpdatePopularDayHourCache(UpdateCache):
+    sql_file_path=luigi.Parameter(default="pipelines/caching/sql/popular_day_hour.sql")
+    exat=luigi.IntParameter(default=int(time.mktime(in_5_minutes().timetuple())))
+
+    def inject_variables(self, sql):
+        hour=datetime.utcnow().hour
+        day_of_week=datetime.utcnow().strftime("%A")
+        return sql.format(hour=hour, day_of_week=day_of_week)
+
 
 class UpdateAllCache(luigi.WrapperTask):
 
@@ -82,3 +95,4 @@ class UpdateAllCache(luigi.WrapperTask):
         yield UpdatePopularAllTimeTimeseriesCache()
         yield UpdatePopularLastWeekCache()
         yield UpdateNewYesterdayCache()
+        yield UpdatePopularDayHourCache()
