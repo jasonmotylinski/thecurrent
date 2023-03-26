@@ -4,25 +4,45 @@ import flask
 import plotly.express as px
 
 from dash import Dash, dash_table, html, dcc, Input, Output
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def popular_artist_title_last_week_cell():
     df=data.get_popular_artist_title_last_week()
-    df=df.rename(columns={"ct":"total plays"})
-    df['title - artist']="<b>" + df['title'] + '</b> <br> ' + df['artist']
-    fig = px.treemap(df,
-                    path=[px.Constant("all"),'title - artist'],
-                    values='total plays',
-                    color='total plays',
-                    color_continuous_scale='RdBu'
-                    )
-    fig.update_traces(hovertemplate='%{label}<br> Total Plays: %{value}')
-    fig.update_traces(root_color="lightgrey")
+    end_date=datetime.utcnow()
+    start_date=end_date - timedelta(90)
+
+    rows=[
+        html.Tr([
+            html.Th("Artist"),
+            html.Th("Title")
+        ])
+    ]
+    
+    for d in df.to_dict('records'):
+        df_timeseries=data.get_title_timeseries(d['artist'], d['title'],start_date, end_date)
+
+        fig = px.line(df_timeseries, x="ymd", y="ct", height=20, width=200)
+        fig.update_xaxes(visible=False, fixedrange=True)
+        fig.update_yaxes(visible=False, fixedrange=True)
+        fig.update_layout(annotations=[], overwrite=True)
+        fig.update_layout(
+            showlegend=False,
+            plot_bgcolor="white",
+            margin=dict(l=0, r=0, t=0, b=0)
+        )
+
+        rows.append(html.Tr([
+            html.Td(d['artist']),
+            html.Td(d['title']),
+            html.Td(children=[dcc.Graph(figure=fig, config={'displayModeBar': False})])
+        ]))
+
+
+    
     return dbc.Col([
                 html.H3("Top 10 Most Popular Songs in the Last Week", className="text-center"),
-                dcc.Graph(figure=fig, id='popular_artist_title_last_week_graph', config={'displayModeBar': False})
-    
+                html.Table(rows, className="table")
             ], md=6)
 
 def popular_artist_last_week_cell():
@@ -36,6 +56,10 @@ def popular_artist_last_week_cell():
                     color_continuous_scale='RdBu',
                     maxdepth=2
                     )
+    fig.update_layout(
+        showlegend=False,
+        margin=dict(l=0, r=0, t=0, b=0)
+    )
     fig.update_traces(hovertemplate='%{label}<br> Total Plays: %{value}')
     fig.update_traces(root_color="lightgrey")
     return dbc.Col([

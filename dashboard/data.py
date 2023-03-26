@@ -28,6 +28,12 @@ def get_sql(filename):
         sql=f.read()
     return sql
 
+def get_title_timeseries(artist, title, start_date, end_date):
+    key='title_timeseries.sql'
+    t=get_sql(key).format(artist=artist, title=title, start_date=start_date, end_date=end_date)
+    con = sqlite3.connect(config.DB)
+    return pd.read_sql(t, con)
+
 def get_popular_artist_title_last_week():
     r=get_redis()
     df=None
