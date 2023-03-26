@@ -1,6 +1,13 @@
+import os
 from sqlalchemy import String, DateTime, Integer, Boolean
 
 DB="thecurrent.sqlite3"
+
+DB_MYSQL_HOST=os.getenv("DB_MYSQL_HOST")
+DB_MYSQL_USER=os.getenv("DB_MYSQL_USER")
+DB_MYSQL_PASSWD=os.getenv("DB_MYSQL_PASSWD")
+DB_MYSQL_DB="thecurrent"
+
 CSV_HEADER_ROW = ['id', 'artist', 'title', 'album', 'played_at', 'duration', 'service_id', 'song_id', 'play_id', 
                   'composer', 'conductor', 'orch_ensemble', 'soloist_1', 'soloist_2', 'soloist_3', 'soloist_4',
                   'soloist_5', 'soloist_6', 'record_co', 'record_id', 'addl_text', 'broadcast', 'songs_on_album',
@@ -33,4 +40,6 @@ WIKIPEDIA_URLS ={
 DISCOGS_URL="https://www.discogs.com/search/ac?searchType=artist&q={artist}&type=a_m_r_13"
 DISCOGS_ARTISTS_JSON="output/discogs/artists_discogs.json"
 
-
+REDIS_HOST="127.0.0.1"
+REDIS_PORT=6379
+REDIS_DB=0

@@ -1,8 +1,8 @@
 -- SQLite
 CREATE TABLE songs(
-id text, 
-artist text, 
-title text, 
+id VARCHAR(100), 
+artist VARCHAR(255), 
+title VARCHAR(255), 
 album text, 
 played_at datetime, 
 duration text, 
@@ -29,6 +29,6 @@ art_url text,
 year int, 
 month int, 
 day int, 
-day_of_week text, 
+day_of_week VARCHAR(25), 
 week int,
 hour int)

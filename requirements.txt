@@ -7,3 +7,4 @@ pandas
 dash-bootstrap-components
 gunicorn
 sqlalchemy
+redis
