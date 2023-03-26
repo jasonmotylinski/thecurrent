@@ -8,6 +8,7 @@ import time
 from datetime import datetime, timedelta
 from luigi.contrib.redis_store import RedisTarget
 
+SQL_ROOT="sql/"
 def tomorrow_at_105_am_cst_in_utc():
     tomorrow_utc=datetime.utcnow() + timedelta(days=1)
     return datetime(tomorrow_utc.year, tomorrow_utc.month,tomorrow_utc.day, 6, 5)
@@ -53,15 +54,25 @@ class UpdateCache(luigi.Task):
         return self.output().redis_client.exists(self.update_id) == 1
 
 class UpdatePopularAllTimeCache(UpdateCache):
-    sql_file_path=luigi.Parameter(default="pipelines/caching/sql/popular_all_time.sql")
+    sql_file_path=luigi.Parameter(default=SQL_ROOT + "popular_all_time.sql")
     exat=luigi.IntParameter(default=int(time.mktime(tomorrow_at_105_am_cst_in_utc().timetuple())))
 
 class UpdatePopularAllTimeTimeseriesCache(UpdateCache):
-    sql_file_path=luigi.Parameter(default="pipelines/caching/sql/popular_all_time_timeseries.sql")
+    sql_file_path=luigi.Parameter(default=SQL_ROOT + "popular_all_time_timeseries.sql")
     exat=luigi.IntParameter(default=int(time.mktime(tomorrow_at_105_am_cst_in_utc().timetuple())))
 
-class UpdatePopularLastWeekCache(UpdateCache):
-    sql_file_path=luigi.Parameter(default="pipelines/caching/sql/popular_last_week.sql")
+class UpdatePopularArtistLastWeekCache(UpdateCache):
+    sql_file_path=luigi.Parameter(default=SQL_ROOT + "popular_artist_last_week.sql")
+    exat=luigi.IntParameter(default=int(time.mktime(tomorrow_at_105_am_cst_in_utc().timetuple())))
+
+    def inject_variables(self, sql):
+        last_week=get_last_week_range()
+        end_date=last_week["end_date"]
+        start_date=last_week["start_date"]
+        return sql.format(start_date=start_date, end_date=end_date)
+
+class UpdatePopularArtistTitleLastWeekCache(UpdateCache):
+    sql_file_path=luigi.Parameter(default=SQL_ROOT + "popular_artist_title_last_week.sql")
     exat=luigi.IntParameter(default=int(time.mktime(tomorrow_at_105_am_cst_in_utc().timetuple())))
 
     def inject_variables(self, sql):
@@ -71,7 +82,7 @@ class UpdatePopularLastWeekCache(UpdateCache):
         return sql.format(start_date=start_date, end_date=end_date)
 
 class UpdateNewYesterdayCache(UpdateCache):
-    sql_file_path=luigi.Parameter(default="pipelines/caching/sql/new_yesterday.sql")
+    sql_file_path=luigi.Parameter(default=SQL_ROOT + "new_yesterday.sql")
     exat=luigi.IntParameter(default=int(time.mktime(tomorrow_at_105_am_cst_in_utc().timetuple())))
 
     def inject_variables(self, sql):
@@ -79,7 +90,7 @@ class UpdateNewYesterdayCache(UpdateCache):
         return sql.format(yesterday=yesterday)
     
 class UpdatePopularDayHourCache(UpdateCache):
-    sql_file_path=luigi.Parameter(default="pipelines/caching/sql/popular_day_hour.sql")
+    sql_file_path=luigi.Parameter(default=SQL_ROOT + "popular_day_hour.sql")
     exat=luigi.IntParameter(default=int(time.mktime(in_5_minutes().timetuple())))
 
     def inject_variables(self, sql):
@@ -93,6 +104,7 @@ class UpdateAllCache(luigi.WrapperTask):
     def requires(self):
         yield UpdatePopularAllTimeCache()
         yield UpdatePopularAllTimeTimeseriesCache()
-        yield UpdatePopularLastWeekCache()
+        yield UpdatePopularArtistTitleLastWeekCache()
+        yield UpdatePopularArtistLastWeekCache()
         yield UpdateNewYesterdayCache()
         yield UpdatePopularDayHourCache()
