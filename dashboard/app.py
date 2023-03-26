@@ -9,24 +9,39 @@ from datetime import datetime
 
 def popular_artist_title_last_week_cell():
     df=data.get_popular_artist_title_last_week()
+    df=df.rename(columns={"ct":"total plays"})
+    df['title - artist']="<b>" + df['title'] + '</b> <br> ' + df['artist']
+    fig = px.treemap(df,
+                    path=[px.Constant("all"),'title - artist'],
+                    values='total plays',
+                    color='total plays',
+                    color_continuous_scale='RdBu'
+                    )
+    fig.update_traces(hovertemplate='%{label}<br> Total Plays: %{value}')
+    fig.update_traces(root_color="lightgrey")
     return dbc.Col([
                 html.H3("Top 10 Most Popular Songs in the Last Week", className="text-center"),
-                dash_table.DataTable(df.to_dict('records'), 
-                                        [{"name": i, "id": i} for i in df.columns],
-                                        style_cell={'font-family':'sans-serif','textAlign': 'left'},
-                                        style_header={'fontWeight': 'bold', 'background_color': '#ffffff', 'border_top': '0px'},
-                                        style_as_list_view=True)
+                dcc.Graph(figure=fig, id='popular_artist_title_last_week_graph', config={'displayModeBar': False})
+    
             ], md=6)
 
 def popular_artist_last_week_cell():
     df=data.get_popular_artist_last_week()
+    df=df.rename(columns={"ct":"total plays"})
+    df['title - artist']="<b>" + df['title'] + '</b> <br> ' + df['artist']
+    fig = px.treemap(df,
+                    path=[px.Constant("all"),'artist', 'title'],
+                    values='total plays',
+                    color='total plays',
+                    color_continuous_scale='RdBu',
+                    maxdepth=2
+                    )
+    fig.update_traces(hovertemplate='%{label}<br> Total Plays: %{value}')
+    fig.update_traces(root_color="lightgrey")
     return dbc.Col([
                 html.H3("Top 10 Most Popular Artists in the Last Week", className="text-center"),
-                dash_table.DataTable(df.to_dict('records'), 
-                                        [{"name": i, "id": i} for i in df.columns],
-                                        style_cell={'font-family':'sans-serif','textAlign': 'left'},
-                                        style_header={'fontWeight': 'bold', 'background_color': '#ffffff', 'border_top': '0px'},
-                                        style_as_list_view=True)
+               dcc.Graph(figure=fig, id='popular_artist_last_week_graph', config={'displayModeBar': False})
+
             ], md=6)
 
 def new_yesterday_cell():
