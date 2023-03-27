@@ -5,4 +5,4 @@ CREATE TABLE calendar(
     hour INT,
     day_of_week TEXT,
     week_of_year INT
-)
+);
