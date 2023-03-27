@@ -42,4 +42,13 @@ shows{
     start_time datetime
     end_time datetime
 }
+
+calendar {
+    year integer
+    month integer
+    day integer
+    hour integer
+    day_of_week text
+    week_of_year integer
+}
 ```
