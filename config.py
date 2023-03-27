@@ -12,14 +12,18 @@ CSV_HEADER_ROW = ['id', 'artist', 'title', 'album', 'played_at', 'duration', 'se
                   'composer', 'conductor', 'orch_ensemble', 'soloist_1', 'soloist_2', 'soloist_3', 'soloist_4',
                   'soloist_5', 'soloist_6', 'record_co', 'record_id', 'addl_text', 'broadcast', 'songs_on_album',
                   'songs_by_artist', 'album_mbid', 'art_url', 'year', 'month', 'day', 'day_of_week', 'week','hour']
-
+THECURRENT_SCHEDULE_CSV_HEADER_ROW =['id', 'show_id', 'host_name', 'show_name', 'start_time', 'end_time']
 THECURRENT_HOUR_URL="https://www.thecurrent.org/playlist/{year}-{month:02d}-{day:02d}/{hour:02d}"
 THECURRENT_DAY_URL="https://www.thecurrent.org/playlist/{year}-{month:02d}-{day:02d}/"
+THECURRENT_SCHEDULE_DAY_URL="https://www.thecurrent.org/schedule/the-current/{date.year}-{date.month}-{date.day}"
 THECURRENT_DAY_CSV="output/thecurrent/csv/{0}/{1}/{2}.csv"
 THECURRENT_YEAR_CSV="output/thecurrent/csv/{0}.csv"
 THECURRENT_HOUR_HTML="output/thecurrent/html/by_hour/{year}/{month:02d}/{day:02d}/playlist_{year}{month:02d}{day:02d}{hour:02d}.html"
 THECURRENT_DAY_HTML="output/thecurrent/html/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.html"
+THECURRENT_SCHEDULE_DAY_HTML="output/thecurrent/schedule/html/by_day/{year}/{month:02d}/{year}{month:02d}{day:02d}.html"
+THECURRENT_SCHEDULE_DAY_CSV="output/thecurrent/schedule/csv/{0}/{1}/{2}.csv"
 THECURRENT_ARTISTS_CSV="output/thecurrent/artists.csv"
+THECURRENT_SCHDEULE_YEAR_CSV="output/thecurrent/schedule/csv/{0}.csv"
 
 EVERYNOISE_ARTISTS_GENRES_JSON="output/everynoise/artists_genres.json"
 EVERYNOISE_URL="https://everynoise.com/lookup.cgi?who={who}&mode=map"
