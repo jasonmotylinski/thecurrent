@@ -31,6 +31,7 @@ class CreateCalendarCsv(luigi.Task):
                     current.day, 
                     current.hour, 
                     current.strftime("%A"),
+                    current.strftime("%w"),
                     current.strftime("%U")
                 ])
                 current=current + timedelta(hours=1)

@@ -62,27 +62,47 @@ def popular_artist_last_week_cell():
     )
     fig.update_traces(hovertemplate='%{label}<br> Total Plays: %{value}')
     fig.update_traces(root_color="lightgrey")
+    fig.update_coloraxes(showscale=False)
     return dbc.Col([
                 html.H3("Top 10 Most Popular Artists in the Last Week", className="text-center"),
-               dcc.Graph(figure=fig, id='popular_artist_last_week_graph', config={'displayModeBar': False})
+                dcc.Graph(figure=fig, id='popular_artist_last_week_graph', config={'displayModeBar': False})
 
             ], md=6)
 
-def new_yesterday_cell():
-    df=data.get_new_yesterday()
+def get_hourly_count_by_day_of_week(df, day_of_week):
+    return df[df['day_of_week']==day_of_week]['ct'].to_list()
+
+def new_last_90_days_cell():
+    df=data.get_new_last_90_days()
+    sunday=get_hourly_count_by_day_of_week(df, "Sunday")
+    monday=get_hourly_count_by_day_of_week(df, "Monday")
+    tuesday=get_hourly_count_by_day_of_week(df, "Tuesday")
+    wednesday=get_hourly_count_by_day_of_week(df, "Wednesday")
+    thursday=get_hourly_count_by_day_of_week(df, "Thursday")
+    friday=get_hourly_count_by_day_of_week(df, "Friday")
+    saturday=get_hourly_count_by_day_of_week(df, "Saturday")
+
+    day_counts=[sunday, monday, tuesday, wednesday, thursday, friday, saturday]
+    fig = px.imshow(day_counts,
+                labels=dict(x="hour", y="day", color="count of plays"),
+                x=['00','01','02','03','04','05','06','07','08','09','10','11','12',
+                   '13','14','15','16','17','18','19','20','21','22','23'],
+                y=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+                color_continuous_scale='deep'
+            )
+    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+    fig.update_coloraxes(showscale=False)
+
     return dbc.Col([
-                html.H3("Songs played for the first time yesterday", className="text-center"),
-                dash_table.DataTable(df.to_dict('records'), 
-                                     [{"name": i, "id": i} for i in df.columns],
-                                     style_cell={'font-family':'sans-serif','textAlign': 'left'},
-                                     style_header={'fontWeight': 'bold', 'background_color': '#ffffff', 'border_top': '0px'},
-                                     style_as_list_view=True)
+                html.H3("Time of Week New Music is Played", className="text-center"),
+                dcc.Graph(figure=fig, id='new_last_90_days', config={'displayModeBar': False},style={'height': '200px'})
             ], md=6)
 
 def popular_all_time_graph():
     df=data.get_popular_all_time_timeseries()
     fig=px.line(df, x="year_month", y="ct", color="artist" )
     fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+
     return dbc.Col([dcc.Graph(figure=fig, id='popular_graph', config={'displayModeBar': False})])
 
 
@@ -138,7 +158,7 @@ def serve_layout():
                 
             ]),
             dbc.Row([
-                new_yesterday_cell(),
+                new_last_90_days_cell(),
                 popular_day_hour()
             ]),
             popular_all_time(),

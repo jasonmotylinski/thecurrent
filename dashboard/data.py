@@ -120,3 +120,15 @@ def get_popular_day_hour_data(hour, day_of_week):
         con = sqlite3.connect(config.DB)
         df=pd.read_sql(t, con)
     return df
+
+def get_new_last_90_days():
+    r=get_redis()
+    df=None
+    key='new_last_90_days.sql'
+    if r.exists(key):
+        df=pd.read_json(r.get(key).decode())
+    else:
+        t=get_sql(key)
+        con = sqlite3.connect(config.DB)
+        df=pd.read_sql(t, con)
+    return df
