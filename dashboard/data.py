@@ -42,7 +42,7 @@ def get_title_timeseries(artist, title, start_date, end_date):
     key=filename+ "_"+artist+title+start_date.strftime("%Y%m%d")+end_date.strftime("%Y%m%d")
     
     if not r.exists(key):
-        t=get_sql(filename).format(artist=artist, title=title, start_date=start_date, end_date=end_date)
+        t=get_sql(filename).format(artist=artist, title=title, start_date=start_date, start_date_week=int(start_date.strftime("%U")), end_date=end_date, end_date_week=int(end_date.strftime("%U")))
         con = sqlite3.connect(config.DB)
         value=pd.read_sql(t, con).to_json()
         r.set(key, value, exat=tomorrow_at_105_am_cst_in_utc())
