@@ -14,6 +14,7 @@ CSV_HEADER_ROW = ['id', 'artist', 'title', 'album', 'played_at', 'duration', 'se
                   'songs_by_artist', 'album_mbid', 'art_url', 'year', 'month', 'day', 'day_of_week','week','hour']
 CALENDAR_HEADER_ROW= ['year','month', 'day','hour','day_of_week','day_of_week_int', 'week_of_year']
 THECURRENT_SCHEDULE_CSV_HEADER_ROW =['id', 'show_id', 'host_name', 'show_name', 'start_time', 'end_time']
+
 THECURRENT_HOUR_URL="https://www.thecurrent.org/playlist/{year}-{month:02d}-{day:02d}/{hour:02d}"
 THECURRENT_DAY_URL="https://www.thecurrent.org/playlist/{year}-{month:02d}-{day:02d}/"
 THECURRENT_SCHEDULE_DAY_URL="https://www.thecurrent.org/schedule/the-current/{date.year}-{date.month}-{date.day}"
@@ -27,8 +28,10 @@ THECURRENT_ARTISTS_CSV="output/thecurrent/artists.csv"
 THECURRENT_SCHDEULE_YEAR_CSV="output/thecurrent/schedule/csv/{0}.csv"
 CALENDAR_CSV="output/calendar/calendar.csv"
 
+EVERYNOISE_ARTISTS_GENRES_CSV="output/everynoise/artists_genres.csv"
 EVERYNOISE_ARTISTS_GENRES_JSON="output/everynoise/artists_genres.json"
 EVERYNOISE_URL="https://everynoise.com/lookup.cgi?who={who}&mode=map"
+EVERYNOISE_CSV_HEADER_ROW=['artist', 'genre', 'source']
 
 WIKIPEDIA_ARTISTS_JSON="output/wikipedia/artists_wikipedia.json"
 WIKIPEDIA_URL="https://en.wikipedia.org/wiki/{artist}"

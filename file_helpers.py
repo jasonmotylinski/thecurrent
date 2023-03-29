@@ -1,3 +1,4 @@
+import csv
 import os
 import json
 
@@ -33,3 +34,10 @@ def write_json_data(path, dict):
     with open(path, 'w') as f:
         for key in dict.keys():
             f.writelines("{0}\n".format(dict[key]))
+
+def write_csv_data(path, list):
+    dir_path=path.replace(os.path.basename(path),"")
+    os.makedirs(dir_path, exist_ok=True)
+    with open(path, 'w') as f:
+        writer = csv.writer(f, delimiter=',', quoting=csv.QUOTE_ALL)
+        writer.writerows(list)
