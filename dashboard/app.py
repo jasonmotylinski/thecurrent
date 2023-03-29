@@ -21,7 +21,6 @@ def popular_artist_title_last_week_cell():
     
     for d in df.to_dict('records'):
         df_timeseries=data.get_title_timeseries(d['artist'], d['title'],start_date, end_date)
-
         fig = px.line(df_timeseries, x="ymw", y="ct", height=20, width=200)
         fig.update_xaxes(visible=False, fixedrange=True)
         fig.update_yaxes(visible=False, fixedrange=True)

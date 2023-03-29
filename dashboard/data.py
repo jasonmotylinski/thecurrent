@@ -22,17 +22,35 @@ def get_last_week_range():
     start_date=datetime.utcnow() - timedelta(days=7)
     return {"start_date": start_date, "end_date": end_date}
 
+def tomorrow_at_105_am_cst_in_utc():
+    tomorrow_utc=datetime.utcnow() + timedelta(days=1)
+    return datetime(tomorrow_utc.year, tomorrow_utc.month,tomorrow_utc.day, 6, 5)
+
+def in_5_minutes():
+    return datetime.utcnow() + timedelta(minutes=5)
+
 def get_sql(filename):
     sql_file_path=SQL_ROOT + filename
     with open(sql_file_path) as f:
         sql=f.read()
     return sql
 
+
 def get_title_timeseries(artist, title, start_date, end_date):
-    key='title_timeseries.sql'
-    t=get_sql(key).format(artist=artist, title=title, start_date=start_date, end_date=end_date)
-    con = sqlite3.connect(config.DB)
-    return pd.read_sql(t, con)
+    r=get_redis()
+    filename='title_timeseries.sql'
+    key=filename+ "_"+artist+title+start_date.strftime("%Y%m%d")+end_date.strftime("%Y%m%d")
+    
+    if not r.exists(key):
+        t=get_sql(filename).format(artist=artist, title=title, start_date=start_date, end_date=end_date)
+        con = sqlite3.connect(config.DB)
+        value=pd.read_sql(t, con).to_json()
+        r.set(key, value, exat=tomorrow_at_105_am_cst_in_utc())
+    
+    df=pd.read_json(r.get(key).decode())
+    df["ymw"]=df["ymw"].astype("str")
+    return df
+ 
 
 def get_popular_artist_title_last_week():
     r=get_redis()
