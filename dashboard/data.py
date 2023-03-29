@@ -54,19 +54,20 @@ def get_title_timeseries(artist, title, start_date, end_date):
 
 def get_popular_artist_title_last_week():
     r=get_redis()
-    df=None
     key='popular_artist_title_last_week.sql'
-    if r.exists(key):
-        df=pd.read_json(r.get(key).decode())
-    else:
+
+    if not r.exists(key):
         last_week=get_last_week_range()
         end_date=last_week["end_date"]
         start_date=last_week["start_date"]
         t=get_sql(key).format(start_date=start_date, end_date=end_date)
 
         con = sqlite3.connect(config.DB)
-        df=pd.read_sql(t, con)
-    return df
+        value=pd.read_sql(t, con).to_json()
+        r.set(key, value, exat=tomorrow_at_105_am_cst_in_utc())
+
+    return pd.read_json(r.get(key).decode())
+   
 
 def get_popular_artist_last_week():
     r=get_redis()
@@ -101,15 +102,15 @@ def get_new_yesterday():
 
 def get_popular_all_time_timeseries():
     r=get_redis()
-    df=None
+    
     key='popular_all_time_timeseries.sql'
-    if r.exists(key):
-        df=pd.read_json(r.get(key).decode())
-    else:
+    if not r.exists(key):
         t = get_sql(key)
         con = sqlite3.connect(config.DB)
-        df=pd.read_sql(t, con)
-    return df
+        value=pd.read_sql(t, con).to_json()
+        r.set(key, value, exat=tomorrow_at_105_am_cst_in_utc())
+
+    return pd.read_json(r.get(key).decode())
 
 def get_popular_all_time(start_date=None, end_date=None):
 
@@ -141,12 +142,12 @@ def get_popular_day_hour_data(hour, day_of_week):
 
 def get_new_last_90_days():
     r=get_redis()
-    df=None
+
     key='new_last_90_days.sql'
-    if r.exists(key):
-        df=pd.read_json(r.get(key).decode())
-    else:
+    if not r.exists(key):
         t=get_sql(key)
         con = sqlite3.connect(config.DB)
-        df=pd.read_sql(t, con)
-    return df
+        value=pd.read_sql(t, con).to_json()
+        r.set(key, value, exat=tomorrow_at_105_am_cst_in_utc())
+
+    return pd.read_json(r.get(key).decode())
