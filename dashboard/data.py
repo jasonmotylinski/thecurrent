@@ -2,6 +2,7 @@ import config
 import redis
 import sqlite3
 import pandas as pd
+import time 
 
 from datetime import datetime, timedelta
 
@@ -22,19 +23,20 @@ def get_last_week_range():
     start_date=datetime.utcnow() - timedelta(days=7)
     return {"start_date": start_date, "end_date": end_date}
 
-def tomorrow_at_105_am_cst_in_utc():
+def tomorrow_at_105_am_est():
     tomorrow_utc=datetime.utcnow() + timedelta(days=1)
-    return datetime(tomorrow_utc.year, tomorrow_utc.month,tomorrow_utc.day, 6, 5)
+    dt=datetime(tomorrow_utc.year, tomorrow_utc.month,tomorrow_utc.day, 6, 5)
+    return int(time.mktime(dt.timetuple()))
 
 def in_5_minutes():
-    return datetime.utcnow() + timedelta(minutes=5)
+    dt=datetime.utcnow() + timedelta(minutes=5)
+    return int(time.mktime(dt.timetuple()))
 
 def get_sql(filename):
     sql_file_path=SQL_ROOT + filename
     with open(sql_file_path) as f:
         sql=f.read()
     return sql
-
 
 def get_title_timeseries(artist, title, start_date, end_date):
     r=get_redis()
@@ -45,12 +47,11 @@ def get_title_timeseries(artist, title, start_date, end_date):
         t=get_sql(filename).format(artist=artist, title=title, start_date=start_date, start_date_week=int(start_date.strftime("%U")), end_date=end_date, end_date_week=int(end_date.strftime("%U")))
         con = sqlite3.connect(config.DB)
         value=pd.read_sql(t, con).to_json()
-        r.set(key, value, exat=tomorrow_at_105_am_cst_in_utc())
+        r.set(key, value, exat=tomorrow_at_105_am_est())
     
     df=pd.read_json(r.get(key).decode())
     df["ymw"]=df["ymw"].astype("str")
     return df
- 
 
 def get_popular_artist_title_last_week():
     r=get_redis()
@@ -64,7 +65,7 @@ def get_popular_artist_title_last_week():
 
         con = sqlite3.connect(config.DB)
         value=pd.read_sql(t, con).to_json()
-        r.set(key, value, exat=tomorrow_at_105_am_cst_in_utc())
+        r.set(key, value, exat=tomorrow_at_105_am_est())
 
     return pd.read_json(r.get(key).decode())
    
@@ -108,7 +109,7 @@ def get_popular_all_time_timeseries():
         t = get_sql(key)
         con = sqlite3.connect(config.DB)
         value=pd.read_sql(t, con).to_json()
-        r.set(key, value, exat=tomorrow_at_105_am_cst_in_utc())
+        r.set(key, value, exat=tomorrow_at_105_am_est())
 
     return pd.read_json(r.get(key).decode())
 
@@ -148,6 +149,6 @@ def get_new_last_90_days():
         t=get_sql(key)
         con = sqlite3.connect(config.DB)
         value=pd.read_sql(t, con).to_json()
-        r.set(key, value, exat=tomorrow_at_105_am_cst_in_utc())
+        r.set(key, value, exat=tomorrow_at_105_am_est())
 
     return pd.read_json(r.get(key).decode())
