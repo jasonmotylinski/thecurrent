@@ -51,4 +51,19 @@ calendar {
     day_of_week text
     week_of_year integer
 }
+
+artist_genres {
+    artist VARCHAR(255)
+    genre VARCHAR(255)
+    source integer
+}
+
+genre_sources {
+    id integer
+    name VARCHAR(255)
+}
+
+songs ||--o{ artist_genres: has_zero_to_many
+artist_genres }o--|| genre_sources: has_zero_to_many
+
 ```
