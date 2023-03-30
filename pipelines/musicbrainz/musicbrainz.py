@@ -13,7 +13,11 @@ if __name__ == '__main__':
     i=0
     for idx,row in data.get_artists().iterrows():
         if row['artist'] not in artists:
-            artists[row['artist']] = json.dumps({"artist": row["artist"], "data": mbz.search_artists(query=row['artist'])['artist-list'][0]})
+            details={}
+            if len(row['artist']['artist-list']) > 0:
+                details=mbz.search_artists(query=row['artist'])['artist-list'][0]
+
+            artists[row['artist']] = json.dumps({"artist": row["artist"], "data": details})
             i=i+1
 
             if i==100:
