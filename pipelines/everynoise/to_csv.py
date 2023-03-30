@@ -4,7 +4,7 @@ import json
 from file_helpers import load_json_data, write_csv_data
 
 if __name__ == '__main__':
-    artists_genres=load_json_data(config.EVERYNOISE_ARTISTS_GENRES_JSON)  
+    artists_genres=load_json_data(config.EVERYNOISE_ARTISTS_GENRES_JSON, "artist")  
     rows=[]
     rows.append(config.EVERYNOISE_CSV_HEADER_ROW)
     for k in artists_genres.keys():

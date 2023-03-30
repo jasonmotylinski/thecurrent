@@ -54,3 +54,4 @@ REDIS_PORT=6379
 REDIS_DB=0
 
 MUSICBRAINZ_ARTISTS_JSON="output/musicbrainz/artists.json"
+MUSICBRAINZ_RELEASEGROUPS_JSON="output/musicbrainz/releasegroups.json"

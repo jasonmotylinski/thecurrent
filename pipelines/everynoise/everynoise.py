@@ -20,7 +20,7 @@ def get_genres(who):
 if __name__ == '__main__':
     artists = load_artists_data(config.THECURRENT_ARTISTS_CSV)
 
-    artists_genres=load_json_data(config.EVERYNOISE_ARTISTS_GENRES_JSON)  
+    artists_genres=load_json_data(config.EVERYNOISE_ARTISTS_GENRES_JSON, "artist")  
     i=0
 
     for a in artists:

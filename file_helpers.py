@@ -19,13 +19,13 @@ def load_artists_data(path):
         artists.append(clean_artist(l))
     return artists
 
-def load_json_data(path):
+def load_json_data(path, key):
     artists_wikipedia = {}
     if os.path.exists(path):
         with open(path,'r') as f:
             for l in f.readlines():
                 file_data = json.loads(l)
-                artists_wikipedia[file_data["artist"]] = l.strip()
+                artists_wikipedia[file_data[key]] = l.strip()
     return artists_wikipedia
 
 def write_json_data(path, dict):
