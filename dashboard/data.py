@@ -152,3 +152,8 @@ def get_new_last_90_days():
         r.set(key, value, exat=tomorrow_at_105_am_est())
 
     return pd.read_json(r.get(key).decode())
+
+def get_artists():
+    sql="SELECT DISTINCT artist FROM songs WHERE artist != ''"
+    con = sqlite3.connect(config.DB)
+    return pd.read_sql(sql, con)

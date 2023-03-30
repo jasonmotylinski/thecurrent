@@ -52,3 +52,5 @@ DISCOGS_ARTISTS_JSON="output/discogs/artists_discogs.json"
 REDIS_HOST="127.0.0.1"
 REDIS_PORT=6379
 REDIS_DB=0
+
+MUSICBRAINZ_ARTISTS_JSON="output/musicbrainz/artists.json"

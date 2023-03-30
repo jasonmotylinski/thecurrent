@@ -9,3 +9,4 @@ gunicorn
 sqlalchemy
 redis
 colour
+musicbrainzngs
