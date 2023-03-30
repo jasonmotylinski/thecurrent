@@ -15,8 +15,8 @@ if __name__ == '__main__':
         if row['artist'] not in artists:
             details={}
             results=mbz.search_artists(query=row['artist'])['artist-list']
-            if len(results['artist-list']) > 0:
-                details=results['artist-list'][0]
+            if len(results) > 0:
+                details=results[0]
 
             artists[row['artist']] = json.dumps({"artist": row["artist"], "data": details})
             i=i+1
