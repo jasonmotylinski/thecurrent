@@ -157,3 +157,8 @@ def get_artists():
     sql="SELECT DISTINCT artist FROM songs WHERE artist != ''"
     con = sqlite3.connect(config.DB)
     return pd.read_sql(sql, con)
+
+def get_artists_titles():
+    sql="SELECT DISTINCT artist, title FROM songs WHERE artist != '' AND title != ''"
+    con = sqlite3.connect(config.DB)
+    return pd.read_sql(sql, con)
