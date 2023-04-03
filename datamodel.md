@@ -35,6 +35,13 @@ songs {
     hour int
 }
 
+songs_metadata{
+    id VARCHAR(255)
+    artist VARCHAR(255)
+    title VARCHAR(255)
+    first_release_date DATE
+}
+
 shows{
     id integer
     host_name text
@@ -61,4 +68,5 @@ artist_genres {
 
 songs ||--o{ artist_genres: has_zero_to_many
 
+songs }|--o| songs_metadata: has_zero_to_one
 ```

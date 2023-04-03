@@ -162,3 +162,21 @@ def get_artists_titles():
     sql="SELECT DISTINCT artist, title FROM songs WHERE artist != '' AND title != ''"
     con = sqlite3.connect(config.DB)
     return pd.read_sql(sql, con)
+
+def get_artists_titles_with_no_release_date():
+    sql="""
+    SELECT 
+        DISTINCT
+        s.artist,
+        s.title,
+        sm.first_release_date
+    FROM songs s
+    LEFT OUTER JOIN songs_metadata sm
+    ON s.artist=sm.artist AND s.title=sm.title
+    WHERE 
+        s.artist != ''
+        AND s.title != ''
+        AND sm.first_release_date IS NULL
+    """
+    con = sqlite3.connect(config.DB)
+    return pd.read_sql(sql, con)
