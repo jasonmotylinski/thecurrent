@@ -1,5 +1,6 @@
 import os
-from sqlalchemy import String, DateTime, Integer, Boolean
+
+DEBUG=os.getenv("DEBUG", False)
 
 DB="thecurrent.sqlite3"
 

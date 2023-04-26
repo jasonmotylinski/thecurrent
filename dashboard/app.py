@@ -1,3 +1,4 @@
+import config
 import data
 import dash_bootstrap_components as dbc
 import flask
@@ -161,6 +162,18 @@ def serve_layout():
                 popular_day_hour()
             ]),
             popular_all_time(),
+            dbc.Row([
+                html.Div(["Developed by ", 
+                          html.A("Jason Motylinski", href='https://jason.motylinski.com'), 
+                         ],
+                         className="text-center")
+            ]),
+            dbc.Row([
+                html.Div([
+                            html.A("Data available on HuggingFace", href='https://huggingface.co/datasets/jasonmotylinski/89.3TheCurrentPlaylists'), 
+                         ],
+                         className="text-center")
+            ]),
             dcc.Interval(
                 id='interval',
                 interval=1*100000,
@@ -194,5 +207,5 @@ def handle_interval_callback_2(n):
     return "Top 5 Most Popular Artists Played on {day_of_week} at {hour_label}".format(day_of_week=day_of_week, hour_label=hour_label)
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=config.DEBUG)
 
