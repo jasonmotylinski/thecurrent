@@ -60,6 +60,31 @@ class BackfillLastXDaysData(luigi.Task):
 
     last_x_days=luigi.IntParameter()
 
+    def run(self):
+        con = sqlite3.connect(config.DB)
+        sql = "DROP TABLE IF EXISTS songs_totals_by_day;"
+        con.execute(sql)
+
+        sql = """CREATE TABLE songs_totals_by_day AS
+                SELECT 
+                    artist, 
+                    title,
+                    year || "-" || PRINTF('%02d', month) || "-" || PRINTF('%02d', day)  AS played_at_ymd,
+                    COUNT(*) as ct
+                FROM songs
+                WHERE
+                    artist != ''
+                    AND title != ''
+                GROUP BY
+                    artist,
+                    title,
+                    year,
+                    month,
+                    day;"""
+        con.execute(sql)
+        con.commit()
+
+
     def requires(self):
            for d in [datetime.now()-timedelta(days=x) for x in range(1, self.last_x_days + 1)]:
                 yield InsertDayData(d)
