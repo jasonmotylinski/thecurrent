@@ -1,11 +1,17 @@
 import config
+import logging
 import redis
 import sqlite3
 import pandas as pd
 import time 
+from flask.logging import default_handler
+
+
 
 from datetime import datetime, timedelta
 
+log = logging.getLogger()
+log.addHandler(default_handler)
 redis_client = None
 SQL_ROOT ="sql/"
 
@@ -46,6 +52,7 @@ def get_title_timeseries(artist, title, start_date, end_date):
     if not r.exists(key):
         t=get_sql(filename).format(artist=artist, title=title, start_date=start_date, start_date_week=int(start_date.strftime("%U")), end_date=end_date, end_date_week=int(end_date.strftime("%U")))
         con = sqlite3.connect(config.DB)
+        log.debug(t)
         value=pd.read_sql(t, con).to_json()
         r.set(key, value, exat=tomorrow_at_105_am_est())
     
@@ -64,6 +71,7 @@ def get_popular_artist_title_last_week():
         t=get_sql(key).format(start_date=start_date, end_date=end_date)
 
         con = sqlite3.connect(config.DB)
+        log.debug(t)
         value=pd.read_sql(t, con).to_json()
         r.set(key, value, exat=tomorrow_at_105_am_est())
 
@@ -83,6 +91,7 @@ def get_popular_artist_last_week():
         t=get_sql(key).format(start_date=start_date, end_date=end_date)
 
         con = sqlite3.connect(config.DB)
+        log.debug(t)
         df=pd.read_sql(t, con)
     return df
 
@@ -98,6 +107,7 @@ def get_new_yesterday():
         t=get_sql(key).format(yesterday=yesterday)
 
         con = sqlite3.connect(config.DB)
+        log.debug(t)
         df=pd.read_sql(t, con)
     return df
 
@@ -108,6 +118,7 @@ def get_popular_all_time_timeseries():
     if not r.exists(key):
         t = get_sql(key)
         con = sqlite3.connect(config.DB)
+        log.debug(t)
         value=pd.read_sql(t, con).to_json()
         r.set(key, value, exat=tomorrow_at_105_am_est())
 
@@ -126,6 +137,7 @@ def get_popular_all_time(start_date=None, end_date=None):
             where="WHERE played_at >='{0}' AND played_at <='{1}'".format(start_date, end_date)
         t = get_sql(key).format(where=where)
         con = sqlite3.connect(config.DB)
+        log.debug(t)
         df=pd.read_sql(t, con)
     return df
 
@@ -138,6 +150,7 @@ def get_popular_day_hour_data(hour, day_of_week):
     else:
         t=get_sql(key).format(hour=hour, day_of_week=day_of_week)
         con = sqlite3.connect(config.DB)
+        log.debug(t)
         df=pd.read_sql(t, con)
     return df
 
@@ -148,6 +161,7 @@ def get_new_last_90_days():
     if not r.exists(key):
         t=get_sql(key)
         con = sqlite3.connect(config.DB)
+        log.debug(t)
         value=pd.read_sql(t, con).to_json()
         r.set(key, value, exat=tomorrow_at_105_am_est())
 
@@ -156,11 +170,13 @@ def get_new_last_90_days():
 def get_artists():
     sql="SELECT DISTINCT artist FROM songs WHERE artist != ''"
     con = sqlite3.connect(config.DB)
+    log.debug(sql)
     return pd.read_sql(sql, con)
 
 def get_artists_titles():
     sql="SELECT DISTINCT artist, title FROM songs WHERE artist != '' AND title != ''"
     con = sqlite3.connect(config.DB)
+    log.debug(sql)
     return pd.read_sql(sql, con)
 
 def get_artists_titles_with_no_release_date():
@@ -179,4 +195,5 @@ def get_artists_titles_with_no_release_date():
         AND sm.first_release_date IS NULL
     """
     con = sqlite3.connect(config.DB)
+    log.debug(sql)
     return pd.read_sql(sql, con)

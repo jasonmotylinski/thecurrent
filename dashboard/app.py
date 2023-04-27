@@ -2,6 +2,7 @@ import config
 import data
 import dash_bootstrap_components as dbc
 import flask
+import logging
 import plotly.express as px
 
 from dash import Dash, dash_table, html, dcc, Input, Output
@@ -207,5 +208,8 @@ def handle_interval_callback_2(n):
     return "Top 5 Most Popular Artists Played on {day_of_week} at {hour_label}".format(day_of_week=day_of_week, hour_label=hour_label)
 
 if __name__ == '__main__':
+    if config.DEBUG:
+        log=logging.getLogger()
+        log.setLevel(logging.DEBUG)
     app.run_server(debug=config.DEBUG)
 

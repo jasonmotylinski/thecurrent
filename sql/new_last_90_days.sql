@@ -9,21 +9,20 @@ WITH new_songs_by_day_of_week_hour(day_of_week, hour, ct) AS (
         SELECT 
             artist, 
             title, 
-            played_at, 
-            DENSE_RANK() OVER (
-            PARTITION BY artist, title
-            ORDER BY played_at ASC) AS rank
+            MIN(played_at) as played_at
         FROM songs
         WHERE trim(artist) != ''
         AND trim(title) != ''
+        GROUP BY
+            artist,
+            title
     ) b
     ON 
         a.artist=b.artist
         AND a.title=b.title
         AND a.played_at=b.played_at
     WHERE  
-        b.rank=1
-        AND b.played_at >= Date('now', '-90 days')
+        b.played_at >= Date('now', '-90 days')
         AND b.played_at <= Date('now')
     GROUP BY 
         a.day_of_week,
