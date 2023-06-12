@@ -7,6 +7,7 @@ import plotly.express as px
 
 from dash import Dash, dash_table, html, dcc, Input, Output
 from datetime import datetime, timedelta
+from routes import api_routes
 
 
 def popular_artist_title_last_week_cell():
@@ -192,6 +193,7 @@ app.scripts.append_script({"external_url": "https://www.googletagmanager.com/gta
 app.scripts.append_script({"external_url": "assets/gtag.js"})
 
 app.layout=serve_layout
+server.register_blueprint(api_routes)
 
 @app.callback(Output('popular_day_hour_table', 'data'),
               Input('interval', 'n_intervals'))

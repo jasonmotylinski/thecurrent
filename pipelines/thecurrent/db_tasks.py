@@ -53,17 +53,19 @@ class InsertDayRangeData(luigi.Task):
     start_date=luigi.DateParameter()
 
     def requires(self):
-           for d in [self.start_date+timedelta(days=x) for x in range((self.end_date-self.start_date).days + 1)]:
-                yield InsertDayData(d)
+        for d in [self.start_date+timedelta(days=x) for x in range((self.end_date-self.start_date).days + 1)]:
+            yield InsertDayData(d)
 
 class BackfillLastXDaysData(luigi.Task):
 
     last_x_days=luigi.IntParameter()
 
     def run(self):
+
         con = sqlite3.connect(config.DB)
         sql = "DROP TABLE IF EXISTS songs_totals_by_day;"
         con.execute(sql)
+        con.commit()
 
         sql = """CREATE TABLE songs_totals_by_day AS
                 SELECT 
@@ -86,5 +88,5 @@ class BackfillLastXDaysData(luigi.Task):
 
 
     def requires(self):
-           for d in [datetime.now()-timedelta(days=x) for x in range(1, self.last_x_days + 1)]:
-                yield InsertDayData(d)
+        for d in [datetime.now()-timedelta(days=x) for x in range(1, self.last_x_days + 1)]:
+            yield InsertDayData(d)
