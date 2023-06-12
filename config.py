@@ -54,6 +54,7 @@ DISCOGS_ARTISTS_JSON="output/discogs/artists_discogs.json"
 REDIS_HOST="127.0.0.1"
 REDIS_PORT=6379
 REDIS_DB=0
+REDIS_URL="redis://{host}:{port}/{db}".format(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
 
 MUSICBRAINZ_ARTISTS_JSON="output/musicbrainz/artists.json"
 MUSICBRAINZ_RELEASEGROUPS_JSON="output/musicbrainz/releasegroups.json"

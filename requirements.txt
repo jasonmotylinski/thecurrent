@@ -10,3 +10,4 @@ sqlalchemy
 redis
 colour
 musicbrainzngs
+flask_caching

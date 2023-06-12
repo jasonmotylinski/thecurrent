@@ -7,6 +7,7 @@ import plotly.express as px
 
 from dash import Dash, dash_table, html, dcc, Input, Output
 from datetime import datetime, timedelta
+from flask_caching import Cache
 from routes import api_routes
 
 
@@ -188,6 +189,12 @@ app.scripts.append_script({"external_url": "https://www.googletagmanager.com/gta
 app.scripts.append_script({"external_url": "assets/gtag.js"})
 
 app.layout=serve_layout
+
+cache = Cache(app.server, config={
+    'CACHE_TYPE': 'redis',
+    'CACHE_REDIS_URL': config.REDIS_URL
+})
+
 server.register_blueprint(api_routes)
 
 @app.callback(Output('popular_day_hour_table', 'data'),
