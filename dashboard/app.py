@@ -10,7 +10,19 @@ from datetime import datetime, timedelta
 from flask_caching import Cache
 from routes import api_routes
 
+server = flask.Flask(__name__)
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], server=server)
+app.title = "89.3 The Current Trends"
+app.scripts.config.serve_locally = False
+app.scripts.append_script({"external_url": "https://www.googletagmanager.com/gtag/js?id=G-HB05PVK153"})
+app.scripts.append_script({"external_url": "assets/gtag.js"})
 
+cache = Cache(app.server, config={
+    'CACHE_TYPE': 'redis',
+    'CACHE_REDIS_URL': config.REDIS_URL
+})
+
+server.register_blueprint(api_routes)
 def popular_artist_title_last_week_cell():
     df=data.get_popular_artist_title_last_week()
     end_date=datetime.utcnow()
@@ -146,6 +158,7 @@ def popular_day_hour():
     ],
     md=6)
 
+@cache.memoize(timeout=600) 
 def serve_layout():
     return html.Div(
         dbc.Container(
@@ -181,22 +194,6 @@ def serve_layout():
         )
     )
 
-server = flask.Flask(__name__)
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], server=server)
-app.title = "89.3 The Current Trends"
-app.scripts.config.serve_locally = False
-app.scripts.append_script({"external_url": "https://www.googletagmanager.com/gtag/js?id=G-HB05PVK153"})
-app.scripts.append_script({"external_url": "assets/gtag.js"})
-
-app.layout=serve_layout
-
-cache = Cache(app.server, config={
-    'CACHE_TYPE': 'redis',
-    'CACHE_REDIS_URL': config.REDIS_URL
-})
-
-server.register_blueprint(api_routes)
-
 @app.callback(Output('popular_day_hour_table', 'data'),
               Input('interval', 'n_intervals'))
 def handle_interval_callback(n):
@@ -210,6 +207,8 @@ def handle_interval_callback_2(n):
     day_of_week=datetime.utcnow().strftime("%A")
     hour_label=datetime.now().strftime("%-I %p")
     return "Top 5 Most Popular Artists Played on {day_of_week} at {hour_label}".format(day_of_week=day_of_week, hour_label=hour_label)
+
+app.layout=serve_layout
 
 if __name__ == '__main__':
     if config.DEBUG:
