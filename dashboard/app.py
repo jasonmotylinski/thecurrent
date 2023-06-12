@@ -175,12 +175,7 @@ def serve_layout():
                             html.A("Data available on HuggingFace", href='https://huggingface.co/datasets/jasonmotylinski/89.3TheCurrentPlaylists'), 
                          ],
                          className="text-center")
-            ]),
-            dcc.Interval(
-                id='interval',
-                interval=1*100000,
-                n_intervals=0
-            )
+            ])
         ]
         )
     )
