@@ -44,6 +44,14 @@ def get_sql(filename):
         sql=f.read()
     return sql
 
+def get_last_updated():
+    filename="last_updated.sql"
+    t=get_sql(filename)
+    con = sqlite3.connect(config.DB)
+    log.debug(t)
+    value=pd.read_sql(t, con).to_dict()['last_updated'][0]
+    return value
+
 def get_title_timeseries(artist, title, start_date, end_date):
     r=get_redis()
     filename='title_timeseries.sql'

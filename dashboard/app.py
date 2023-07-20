@@ -10,12 +10,16 @@ from datetime import datetime, timedelta
 from flask_caching import Cache
 from routes import api_routes
 
+
+external_scripts =[
+    "https://www.googletagmanager.com/gtag/js?id=G-HB05PVK153",
+    "assets/gtag.js"
+]
+
 server = flask.Flask(__name__)
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], server=server)
+app = Dash(__name__, external_scripts=external_scripts, external_stylesheets=[dbc.themes.BOOTSTRAP], server=server)
 app.title = "89.3 The Current Trends"
 app.scripts.config.serve_locally = False
-app.scripts.append_script({"external_url": "https://www.googletagmanager.com/gtag/js?id=G-HB05PVK153"})
-app.scripts.append_script({"external_url": "assets/gtag.js"})
 
 cache = Cache(app.server, config={
     'CACHE_TYPE': 'redis',
@@ -158,7 +162,7 @@ def popular_day_hour():
     ],
     md=6)
 
-@cache.memoize(timeout=600) 
+#@cache.memoize(timeout=600) 
 def serve_layout():
     return html.Div(
         dbc.Container(
@@ -185,13 +189,15 @@ def serve_layout():
                          className="text-center")
             ]),
             dbc.Row([
+                html.Div(["Data last updated:" + data.get_last_updated()], 
+                         className='text-center')]),
+            dbc.Row([
                 html.Div([
                             html.A("Data available on HuggingFace", href='https://huggingface.co/datasets/jasonmotylinski/89.3TheCurrentPlaylists'), 
                          ],
                          className="text-center")
             ])
-        ]
-        )
+        ])
     )
 
 @app.callback(Output('popular_day_hour_table', 'data'),
