@@ -103,6 +103,21 @@ def get_popular_artist_last_week():
         df=pd.read_sql(t, con)
     return df
 
+def get_popular_title_for_each_artist():
+    r=get_redis()
+    df=None
+    key='popular_title_for_each_artist.sql'
+    if r.exists(key):
+        df=pd.read_json(r.get(key).decode())
+    else:
+
+        t=get_sql(key).format()
+
+        con = sqlite3.connect(config.DB)
+        log.debug(t)
+        df=pd.read_sql(t, con)
+    return df
+
 def get_new_yesterday():
 
     r=get_redis()

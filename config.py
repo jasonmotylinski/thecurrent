@@ -61,3 +61,5 @@ MUSICBRAINZ_RELEASEGROUPS_JSON="output/musicbrainz/releasegroups.json"
 MUSICBRAINZ_RELEASEGROUPS_CSV_HEADER_ROW=['id', 'artist', 'title', 'first_release_date']
 MUSICBRAINZ_RELEASEGROUPS_CSV="output/musicbrainz/releasegroups.csv"
 MUSICBRAINZ_RECORDINGS_JSON="output/musicbrainz/recordings.json"
+
+SPOTIFY_ARTISTS_JSON="output/spotify/artists.json"
