@@ -162,7 +162,7 @@ def popular_day_hour():
     ],
     md=6)
 
-#@cache.memoize(timeout=600) 
+@cache.memoize(timeout=600) 
 def serve_layout():
     return html.Div(
         dbc.Container(
