@@ -24,7 +24,7 @@ if __name__ == '__main__':
             artists[artist] = json.dumps({"artist": artist, "data": details})
             i=i+1
 
-            if i==1000:
+            if i==100:
                 break
         
         write_json_data(config.SPOTIFY_ARTISTS_JSON, artists)
