@@ -65,8 +65,21 @@ artist_genres {
     source VARCHAR(255)
 }
 
+artist_metadata {
+    artist VARCHAR(255)
+}
 
-songs ||--o{ artist_genres: has_zero_to_many
+artist_images {
+    artist VARCHAR(255)
+    height integer
+    width integer
+    url VARCHAR(255)
+    source VARCHAR(255)
+}
 
 songs }|--o| songs_metadata: has_zero_to_one
+
+artist_metadata ||--o{ songs: one_to_many
+artist_metadata ||--o{ artist_genres: one_to_many
+artist_metadata ||--o{ artist_images: one_to_many
 ```
