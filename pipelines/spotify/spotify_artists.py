@@ -27,4 +27,4 @@ if __name__ == '__main__':
             if i==100:
                 break
         
-        write_json_data(config.SPOTIFY_ARTISTS_JSON, artists)
+    write_json_data(config.SPOTIFY_ARTISTS_JSON, artists)
