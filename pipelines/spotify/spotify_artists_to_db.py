@@ -59,7 +59,9 @@ if __name__ == '__main__':
         artist=key.strip()
         artist_data=json.loads(artists[key])
         insert_artist(artist)
-        insert_genres(artist, artist_data['data']['genres'], 'spotify')
-        insert_images(artist, artist_data['data']['images'], 'spotify')
+        if 'genres' in  artist_data['data']:
+            insert_genres(artist, artist_data['data']['genres'], 'spotify')
+        if 'images' in  artist_data['data']:
+            insert_images(artist, artist_data['data']['images'], 'spotify')
 
  
