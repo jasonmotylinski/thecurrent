@@ -8,6 +8,7 @@ DB_MYSQL_HOST=os.getenv("DB_MYSQL_HOST")
 DB_MYSQL_USER=os.getenv("DB_MYSQL_USER")
 DB_MYSQL_PASSWD=os.getenv("DB_MYSQL_PASSWD")
 DB_MYSQL_DB="thecurrent"
+DB_MYSQL_CONN="mysql://{1}:{2}@{0}/{3}".format(DB_MYSQL_HOST, DB_MYSQL_USER, DB_MYSQL_PASSWD, DB_MYSQL_DB)
 
 CSV_HEADER_ROW = ['id', 'artist', 'title', 'album', 'played_at', 'duration', 'service_id', 'song_id', 'play_id', 
                   'composer', 'conductor', 'orch_ensemble', 'soloist_1', 'soloist_2', 'soloist_3', 'soloist_4',

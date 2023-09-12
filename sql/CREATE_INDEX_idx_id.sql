@@ -1,1 +1,1 @@
-CREATE INDEX idx_id ON songs(id)
+CREATE INDEX idx_id ON songs(id);

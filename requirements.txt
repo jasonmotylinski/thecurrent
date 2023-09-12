@@ -12,3 +12,4 @@ colour
 musicbrainzngs
 flask_caching
 spotipy
+ mysql-connector-python

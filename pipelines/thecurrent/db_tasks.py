@@ -5,9 +5,46 @@ import sqlite3
 
 from datetime import datetime, timedelta
 from pipelines.thecurrent.csv_tasks import ConvertDayHtmlToCsv
+from luigi.contrib import mysqldb
 
 def clean_str(str):
-    return str.replace('"', '""')
+    newval= str.replace('"', '""')
+    if newval == '':
+        newval = None
+    if newval == 'True':
+        newval = 1
+    if newval == 'False':
+        newval = 0
+    return newval
+
+class InsertDayDataMysql(mysqldb.CopyToTable):
+    date = luigi.DateParameter()
+    reflect = True
+    database = config.DB_MYSQL_DB
+    host = config.DB_MYSQL_HOST
+    password = config.DB_MYSQL_PASSWD
+    user = config.DB_MYSQL_USER
+    table = "songs" 
+    columns = [['id'], ['artist'], ['title'], ['album'], ['played_at'], ['duration'], ['service_id'], ['song_id'], ['play_id'], 
+               ['composer'], ['conductor'], ['orch_ensemble'], ['soloist_1'], ['soloist_2'], ['soloist_3'], ['soloist_4'], 
+               ['soloist_5'], ['soloist_6'], ['record_co'], ['record_id'],['addl_text'], ['broadcast'], ['songs_on_album'],
+               ['songs_by_artist'], ['album_mbid'], ['art_url'], ['year'], ['month'], ['day'], ['day_of_week'], ['week'], ['hour']]
+    def rows(self):
+        with self.input()[0].open('r') as f:
+            reader=csv.DictReader(f, delimiter=',', quoting=csv.QUOTE_ALL)
+            for row in reader:
+                yield [clean_str(row['id']),clean_str(row['artist']),clean_str(row['title']),clean_str(row['album']),clean_str(row['played_at']),
+                      clean_str(row['duration']),clean_str(row['service_id']), clean_str(row['song_id']),clean_str(row['play_id']),
+                      clean_str(row['composer']), clean_str(row['conductor']), clean_str(row['orch_ensemble']),
+                      clean_str(row['soloist_1']),clean_str(row['soloist_2']),clean_str(row['soloist_3']),clean_str(row['soloist_4']),
+                      clean_str(row['soloist_5']),clean_str(row['soloist_6']),clean_str(row['record_co']),clean_str(row['record_id']),
+                      clean_str(row['addl_text']),clean_str(row['broadcast']), clean_str(row['songs_on_album']),
+                      clean_str(row['songs_by_artist']), clean_str(row['album_mbid']), clean_str(row['art_url']),
+                      clean_str(row['year']), clean_str(row['month']), clean_str(row['day']),clean_str(row['day_of_week']), clean_str(row['week']),
+                      clean_str(row['hour'])]
+    def requires(self):
+        """Requires."""
+        yield ConvertDayHtmlToCsv(self.date)
 
 class InsertDayData(luigi.Task):
     date = luigi.DateParameter()
@@ -55,6 +92,7 @@ class InsertDayRangeData(luigi.Task):
     def requires(self):
         for d in [self.start_date+timedelta(days=x) for x in range((self.end_date-self.start_date).days + 1)]:
             yield InsertDayData(d)
+            yield InsertDayDataMysql(d)
 
 class BackfillLastXDaysData(luigi.Task):
 
