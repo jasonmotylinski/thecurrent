@@ -128,3 +128,4 @@ class BackfillLastXDaysData(luigi.Task):
     def requires(self):
         for d in [datetime.now()-timedelta(days=x) for x in range(1, self.last_x_days + 1)]:
             yield InsertDayData(d)
+            yield InsertDayDataMysql(d)
