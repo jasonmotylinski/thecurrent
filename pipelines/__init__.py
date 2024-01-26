@@ -3,7 +3,7 @@ from hashlib import sha256
 def clean_str(str):
     newval= str.replace('"', '""')
     if newval == '':
-        newval = "NULL"
+       return "NULL"
     if newval == 'True':
         newval = 1
     if newval == 'False':
