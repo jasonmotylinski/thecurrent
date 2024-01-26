@@ -77,9 +77,16 @@ artist_images {
     source VARCHAR(255)
 }
 
+services {
+    service_id integer
+    name VARCHAR(255)
+}
+
 songs }|--o| songs_metadata: has_zero_to_one
 
 artist_metadata ||--o{ songs: one_to_many
 artist_metadata ||--o{ artist_genres: one_to_many
 artist_metadata ||--o{ artist_images: one_to_many
+
+services ||--o{ songs:one_to_many
 ```

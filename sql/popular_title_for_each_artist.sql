@@ -12,7 +12,7 @@ SELECT
     ) as rnk
 FROM 
     songs
-WHERE artist != '' and title != ''
+WHERE service_id=1 AND artist != '' and title != ''
 GROUP BY
     artist,
     title

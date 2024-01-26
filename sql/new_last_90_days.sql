@@ -14,7 +14,7 @@ WITH new_songs_by_day_of_week_hour(day_of_week, hour, ct) AS (
             PARTITION BY artist, title
             ORDER BY played_at ASC) AS rank
         FROM songs
-        WHERE trim(artist) != ''
+        WHERE service_id = 1 AND trim(artist) != ''
         AND trim(title) != ''
     ) b
     ON 

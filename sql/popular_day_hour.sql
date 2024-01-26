@@ -2,7 +2,9 @@ SELECT
     artist, 
     COUNT(*) as ct
 FROM songs
-WHERE day_of_week='{day_of_week}'
+WHERE 
+    service_id=1 
+    AND day_of_week='{day_of_week}'
     AND hour={hour}
     AND artist != ''
 GROUP BY artist

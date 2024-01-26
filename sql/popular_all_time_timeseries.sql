@@ -7,10 +7,12 @@ SELECT
 FROM songs 
 WHERE artist IN(
     SELECT artist
-    FROM songs 
+    FROM songs
+    WHERE service_id=1 
     GROUP BY artist
     ORDER BY COUNT(*) DESC
     LIMIT 5
 )
+AND service_id=1
 GROUP BY artist, year, month
 ORDER BY year, month ASC

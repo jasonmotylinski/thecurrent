@@ -16,7 +16,7 @@ pip install -r requirements.txt
 
 The Current posts their playlist by hour or by day to https://www.thecurrent.org/playlist/the-current/2021-01-01. 
 
-The code is broken into the major compontents:
+The code is broken into the major components:
 
 - __playlist.py__ - Retrieves HTML and parses the song information from https://www.thecurrent.org/playlist/the-current/. 
 - __html_tasks.py__ - Tasks to orchestrates HTML retrieval using __playlist.py__ 
@@ -37,6 +37,7 @@ In order to prevent DoS'ing The Current website, a Luigi-based pipeline exists w
 The following command will retrieve the HTML, save it to the `output/html` directory, parse the HTML for articles, and save the results as a CSV in the `output/csv` directory. Execute the pipeline like song
 
 ### Saving the HTML
+
 Retrieve and save a single __hour__ HTML
 ```bash
 export PYTHONPATH=.

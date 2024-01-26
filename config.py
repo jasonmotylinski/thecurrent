@@ -64,3 +64,6 @@ MUSICBRAINZ_RELEASEGROUPS_CSV="output/musicbrainz/releasegroups.csv"
 MUSICBRAINZ_RECORDINGS_JSON="output/musicbrainz/recordings.json"
 
 SPOTIFY_ARTISTS_JSON="output/spotify/artists.json"
+
+KEXP_DAY_JSON="output/kexp/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
+KEXP_DAY_CSV="output/kexp/csv/{0}/{1}/{2}.csv"

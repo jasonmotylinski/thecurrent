@@ -20,7 +20,8 @@ FROM (
             FROM 
             songs
         WHERE
-            played_at >=  DATETIME('now', '-1 year')
+            service_id=1 
+            AND played_at >=  DATETIME('now', '-1 year')
         GROUP BY 
             artist,
             title
@@ -28,7 +29,8 @@ FROM (
         LIMIT 20
     ) s2 ON s1.artist=s2.artist AND s1.title=s2.title
     WHERE
-        played_at >=  DATETIME('now', '-1 year')
+        service_id=1 
+        AND played_at >=  DATETIME('now', '-1 year')
     GROUP BY 
         s1.artist, 
         s1.title, 
@@ -41,6 +43,7 @@ FROM (
         s1.week ASC, 
         ct DESC
 )
+WHERE service_id=1 
 GROUP BY
     artist,
     title

@@ -12,7 +12,7 @@ INNER JOIN (
         PARTITION BY artist, title
         ORDER BY played_at ASC) AS rank
     FROM songs
-    WHERE trim(artist) != ''
+    WHERE service_id=1 AND trim(artist) != ''
     or trim(title) != ''
 ) b
 ON a.artist=b.artist
