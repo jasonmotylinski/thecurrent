@@ -35,8 +35,8 @@ class ConvertDayHtmlToCsv(luigi.Task):
                                       s["title"],
                                       s["album"],
                                       s["played_at"],
-                                      '',
-                                      '',
+                                      '', # Duration
+                                      1, # Service_id
                                       '',
                                       '',
                                       '',

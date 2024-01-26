@@ -69,6 +69,7 @@ luigi --module html_tasks SaveYearHtmlToLocal --year=2016 --local-scheduler
 ```
 
 ## Generating CSVs
+
 CSV generation requires the HTML has been saved down. If the HTML hasn't been retrieved yet the CSV task will retrieve the HTML and then create the file(s).
 
 Convert a single day's HTML into the song CSV
