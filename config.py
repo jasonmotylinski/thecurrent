@@ -80,6 +80,7 @@ class KUTX(object):
 class WXPN(object):
     DAY_URL="https://origin.xpn.org/utils/playlist/json/{date.year}-{date.month:02d}-{date.day:02d}.json"
     DAY_JSON="output/wxpn/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
+    DAY_CSV="output/wxpn/csv/{0}/{1}/{2}.csv"
     SERVICE_ID=4
 
 class THECURRENT(object):
