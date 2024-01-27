@@ -36,7 +36,7 @@ class ConvertDayHtmlToCsv(luigi.Task):
                                       s["album"],
                                       s["played_at"],
                                       '', # Duration
-                                      1, # Service_id
+                                      config.THECURRENT.SERVICE_ID, # Service_id
                                       '',
                                       '',
                                       '',

@@ -17,7 +17,7 @@ class ConvertDayJsonToCsv(luigi.Task):
 
     def output(self):
         """Output."""
-        return luigi.LocalTarget(config.KEXP_DAY_CSV.format(self.date.strftime("%Y"), self.date.strftime("%m"), self.date.strftime("%Y%m%d")),format=UTF8)
+        return luigi.LocalTarget(config.KEXP.DAY_CSV.format(self.date.strftime("%Y"), self.date.strftime("%m"), self.date.strftime("%Y%m%d")),format=UTF8)
 
     def run(self):
         """Run."""
@@ -31,13 +31,13 @@ class ConvertDayJsonToCsv(luigi.Task):
                 writer = csv.writer(f, delimiter=',', quoting=csv.QUOTE_ALL)
                 writer.writerow(config.CSV_HEADER_ROW)
 
-                list(writer.writerow([  create_id(s["airdate"], s["artist"], s["song"], 2), 
+                list(writer.writerow([  create_id(s["airdate"], s["artist"], s["song"], config.KEXP.SERVICE_ID), 
                                         s["artist"],
                                         s["song"],
                                         s["album"],
                                         s["airdate"],
                                         '', # Duration
-                                        '2', # Service ID
+                                        config.KEXP.SERVICE_ID, # Service ID
                                         '',
                                         '',
                                         '',
