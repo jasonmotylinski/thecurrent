@@ -65,5 +65,12 @@ MUSICBRAINZ_RECORDINGS_JSON="output/musicbrainz/recordings.json"
 
 SPOTIFY_ARTISTS_JSON="output/spotify/artists.json"
 
+KEXP_DAY_URL="https://api.kexp.org/v2/plays/?limit=1000&airdate_after={date.year}-{date.month:02d}-{date.day:02d}T00:00:00&airdate_before={date.year}-{date.month:02d}-{date.day:02d}T23:59:59"
 KEXP_DAY_JSON="output/kexp/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
 KEXP_DAY_CSV="output/kexp/csv/{0}/{1}/{2}.csv"
+
+KUTX_DAY_URL="https://api.composer.nprstations.org/v1/widget/50ef24ebe1c8a1369593d032/day?date={date.year}-{date.month:02d}-{date.day:02d}&format=json"
+KUTX_DAY_JSON="output/kutx/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
+
+WXPN_DAY_URL="https://origin.xpn.org/utils/playlist/json/{date.year}-{date.month:02d}-{date.day:02d}.json"
+WXPN_DAY_JSON="output/wxpn/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
