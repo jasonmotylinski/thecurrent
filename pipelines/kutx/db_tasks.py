@@ -5,7 +5,7 @@ import sqlite3
 
 from datetime import datetime, timedelta
 from pipelines import clean_str
-from pipelines.kexp.csv_tasks import ConvertDayJsonToCsv
+from pipelines.kutx.csv_tasks import ConvertDayJsonToCsv
 
 class InsertDayData(luigi.Task):
     date = luigi.DateParameter()
@@ -43,7 +43,7 @@ class InsertDayData(luigi.Task):
     def requires(self):
         """Requires."""
         yield ConvertDayJsonToCsv(self.date)
-        
+
 class InsertDayRangeData(luigi.Task):
     end_date=luigi.DateParameter()
     start_date=luigi.DateParameter()

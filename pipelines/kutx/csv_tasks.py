@@ -29,44 +29,45 @@ class ConvertDayJsonToCsv(luigi.Task):
                 writer = csv.writer(f, delimiter=',', quoting=csv.QUOTE_ALL)
                 writer.writerow(config.CSV_HEADER_ROW)
                 for p in json.load(i)["onToday"]:
-                    records=p['playlist']
-                    for s in records:
-                        played_at=datetime.strptime(s["_start_time"]+"-06:00", "%m-%d-%Y %H:%M:%S%z") 
-                        album=None
-                        if 'collectionName' in s:
-                            album=s["collectionName"]
-                        writer.writerow([  create_id(played_at, s["artistName"], s["trackName"], config.KUTX.SERVICE_ID), 
-                                            s["artistName"],
-                                            s["trackName"],
-                                            album,
-                                            played_at.isoformat(),
-                                            s["_duration"], # Duration
-                                            config.KUTX.SERVICE_ID, # Service ID
-                                            '',
-                                            '',
-                                            '',
-                                            '',
-                                            '',
-                                            '',
-                                            '',
-                                            '',
-                                            '',
-                                            '',
-                                            '',
-                                            '',
-                                            '',
-                                            '',
-                                            '',
-                                            '',
-                                            '',
-                                            '',
-                                            '',
-                                            played_at.strftime("%Y"),
-                                            played_at.strftime("%m"),
-                                            played_at.strftime("%d"),
-                                            played_at.strftime("%A"),
-                                            played_at.strftime("%U"),
-                                            played_at.strftime("%H")])
+                        records=p['playlist']
+                        if records:
+                            for s in records:
+                                played_at=datetime.strptime(s["_start_time"]+"-06:00", "%m-%d-%Y %H:%M:%S%z") 
+                                album=None
+                                if 'collectionName' in s:
+                                    album=s["collectionName"]
+                                writer.writerow([  create_id(played_at, s["artistName"], s["trackName"], config.KUTX.SERVICE_ID), 
+                                                    s["artistName"],
+                                                    s["trackName"],
+                                                    album,
+                                                    played_at.isoformat(),
+                                                    s["_duration"], # Duration
+                                                    config.KUTX.SERVICE_ID, # Service ID
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    played_at.strftime("%Y"),
+                                                    played_at.strftime("%m"),
+                                                    played_at.strftime("%d"),
+                                                    played_at.strftime("%A"),
+                                                    played_at.strftime("%U"),
+                                                    played_at.strftime("%H")])
 
     def requires(self):
         """Requires."""
