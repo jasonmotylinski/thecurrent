@@ -178,9 +178,9 @@ def serve_layout():
             ]),
             dbc.Row([
                  new_last_90_days_cell(),
-        #        popular_day_hour()
+                 popular_day_hour()
             ]),
-        #    popular_all_time(),
+            popular_all_time(),
             dbc.Row([
                 html.Div(["Developed by ", 
                           html.A("Jason Motylinski", href='https://jason.motylinski.com'), 
