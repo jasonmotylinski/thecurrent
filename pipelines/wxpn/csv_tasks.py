@@ -29,7 +29,11 @@ class ConvertDayJsonToCsv(luigi.Task):
                 writer = csv.writer(f, delimiter=',', quoting=csv.QUOTE_ALL)
                 writer.writerow(config.CSV_HEADER_ROW)
                 for s in json.load(i):
-                    played_at=datetime.strptime(s["timeslice"]+"-05:00", "%Y-%m-%d %H:%M:%S%z") 
+                    if "timeslice" in s:
+                        played_at=s['timeslice']
+                    if "air_date" in s:
+                        played_at=s['air_date']
+                    played_at=datetime.strptime(played_at+"-05:00", "%Y-%m-%d %H:%M:%S%z") 
                     writer.writerow([  create_id(played_at, s["artist"], s["song"], config.KUTX.SERVICE_ID), 
                                         s["artist"],
                                         s["song"],
