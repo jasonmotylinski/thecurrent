@@ -174,14 +174,14 @@ def serve_layout():
             ),
             dbc.Row([
                 popular_artist_title_last_week_cell(),
-                popular_artist_last_week_cell(),
+               popular_artist_last_week_cell(),
                 
             ]),
             dbc.Row([
-                new_last_90_days_cell(),
-                popular_day_hour()
+        #       new_last_90_days_cell(),
+        #        popular_day_hour()
             ]),
-            popular_all_time(),
+        #    popular_all_time(),
             dbc.Row([
                 html.Div(["Developed by ", 
                           html.A("Jason Motylinski", href='https://jason.motylinski.com'), 
