@@ -85,3 +85,9 @@ class WXPN(object):
 
 class THECURRENT(object):
     SERVICE_ID=1
+
+class WFUV(object):
+    SERVICE_ID=5
+    DAY_JSON="output/wfuv/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
+    URL="https://wfuv.org/views/ajax"
+    DAY_CSV="output/wfuv/csv/{0}/{1}/{2}.csv"
