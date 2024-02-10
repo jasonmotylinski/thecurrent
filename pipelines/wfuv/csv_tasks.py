@@ -1,11 +1,12 @@
 import bs4 as bs
 import config
 import csv
-import datetime
 import json
 import luigi
 import os
 
+from calendar import monthrange
+from datetime import datetime, timezone, timedelta
 from luigi.format import UTF8
 from pipelines import create_id
 from pipelines.wfuv.json_tasks import SaveDayJsonToLocal
@@ -33,8 +34,8 @@ class ConvertDayJsonToCsv(luigi.Task):
                     dte=tr.find('td', {'headers': 'view-created-table-column'}).text.strip()
                     song=tr.find('td', {'headers': 'view-title-table-column'}).text.strip()
                     artist=tr.find('td', {'headers': 'view-field-artist-table-column'}).text.strip()
-                    d=datetime.datetime.strptime(dte, "%m/%d, %H:%M%p")
-                    played_at=d.replace(year=2023, tzinfo = datetime.timezone(offset=datetime.timedelta(hours=-5)))
+                    d=datetime.strptime(dte, "%m/%d, %H:%M%p")
+                    played_at=d.replace(year=int(self.date.strftime("%Y")), tzinfo = timezone(offset=timedelta(hours=-5)))
         
                     writer.writerow([  create_id(played_at, artist, song, config.WFUV.SERVICE_ID), 
                                        artist,
@@ -72,3 +73,14 @@ class ConvertDayJsonToCsv(luigi.Task):
     def requires(self):
         """Requires."""
         yield SaveDayJsonToLocal(self.date)
+
+class CreateMonthCsv(luigi.WrapperTask):
+    """Parse the articles from the HTML for the given month."""
+    year = luigi.IntParameter()
+    month = luigi.IntParameter()
+
+    def requires(self):
+        month_days = monthrange(int(self.year), int(self.month))
+        for i in range(1, month_days[1] + 1):
+            yield ConvertDayJsonToCsv(datetime(int(self.year), int(self.month), i))
+
