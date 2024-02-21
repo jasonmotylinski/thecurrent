@@ -34,13 +34,13 @@ class ConvertDayJsonToCsv(luigi.Task):
                     if "air_date" in s:
                         played_at=s['air_date']
                     played_at=datetime.strptime(played_at+"-05:00", "%Y-%m-%d %H:%M:%S%z") 
-                    writer.writerow([  create_id(played_at, s["artist"], s["song"], config.KUTX.SERVICE_ID), 
+                    writer.writerow([  create_id(played_at, s["artist"], s["song"], config.WXPN.SERVICE_ID), 
                                         s["artist"],
                                         s["song"],
                                          s["album"],
                                         played_at.isoformat(),
                                         '', # Duration
-                                        config.KUTX.SERVICE_ID, # Service ID
+                                        config.WXPN.SERVICE_ID, # Service ID
                                         '',
                                         '',
                                         '',
