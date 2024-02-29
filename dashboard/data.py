@@ -144,9 +144,8 @@ def get_popular_all_time_timeseries():
     key='popular_all_time_timeseries.sql'
     if not r.exists(key):
         t = get_sql(key)
-        con = sqlite3.connect(config.DB)
         log.debug(t)
-        value=pd.read_sql(t, con).to_json()
+        value=pd.read_sql(t, get_engine()).to_json()
         r.set(key, value, exat=tomorrow_at_105_am_est())
 
     return pd.read_json(r.get(key).decode())
