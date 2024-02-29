@@ -70,3 +70,4 @@ metastore_db
 
 *.sqlite3
 *.db
+.env

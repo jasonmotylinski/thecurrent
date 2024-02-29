@@ -1,13 +1,12 @@
 import config
 import logging
+import pandas as pd
 import redis
 import sqlite3
-import pandas as pd
 import time 
 
 from sqlalchemy import create_engine
 from flask.logging import default_handler
-
 
 
 from datetime import datetime, timedelta
@@ -160,13 +159,13 @@ def get_popular_all_time(start_date=None, end_date=None):
     if r.exists(key):
         df=pd.read_json(r.get(key).decode())
     else:
+        log.info("CACHE MISS: {0}".format(key))
         where=""
         if start_date and end_date:
             where="WHERE played_at >='{0}' AND played_at <='{1}'".format(start_date, end_date)
         t = get_sql(key).format(where=where)
-        con = sqlite3.connect(config.DB)
         log.debug(t)
-        df=pd.read_sql(t, con)
+        df=pd.read_sql(t, get_engine())
     return df
 
 def get_popular_day_hour_data(hour, day_of_week):
