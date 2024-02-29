@@ -114,9 +114,7 @@ def get_popular_title_for_each_artist():
     if r.exists(key):
         df=pd.read_json(r.get(key).decode())
     else:
-
         t=get_sql(key).format()
-
         con = sqlite3.connect(config.DB)
         log.debug(t)
         df=pd.read_sql(t, con)
