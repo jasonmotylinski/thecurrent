@@ -1,6 +1,9 @@
 import config
 import duckdb
 import glob
+import sys
+
+TRANFORMS_ROOT="sql/transforms/"
 
 def init():
     data={"sqlite_db": config.DB, 
@@ -19,15 +22,20 @@ def init():
     return con
 
 def transforms():
-    for f in glob.glob('sql/transforms/*.sql', recursive=True):
+    for f in glob.glob('{0}*.sql'.format(TRANFORMS_ROOT), recursive=True):
         with open(f) as sql:
             yield(sql.read())
 
 if __name__=="__main__": 
     con = init()
 
-    for t in transforms():
-        con.sql(t)
+    if len(sys.argv) > 1:
+        for a in sys.argv[1:]:
+            with open(TRANFORMS_ROOT + a) as sql:
+                con.sql(sql.read())
+    else:
+        for t in transforms():
+            con.sql(t)
 
 
 

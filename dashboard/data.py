@@ -187,10 +187,10 @@ def get_new_last_90_days():
     key='new_last_90_days.sql'
     if not r.exists(key):
         t=get_sql(key)
-        con = sqlite3.connect(config.DB)
         log.debug(t)
-        value=pd.read_sql(t, con).to_json()
-        r.set(key, value, exat=tomorrow_at_105_am_est())
+        with get_engine().connect() as conn:
+            value=pd.read_sql(t, conn).to_json()
+            r.set(key, value, exat=tomorrow_at_105_am_est())
 
     return pd.read_json(r.get(key).decode())
 
