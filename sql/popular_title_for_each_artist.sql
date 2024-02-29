@@ -1,4 +1,3 @@
-
 SELECT 
     artist, title, ct, rnk
 FROM (
