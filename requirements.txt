@@ -3,10 +3,10 @@ luigi
 elasticsearch-dsl==2.1.0
 requests
 dash
-pandas
+pandas>=2.2.1
 dash-bootstrap-components
 gunicorn
-sqlalchemy
+sqlalchemy>=2.0.27
 redis
 colour
 musicbrainzngs
