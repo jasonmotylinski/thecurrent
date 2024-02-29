@@ -101,10 +101,10 @@ def get_popular_artist_last_week():
         end_date=last_week["end_date"]
         start_date=last_week["start_date"]
         t=get_sql(key).format(start_date=start_date, end_date=end_date)
-
-        con = sqlite3.connect(config.DB)
-        log.debug(t)
-        df=pd.read_sql(t, con)
+        with get_engine().connect() as conn:
+            value=pd.read_sql(t, conn).to_json()
+            r.set(key, value, exat=tomorrow_at_105_am_est())
+        df=pd.read_json(r.get(key).decode())
     return df
 
 def get_popular_title_for_each_artist():
