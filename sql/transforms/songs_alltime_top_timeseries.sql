@@ -5,10 +5,10 @@ SELECT
     month,
     year || '-' || month AS year_month, 
     COUNT(*) as ct 
-FROM postgres.songs 
+FROM sqlite.songs 
 WHERE artist IN(
     SELECT artist
-    FROM postgres.songs
+    FROM sqlite.songs
     WHERE service_id=1 
     GROUP BY artist
     ORDER BY COUNT(*) DESC
