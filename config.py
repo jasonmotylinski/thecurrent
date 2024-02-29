@@ -1,4 +1,8 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 DEBUG=os.getenv("DEBUG", False)
 
@@ -7,8 +11,12 @@ DB="thecurrent.sqlite3"
 DB_MYSQL_HOST=os.getenv("DB_MYSQL_HOST")
 DB_MYSQL_USER=os.getenv("DB_MYSQL_USER")
 DB_MYSQL_PASSWD=os.getenv("DB_MYSQL_PASSWD")
-DB_MYSQL_DB="thecurrent"
-DB_MYSQL_CONN="mysql://{1}:{2}@{0}/{3}".format(DB_MYSQL_HOST, DB_MYSQL_USER, DB_MYSQL_PASSWD, DB_MYSQL_DB)
+DB_PG_HOST=os.getenv("DB_PGL_HOST")
+DB_PG_USER=os.getenv("DB_PG_USER")
+DB_PG_PASSWD=os.getenv("DB_PG_PASSWD")
+DB_NAME="thecurrent"
+DB_MYSQL_CONN="mysql://{1}:{2}@{0}/{3}".format(DB_MYSQL_HOST, DB_MYSQL_USER, DB_MYSQL_PASSWD, DB_NAME)
+DB_PG_CONN="postgresql+psycopg://{1}:{2}@{0}/{3}".format(DB_PG_HOST, DB_PG_USER, DB_PG_PASSWD, DB_NAME)
 
 CSV_HEADER_ROW = ['id', 'artist', 'title', 'album', 'played_at', 'duration', 'service_id', 'song_id', 'play_id', 
                   'composer', 'conductor', 'orch_ensemble', 'soloist_1', 'soloist_2', 'soloist_3', 'soloist_4',

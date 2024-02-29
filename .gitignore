@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 venv
-=======
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -71,3 +69,4 @@ metastore_db
 .DS_Store
 
 *.sqlite3
+*.db

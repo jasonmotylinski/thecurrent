@@ -12,4 +12,7 @@ colour
 musicbrainzngs
 flask_caching
 spotipy
- mysql-connector-python
+mysql-connector-python
+python-dotenv
+psycopg[binary,pool]
+duckdb

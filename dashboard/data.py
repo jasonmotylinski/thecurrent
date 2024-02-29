@@ -4,6 +4,8 @@ import redis
 import sqlite3
 import pandas as pd
 import time 
+
+from sqlalchemy import create_engine
 from flask.logging import default_handler
 
 
@@ -20,6 +22,9 @@ def get_redis():
     if redis_client is None:
         redis_client=redis.Redis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.REDIS_DB)
     return redis_client
+
+def get_engine():
+    return create_engine(config.DB_PG_CONN)
 
 def get_yesterday():
     return datetime.utcnow() - timedelta(days=1)
