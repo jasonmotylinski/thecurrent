@@ -145,8 +145,9 @@ def get_popular_all_time_timeseries():
     if not r.exists(key):
         t = get_sql(key)
         log.debug(t)
-        value=pd.read_sql(t, get_engine()).to_json()
-        r.set(key, value, exat=tomorrow_at_105_am_est())
+        with get_engine().connect() as conn:
+            value=pd.read_sql(t, conn).to_json()
+            r.set(key, value, exat=tomorrow_at_105_am_est())
 
     return pd.read_json(r.get(key).decode())
 
@@ -163,8 +164,8 @@ def get_popular_all_time(start_date=None, end_date=None):
         if start_date and end_date:
             where="WHERE played_at >='{0}' AND played_at <='{1}'".format(start_date, end_date)
         t = get_sql(key).format(where=where)
-        log.debug(t)
-        df=pd.read_sql(t, get_engine())
+        with get_engine().connect() as conn:
+            df=pd.read_sql(t, conn)
     return df
 
 def get_popular_day_hour_data(hour, day_of_week):
