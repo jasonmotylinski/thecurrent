@@ -12,7 +12,7 @@ def init():
     sql = """   
     SET GLOBAL sqlite_all_varchar = true;
     ATTACH 'sqlite:{sqlite_db}' AS sqlite;
-    ATTACH 'postgres:dbname={db_pg_name} user={db_pg_user} password={db_pg_passwd} host={db_pg_host} port=15432' AS postgres;
+    ATTACH 'postgres:dbname={db_pg_name} user={db_pg_user} password={db_pg_passwd} host={db_pg_host}' AS postgres;
     """.format(**data)
     con = duckdb.connect("file.db")
     con.sql(sql)
