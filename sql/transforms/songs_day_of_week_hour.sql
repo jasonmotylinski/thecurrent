@@ -3,6 +3,9 @@ SELECT
     artist, 
     title,
     CAST(played_at AS DATE) as played_at,
+    year,
+    month,
+    week,
     day_of_week,
     hour,
     COUNT(*) as ct
@@ -13,5 +16,8 @@ GROUP BY
     artist, 
     title,
     CAST(played_at AS DATE),
+    year,
+    month,
+    week,
     day_of_week, 
     hour

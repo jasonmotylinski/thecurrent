@@ -1,15 +1,16 @@
-WITH week_count(ymw, ct) AS (
-    SELECT 
-        CAST(year || PRINTF('%02d',month) ||  PRINTF('%02d',week) AS INT) AS ymw,
+WITH week_count(year, month, week, ct) AS (
+    SELECT
+        year,
+        month,
+        week,
         COUNT(*) as ct
     FROM 
-        songs
+        songs_day_of_week_hour
     WHERE  
-        service_id=1 
-        AND artist="{artist}"
-        AND title="{title}"
-        AND played_at >= '{start_date.year}-{start_date.month:02d}-{start_date.day:02d}T00:00:00.000-06:00'
-        AND played_at <= '{end_date.year}-{end_date.month:02d}-{end_date.day:02d}T23:59:59.000-06:00'
+        artist='{artist}'
+        AND title='{title}'
+        AND played_at >= CURRENT_DATE - INTERVAL '90 DAY'
+        AND played_at <= CURRENT_DATE
     GROUP BY
         year,
         month,
@@ -25,9 +26,15 @@ SELECT
     CASE WHEN wc.ct IS NULL THEN 0 ELSE wc.ct END AS ct
 FROM (
     SELECT 
-DISTINCT CAST(year || PRINTF('%02d',month) ||  PRINTF('%02d',week_of_year) AS INT) AS ymw 
+        DISTINCT
+        year,
+        month,
+        week_of_year,
+        year || TO_CHAR(month::int, 'FM00') || TO_CHAR(week_of_year::int, 'FM00') AS ymw
     FROM calendar 
-) c
-LEFT OUTER JOIN week_count wc ON c.ymw=wc.ymw
-WHERE c.ymw >= '{start_date.year}{start_date.month:02d}{start_date_week:02d}'
-AND c.ymw <= '{end_date.year}{end_date.month:02d}{end_date_week:02d}'
+    WHERE
+        month != 'month'
+) AS c
+LEFT OUTER JOIN week_count AS wc ON c.year=wc.year AND c.month=wc.month AND c.week_of_year=wc.week
+WHERE c.ymw >= to_char(CURRENT_DATE - INTERVAL '90 DAY', 'YYYYMMIW')
+AND c.ymw <= to_char(CURRENT_DATE, 'YYYYMMIW')
