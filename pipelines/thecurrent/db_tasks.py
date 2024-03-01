@@ -12,7 +12,7 @@ from pipelines import clean_str
 class InsertDayDataMysql(mysqldb.CopyToTable):
     date = luigi.DateParameter()
     reflect = True
-    database = config.DB_MYSQL_DB
+    database = config.DB_NAME
     host = config.DB_MYSQL_HOST
     password = config.DB_MYSQL_PASSWD
     user = config.DB_MYSQL_USER
@@ -76,7 +76,6 @@ class InsertDayData(luigi.Task):
         """Requires."""
         yield ConvertDayHtmlToCsv(self.date)
         
-
 class InsertDayRangeData(luigi.Task):
     end_date=luigi.DateParameter()
     start_date=luigi.DateParameter()
@@ -84,7 +83,6 @@ class InsertDayRangeData(luigi.Task):
     def requires(self):
         for d in [self.start_date+timedelta(days=x) for x in range((self.end_date-self.start_date).days + 1)]:
             yield InsertDayData(d)
-            yield InsertDayDataMysql(d)
 
 class BackfillLastXDaysData(luigi.Task):
 
@@ -120,4 +118,3 @@ class BackfillLastXDaysData(luigi.Task):
     def requires(self):
         for d in [datetime.now()-timedelta(days=x) for x in range(1, self.last_x_days + 1)]:
             yield InsertDayData(d)
-            yield InsertDayDataMysql(d)
