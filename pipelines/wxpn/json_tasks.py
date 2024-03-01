@@ -1,26 +1,21 @@
 import config
-import json
 import luigi
 import requests
 
 from calendar import monthrange
 from datetime import datetime
+from pipelines import BaseSaveDayJsonToLocal
 
+class SaveDayJsonToLocal(BaseSaveDayJsonToLocal):
 
-class SaveDayJsonToLocal(luigi.Task):
-    """Get an hour of playlist."""
-    date = luigi.DateParameter()
+    def __init__(self, *args, **kwargs):
+        super(SaveDayJsonToLocal, self).__init__(*args, **kwargs)
+        self.config= config.WXPN
 
-    def output(self):
-        """Output."""
-        return luigi.LocalTarget(config.WXPN.DAY_JSON.format(year=int(self.date.strftime("%Y")), month=int(self.date.strftime("%m")), day=int(self.date.strftime("%d"))))
-
-    def run(self):
+    def get_json(self):
         """Run."""
-        with self.output().open('w') as f:
-            r=requests.get(config.WXPN.DAY_URL.format(date=self.date))
-
-            f.write(json.dumps(r.json(), indent=4))
+        r=requests.get(self.config.DAY_URL.format(date=self.date))
+        return r.json()
 
 class SaveMonthJsonToLocal(luigi.Task):
     """Save the HTML for a given month locally."""
