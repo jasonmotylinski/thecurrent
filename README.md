@@ -93,9 +93,9 @@ luigi --module --module csv_tasks ConvertDayHtmlToCsv --date=2016-01-01 --local-
 | week        | integer  | The week of the year the song was played                      |
 | hour        | integer  | The hour block the song was played (0-23)                     |
 
-## Running the analysis
+## Running the Notebooks
 
- 1. Download Spark 2.0.1 from here: http://d3kbcqa49mib13.cloudfront.net/spark-2.1.0-bin-hadoop2.7.tgz
- 1. Untar it to the location /opt/spark-2.1.0-bin-hadoop2.7
- 1. From the command line execute: source profile && pyspark
-
+In VSCode change the `Jupyter Notebook File Root` setting to 
+```
+${workspaceFolder}
+```

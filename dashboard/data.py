@@ -48,6 +48,19 @@ def get_sql(filename):
         sql=f.read()
     return sql
 
+def get_data(filename, params={}, cache_expire_at=tomorrow_at_105_am_est()):
+    r=get_redis()
+    
+    key=filename + "_".join([str(v) for v in params.values()])
+
+    if not r.exists(key):
+        t=get_sql(filename) % (params)
+        with get_engine().connect() as conn:
+            value=pd.read_sql(t, conn).to_json()
+            r.set(key, value, exat=cache_expire_at)
+    
+    return pd.read_json(r.get(key).decode())
+
 def get_last_updated():
     filename="last_updated.sql"
     t=get_sql(filename)
@@ -57,52 +70,40 @@ def get_last_updated():
     return value
 
 def get_title_timeseries(artist, title, start_date, end_date):
-    r=get_redis()
+
     filename='title_timeseries.sql'
-    key=filename+ "_"+artist+title+start_date.strftime("%Y%m%d")+end_date.strftime("%Y%m%d")
+    params={
+        "artist": artist, 
+        "title": title, 
+        "start_date": start_date,
+        "start_date_week": int(start_date.strftime("%U")), 
+        "end_date": end_date, 
+        "end_date_week": int(end_date.strftime("%U"))
+    }
     
-    if not r.exists(key):
-        t=get_sql(filename).format(artist=artist, title=title, start_date=start_date, start_date_week=int(start_date.strftime("%U")), end_date=end_date, end_date_week=int(end_date.strftime("%U")))
-        with get_engine().connect() as conn:
-            value=pd.read_sql(t, conn).to_json()
-            r.set(key, value, exat=tomorrow_at_105_am_est())
-    
-    df=pd.read_json(r.get(key).decode())
-    df["ymw"]=df["ymw"].astype("str")
+    df=get_data(filename, params)
+    df["yw"]=df["yw"].astype("str")
     return df
 
 def get_popular_artist_title_last_week():
-    r=get_redis()
-    key='popular_artist_title_last_week.sql'
-
-    if not r.exists(key):
-        last_week=get_last_week_range()
-        end_date=last_week["end_date"]
-        start_date=last_week["start_date"]
-        t=get_sql(key).format(start_date=start_date, end_date=end_date)
-        with get_engine().connect() as conn:
-            value=pd.read_sql(t, conn).to_json()
-            r.set(key, value, exat=tomorrow_at_105_am_est())
-
-    return pd.read_json(r.get(key).decode())
-   
+    last_week=get_last_week_range()
+    filename='popular_artist_title_last_week.sql'
+    params={
+        "last_week": get_last_week_range(),
+        "end_date": last_week["end_date"],
+        "start_date": last_week["start_date"]
+    }
+  
+    return get_data(filename, params)
 
 def get_popular_artist_last_week():
-    r=get_redis()
-    df=None
-    key='popular_artist_last_week.sql'
-    if r.exists(key):
-        df=pd.read_json(r.get(key).decode())
-    else:
-        last_week=get_last_week_range()
-        end_date=last_week["end_date"]
-        start_date=last_week["start_date"]
-        t=get_sql(key).format(start_date=start_date, end_date=end_date)
-        with get_engine().connect() as conn:
-            value=pd.read_sql(t, conn).to_json()
-            r.set(key, value, exat=tomorrow_at_105_am_est())
-        df=pd.read_json(r.get(key).decode())
-    return df
+    last_week=get_last_week_range()
+    filename='popular_artist_last_week.sql'
+    params={
+        "end_date": last_week["end_date"],
+        "start_date": last_week["start_date"]
+    }
+    return get_data(filename, params)
 
 def get_popular_title_for_each_artist():
     r=get_redis()
@@ -134,60 +135,26 @@ def get_new_yesterday():
     return df
 
 def get_popular_all_time_timeseries():
-    r=get_redis()
-    
-    key='popular_all_time_timeseries.sql'
-    if not r.exists(key):
-        t = get_sql(key)
-        log.debug(t)
-        with get_engine().connect() as conn:
-            value=pd.read_sql(t, conn).to_json()
-            r.set(key, value, exat=tomorrow_at_105_am_est())
-
-    return pd.read_json(r.get(key).decode())
+    filename='popular_all_time_timeseries.sql'
+    return get_data(filename)
 
 def get_popular_all_time(start_date=None, end_date=None):
-
-    r=get_redis()
-    df=None
-    key='popular_all_time.sql'
-    if r.exists(key):
-        df=pd.read_json(r.get(key).decode())
-    else:
-        log.info("CACHE MISS: {0}".format(key))
-        where=""
-        if start_date and end_date:
-            where="WHERE played_at >='{0}' AND played_at <='{1}'".format(start_date, end_date)
-        t = get_sql(key).format(where=where)
-        with get_engine().connect() as conn:
-            df=pd.read_sql(t, conn)
-    return df
+    filename='popular_all_time.sql'
+    return get_data(filename)
 
 def get_popular_day_hour_data(hour, day_of_week):
-    r=get_redis()
-    df=None
-    key='popular_day_hour.sql'
-    if r.exists(key):
-        df=pd.read_json(r.get(key).decode())
-    else:
-        t=get_sql(key).format(hour=hour, day_of_week=day_of_week)
-        with get_engine().connect() as conn:
-            df=pd.read_sql(t, conn)
-    return df
+    params={
+        "hour": hour, 
+        "day_of_week": day_of_week
+    }
+    filename='popular_day_hour.sql'
+    return get_data(filename, params, in_5_minutes())
+
 
 def get_new_last_90_days():
-    r=get_redis()
-
-    key='new_last_90_days.sql'
-    if not r.exists(key):
-        t=get_sql(key)
-        log.debug(t)
-        with get_engine().connect() as conn:
-            value=pd.read_sql(t, conn).to_json()
-            r.set(key, value, exat=tomorrow_at_105_am_est())
-
-    return pd.read_json(r.get(key).decode())
-
+    filename='new_last_90_days.sql'
+    return get_data(filename)
+   
 def get_artists():
     sql="SELECT DISTINCT artist FROM songs WHERE artist != ''"
     con = sqlite3.connect(config.DB)

@@ -3,8 +3,8 @@ SELECT
     SUM(ct) AS ct
 FROM artists_day_of_week_hour
 WHERE 
-    day_of_week='{day_of_week}'
-    AND hour='{hour}'
+    day_of_week='%(day_of_week)s'
+    AND hour='%(hour)s'
 GROUP BY 
     artist,
     day_of_week,
