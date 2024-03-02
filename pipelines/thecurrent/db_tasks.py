@@ -84,7 +84,7 @@ class InsertDayRangeData(luigi.Task):
         for d in [self.start_date+timedelta(days=x) for x in range((self.end_date-self.start_date).days + 1)]:
             yield InsertDayData(d)
 
-class BackfillLastXDaysData(luigi.Task):
+class KCMPBackfillLastXDaysData(luigi.Task):
 
     last_x_days=luigi.IntParameter()
 
