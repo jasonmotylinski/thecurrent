@@ -78,24 +78,29 @@ class KEXP(object):
     DAY_JSON="output/kexp/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
     DAY_CSV="output/kexp/csv/{0}/{1}/{2}.csv"
     SERVICE_ID=2
+    SERVICE_NAME="kexp"
 
 class KUTX(object):
     DAY_URL="https://api.composer.nprstations.org/v1/widget/50ef24ebe1c8a1369593d032/day?date={date.year}-{date.month:02d}-{date.day:02d}&format=json"
     DAY_JSON="output/kutx/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
     DAY_CSV="output/kutx/csv/{0}/{1}/{2}.csv"
     SERVICE_ID=3
+    SERVICE_NAME="kutx"
 
 class WXPN(object):
     DAY_URL="https://origin.xpn.org/utils/playlist/json/{date.year}-{date.month:02d}-{date.day:02d}.json"
     DAY_JSON="output/wxpn/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
     DAY_CSV="output/wxpn/csv/{0}/{1}/{2}.csv"
     SERVICE_ID=4
+    SERVICE_NAME="wxpn"
 
 class THECURRENT(object):
     SERVICE_ID=1
+    SERVICE_NAME="kcmp"
 
 class WFUV(object):
     SERVICE_ID=5
+    SERVICE_NAME="wfuv"
     DAY_JSON="output/wfuv/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
     URL="https://wfuv.org/views/ajax"
     DAY_CSV="output/wfuv/csv/{0}/{1}/{2}.csv"

@@ -1,86 +1,63 @@
 import bs4 as bs
 import config
-import csv
 import json
 import luigi
-import os
-
-from calendar import monthrange
 from datetime import datetime, timezone, timedelta
-from luigi.format import UTF8
-from pipelines import create_id
+from pipelines import create_id, BaseConvertDayJsonToCsv
 from pipelines.wfuv.json_tasks import SaveDayJsonToLocal
 
 
-class ConvertDayJsonToCsv(luigi.Task):
+class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
     """Parse the articles from the JSON for the given day."""
     date = luigi.DateParameter()
 
-    def output(self):
-        """Output."""
-        return luigi.LocalTarget(config.WFUV.DAY_CSV.format(self.date.strftime("%Y"), self.date.strftime("%m"), self.date.strftime("%Y%m%d")),format=UTF8)
-
-    def run(self):
-        """Run."""
-        with self.input()[0].open('r') as i:         
-            d = os.path.dirname(self.output().path)
-            if not os.path.exists(d):
-                os.makedirs(d)
-            with open(self.output().path, 'w') as f:
-                writer = csv.writer(f, delimiter=',', quoting=csv.QUOTE_ALL)
-                writer.writerow(config.CSV_HEADER_ROW)
-                tbody=bs.BeautifulSoup(json.load(i)[4]['data']).select_one('tbody')
-                for tr in tbody.select('tr'):
-                    dte=tr.find('td', {'headers': 'view-created-table-column'}).text.strip()
-                    song=tr.find('td', {'headers': 'view-title-table-column'}).text.strip()
-                    artist=tr.find('td', {'headers': 'view-field-artist-table-column'}).text.strip()
-                    d=datetime.strptime(dte, "%m/%d, %H:%M%p")
-                    played_at=d.replace(year=int(self.date.strftime("%Y")), tzinfo = timezone(offset=timedelta(hours=-5)))
-        
-                    writer.writerow([  create_id(played_at, artist, song, config.WFUV.SERVICE_ID), 
-                                       artist,
-                                        song,
-                                        '',
-                                        played_at.isoformat(),
-                                        '', # Duration
-                                        config.WFUV.SERVICE_ID, # Service ID
-                                        '',
-                                        '',
-                                        '',
-                                        '',
-                                        '',
-                                        '',
-                                        '',
-                                        '',
-                                        '',
-                                        '',
-                                        '',
-                                        '',
-                                        '',
-                                        '',
-                                        '',
-                                        '',
-                                        '',
-                                        '',
-                                        '',
-                                        played_at.strftime("%Y"),
-                                        played_at.strftime("%m"),
-                                        played_at.strftime("%d"),
-                                        played_at.strftime("%A"),
-                                        played_at.strftime("%U"),
-                                        played_at.strftime("%H")])
+    def __init__(self, *args, **kwargs):
+        super(ConvertDayJsonToCsv, self).__init__(*args, **kwargs)
+        self.config= config.WFUV
 
     def requires(self):
         """Requires."""
         yield SaveDayJsonToLocal(self.date)
+        
+    def get_rows(self, input):
+        tbody=bs.BeautifulSoup(json.load(input)[4]['data']).select_one('tbody')
+        for tr in tbody.select('tr'):
+            dte=tr.find('td', {'headers': 'view-created-table-column'}).text.strip()
+            song=tr.find('td', {'headers': 'view-title-table-column'}).text.strip()
+            artist=tr.find('td', {'headers': 'view-field-artist-table-column'}).text.strip()
+            d=datetime.strptime(dte, "%m/%d, %H:%M%p")
+            played_at=d.replace(year=int(self.date.strftime("%Y")), tzinfo = timezone(offset=timedelta(hours=-5)))
 
-class CreateMonthCsv(luigi.WrapperTask):
-    """Parse the articles from the HTML for the given month."""
-    year = luigi.IntParameter()
-    month = luigi.IntParameter()
-
-    def requires(self):
-        month_days = monthrange(int(self.year), int(self.month))
-        for i in range(1, month_days[1] + 1):
-            yield ConvertDayJsonToCsv(datetime(int(self.year), int(self.month), i))
+            yield [create_id(played_at, artist, song, self.config.SERVICE_ID), 
+                    artist,
+                    song,
+                    '',
+                    played_at.isoformat(),
+                    '', # Duration
+                    self.config.SERVICE_ID, # Service ID
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    played_at.strftime("%Y"),
+                    played_at.strftime("%m"),
+                    played_at.strftime("%d"),
+                    played_at.strftime("%A"),
+                    played_at.strftime("%U"),
+                    played_at.strftime("%H")]
 
