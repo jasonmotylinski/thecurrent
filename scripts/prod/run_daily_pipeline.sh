@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cd /var/projects/thecurrent
+export PYTHONPATH=.
 source /var/projects/thecurrent/venv/bin/activate
 luigi --module pipelines.thecurrent.db_tasks BackfillLastXDaysData --last-x-days=7 --local-scheduler
 luigi --module pipelines BackfillLastXDaysData --last-x-days=7 --service-name=kexp --local-scheduler
