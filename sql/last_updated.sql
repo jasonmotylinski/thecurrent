@@ -1,1 +1,1 @@
-SELECT DATETIME(MAX(played_at)) AS last_updated FROM songs;
+SELECT DATETIME(MAX(played_at)) AS last_updated FROM songs WHERE service_id=1;
