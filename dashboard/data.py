@@ -4,12 +4,11 @@ import pandas as pd
 import redis
 import sqlite3
 import time 
-
-from sqlalchemy import create_engine
-from flask.logging import default_handler
-
-
+from io import StringIO
 from datetime import datetime, timedelta
+from flask.logging import default_handler
+from sqlalchemy import create_engine
+
 
 log = logging.getLogger()
 log.addHandler(default_handler)
@@ -109,7 +108,7 @@ def get_data(filename, params={}, cache_expire_at=tomorrow_at_105_am_est()):
             value=pd.read_sql(t, conn).to_json()
             r.set(key, value, exat=cache_expire_at)
     
-    return pd.read_json(r.get(key).decode())
+    return pd.read_json(StringIO(r.get(key).decode()))
 
 def get_last_updated():
     """Gets the date the data was last updated

@@ -112,8 +112,9 @@ class CreateYearCsv(luigi.Task):
             writer.writerow(config.CSV_HEADER_ROW)
             for month in range(1, 13):
                 month_days = monthrange(int(self.year), int(month))
-                for day in range(1, month_days[1] + 1):
-                    with open(config.THECURRENT_DAY_CSV.format(self.year, "{0:02d}".format(month), "{0:02d}".format(day)), "r") as f:
+                for day in range(1, month_days[1] + 1):         
+                    date="{0}{1:02d}{2:02d}".format(self.year, month,day)
+                    with open(config.THECURRENT_DAY_CSV.format(self.year, "{0:02d}".format(month), date), "r") as f:
                         reader = csv.reader(f, delimiter=',')
                         next(reader, None)
                         for row in reader:

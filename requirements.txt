@@ -2,7 +2,7 @@ beautifulsoup4
 luigi
 elasticsearch-dsl==2.1.0
 requests
-dash
+dash==2.16
 pandas>=2.2.1
 dash-bootstrap-components
 gunicorn
