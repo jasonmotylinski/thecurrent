@@ -110,7 +110,7 @@ def get_data(filename, params={}, cache_expire_at=tomorrow_at_105_am_est()):
     try:
         return pd.read_json(StringIO(r.get(key).decode()))
     except Exception as e:
-        log.error("{0}: {1}".format(key, e))
+        log.error("get_data:ERROR:key:{0}: {1}".format(key, e))
         return pd
 
 def get_last_updated():
