@@ -107,8 +107,11 @@ def get_data(filename, params={}, cache_expire_at=tomorrow_at_105_am_est()):
         with get_engine().connect() as conn:
             value=pd.read_sql(t, conn).to_json()
             r.set(key, value, exat=cache_expire_at)
-    
-    return pd.read_json(StringIO(r.get(key).decode()))
+    try:
+        return pd.read_json(StringIO(r.get(key).decode()))
+    except Exception as e:
+        log.error("{0}: {1}".format(key, e))
+        return pd
 
 def get_last_updated():
     """Gets the date the data was last updated
