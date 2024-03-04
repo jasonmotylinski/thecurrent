@@ -27,6 +27,7 @@ cache = Cache(app.server, config={
 })
 
 server.register_blueprint(api_routes)
+
 def popular_artist_title_last_week_cell():
     df=data.get_popular_artist_title_last_week()
     end_date=datetime.utcnow()
