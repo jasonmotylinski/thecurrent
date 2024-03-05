@@ -103,10 +103,12 @@ def get_data(filename, params={}, cache_expire_at=tomorrow_at_105_am_est()):
     key=filename + "_".join([str(v) for v in params.values()])
 
     if not r.exists(key):
+        log.info("get_data:INFO:cache miss:key:{0}".format(key))
         t=get_sql(filename) % (params)
         with get_engine().connect() as conn:
             value=pd.read_sql(t, conn).to_json()
             r.set(key, value, exat=cache_expire_at)
+            log.info("get_data:INFO:set key:{0} exat: {1}".format(key, cache_expire_at))
     try:
         return pd.read_json(StringIO(r.get(key).decode()))
     except Exception as e:
