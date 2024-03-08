@@ -149,8 +149,8 @@ def get_popular_artist_title_last_week():
     filename='popular_artist_title_last_week.sql'
     params={
         "last_week": get_last_week_range(),
-        "end_date": last_week["end_date"].date,
-        "start_date": last_week["start_date"].date
+        "end_date": last_week["end_date"].date(),
+        "start_date": last_week["start_date"].date()
     }
   
     return get_data(filename, params)
