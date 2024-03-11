@@ -50,7 +50,7 @@ def get_last_week_range():
     """
     end_date=datetime.utcnow() - timedelta(days=1)
     start_date=datetime.utcnow() - timedelta(days=7)
-    return {"start_date": start_date, "end_date": end_date}
+    return {"start_date": start_date.date(), "end_date": end_date.date()}
 
 def tomorrow_at_105_am_est():
     """Calculates tomorrow at 1:05am eastern time. Used to expire the Redis cache at night.
