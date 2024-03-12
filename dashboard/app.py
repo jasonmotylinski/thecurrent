@@ -8,8 +8,8 @@ import plotly.express as px
 from dash import Dash, dash_table, html, dcc, Input, Output
 from datetime import datetime, timedelta
 from flask_caching import Cache
+from flask.logging import default_handler
 from routes import api_routes
-
 
 external_scripts =[
     "https://www.googletagmanager.com/gtag/js?id=G-HB05PVK153",
@@ -163,7 +163,7 @@ def popular_day_hour():
     ],
     md=6)
 
-@cache.memoize(timeout=600) 
+#@cache.memoize(timeout=600) 
 def serve_layout():
     return html.Div(
         dbc.Container(
@@ -220,6 +220,7 @@ if __name__ == '__main__':
     if config.DEBUG:
         log=logging.getLogger()
         log.setLevel(logging.DEBUG)
+        log.addHandler(default_handler)
         log.info("app: Setting log level to DEBUG")
     app.run_server(debug=config.DEBUG)
 

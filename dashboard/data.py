@@ -6,12 +6,9 @@ import sqlite3
 import time 
 from io import StringIO
 from datetime import datetime, timedelta
-from flask.logging import default_handler
+
 from sqlalchemy import create_engine
-
-
 log = logging.getLogger()
-log.addHandler(default_handler)
 redis_client = None
 SQL_ROOT ="sql/"
 
@@ -110,6 +107,7 @@ def get_data(filename, params={}, cache_expire_at=tomorrow_at_105_am_est()):
             r.set(key, value, exat=cache_expire_at)
             log.info("get_data:INFO:set key:{0} exat: {1}".format(key, cache_expire_at))
     try:
+        log.info("get_data:INFO:reading key from cache:key:{0}".format(key))
         return pd.read_json(StringIO(r.get(key).decode()))
     except Exception as e:
         log.error("get_data:ERROR:key:{0}: {1}".format(key, e))
