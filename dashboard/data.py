@@ -134,9 +134,9 @@ def get_title_timeseries(artist, title, start_date, end_date):
     params={
         "artist": artist.replace('\'', '\'\''), 
         "title": title.replace('\'', '\'\''), 
-        "start_date": start_date,
+        "start_date": start_date.date(),
         "start_date_week": int(start_date.strftime("%U")), 
-        "end_date": end_date, 
+        "end_date": end_date.date(), 
         "end_date_week": int(end_date.strftime("%U"))
     }
     
