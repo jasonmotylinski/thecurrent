@@ -220,5 +220,6 @@ if __name__ == '__main__':
     if config.DEBUG:
         log=logging.getLogger()
         log.setLevel(logging.DEBUG)
+        log.info("app: Setting log level to DEBUG")
     app.run_server(debug=config.DEBUG)
 
