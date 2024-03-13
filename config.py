@@ -5,7 +5,7 @@ load_dotenv()
 
 
 DEBUG=os.getenv("DEBUG", False)
-
+LOGGER_NAME=os.getenv("LOGGER_NAME", "root")
 DB="thecurrent.sqlite3"
 
 DB_MYSQL_HOST=os.getenv("DB_MYSQL_HOST")

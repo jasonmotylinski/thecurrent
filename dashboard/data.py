@@ -8,7 +8,7 @@ from io import StringIO
 from datetime import datetime, timedelta
 
 from sqlalchemy import create_engine
-log = logging.getLogger()
+log = logging.getLogger(config.LOGGER_NAME)
 redis_client = None
 SQL_ROOT ="sql/"
 
