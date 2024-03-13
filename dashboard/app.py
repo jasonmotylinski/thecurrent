@@ -218,7 +218,7 @@ app.layout=serve_layout
 
 if __name__ == '__main__':
     if config.DEBUG:
-        log=logging.getLogger()
+        log=logging.getLogger(config.LOGGER_NAME)
         log.setLevel(logging.DEBUG)
         log.addHandler(default_handler)
         log.info("app: Setting log level to DEBUG")
