@@ -82,7 +82,7 @@ def get_sql(filename):
         sql=f.read()
     return sql
 
-def get_data(filename, params={}, cache_expire_at=tomorrow_at_105_am_est()):
+def get_data(filename, cache_expire_at, params={}):
     """Retrieves the requested data from either Redis cache or Postgres. If the data 
        is not in cache it queries the database, puts the data in cache with the given expiration time,
        and returns the data
@@ -90,7 +90,7 @@ def get_data(filename, params={}, cache_expire_at=tomorrow_at_105_am_est()):
     Args:
         filename (string): The name of the query file.
         params (dict, optional): A dictionary of parameters used in the SQL statement. Defaults to {}.
-        cache_expire_at (_type_, optional): The datetime as an integer to expire the cache at. Defaults to tomorrow_at_105_am_est().
+        cache_expire_at (_type_): The datetime as an integer to expire the cache at. Defaults to tomorrow_at_105_am_est().
 
     Returns:
         DataFrame: A dataframe of the data from the query
@@ -138,7 +138,7 @@ def get_title_timeseries(artist, title, start_date, end_date):
         "end_date_week": int(end_date.strftime("%U"))
     }
     
-    df=get_data(filename, params)
+    df=get_data(filename,tomorrow_at_105_am_est(), params)
     df["yw"]=df["yw"].astype("str")
     return df
 
@@ -151,7 +151,7 @@ def get_popular_artist_title_last_week():
         "start_date": last_week["start_date"]
     }
   
-    return get_data(filename, params)
+    return get_data(filename, tomorrow_at_105_am_est(), params)
 
 def get_popular_artist_last_week():
     last_week=get_last_week_range()
@@ -160,7 +160,7 @@ def get_popular_artist_last_week():
         "end_date": last_week["end_date"],
         "start_date": last_week["start_date"]
     }
-    return get_data(filename, params)
+    return get_data(filename, tomorrow_at_105_am_est(), params)
 
 def get_popular_title_for_each_artist():
     r=get_redis()
@@ -193,11 +193,11 @@ def get_new_yesterday():
 
 def get_popular_all_time_timeseries():
     filename='popular_all_time_timeseries.sql'
-    return get_data(filename)
+    return get_data(filename, tomorrow_at_105_am_est())
 
 def get_popular_all_time(start_date=None, end_date=None):
     filename='popular_all_time.sql'
-    return get_data(filename)
+    return get_data(filename, tomorrow_at_105_am_est())
 
 def get_popular_day_hour_data(hour, day_of_week):
     params={
@@ -205,12 +205,12 @@ def get_popular_day_hour_data(hour, day_of_week):
         "day_of_week": day_of_week
     }
     filename='popular_day_hour.sql'
-    return get_data(filename, params, in_5_minutes())
+    return get_data(filename, in_5_minutes(), params)
 
 
 def get_new_last_90_days():
     filename='new_last_90_days.sql'
-    return get_data(filename)
+    return get_data(filename,tomorrow_at_105_am_est())
    
 def get_artists():
     sql="SELECT DISTINCT artist FROM songs WHERE artist != ''"
