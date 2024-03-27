@@ -61,7 +61,7 @@ def popular_artist_title_last_week_cell():
 
     
     return dbc.Col([
-                html.H3("Top 10 Most Popular Songs in the Last Week", className="text-center"),
+                html.H3([html.A(html.Img(width="20", src="assets/Spotify_Icon_RGB_Black.png"), href="https://open.spotify.com/playlist/0oq9XIzdeGLd90DU2rYxuD?si=2a106dbe16c243fa"),"  Top 10 Most Popular Songs in the Last Week",] ,className="text-center"),
                 html.Table(rows, className="table")
             ], md=6)
 
