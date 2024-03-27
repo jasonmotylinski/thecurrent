@@ -5,8 +5,9 @@ WITH week_count(year, week, ct) AS (
         COUNT(*) as ct
     FROM 
         songs_day_of_week_hour
-    WHERE  
-        artist='%(artist)s'
+    WHERE
+        service_id=%(service_id)s
+        AND artist='%(artist)s'
         AND title='%(title)s'
         AND played_at >= CURRENT_DATE - INTERVAL '90 DAY'
         AND played_at <= CURRENT_DATE

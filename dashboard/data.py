@@ -103,6 +103,7 @@ def get_data(filename, cache_expire_at, params={}):
         log.info("get_data:INFO:cache miss:key:{0}".format(key))
         t=get_sql(filename) % (params)
         with get_engine().connect() as conn:
+            log.info("get_data:INFO:executing SQL:{0}".format(t))
             value=pd.read_sql(t, conn).to_json()
             r.set(key, value, exat=cache_expire_at)
             log.info("get_data:INFO:set key:{0} exat: {1}".format(key, cache_expire_at))
@@ -126,10 +127,11 @@ def get_last_updated():
     value=pd.read_sql(t, con).to_dict()['last_updated'][0]
     return value
 
-def get_title_timeseries(artist, title, start_date, end_date):
+def get_title_timeseries(artist, title, start_date, end_date, service_id=1):
 
     filename='title_timeseries.sql'
     params={
+        "service_id": service_id,
         "artist": artist.replace('\'', '\'\''), 
         "title": title.replace('\'', '\'\''), 
         "start_date": start_date.date(),
@@ -142,10 +144,11 @@ def get_title_timeseries(artist, title, start_date, end_date):
     df["yw"]=df["yw"].astype("str")
     return df
 
-def get_popular_artist_title_last_week():
+def get_popular_artist_title_last_week(service_id=1):
     last_week=get_last_week_range()
     filename='popular_artist_title_last_week.sql'
     params={
+        "service_id": service_id,
         "last_week": get_last_week_range(),
         "end_date": last_week["end_date"],
         "start_date": last_week["start_date"]
@@ -153,10 +156,11 @@ def get_popular_artist_title_last_week():
   
     return get_data(filename, tomorrow_at_105_am_est(), params)
 
-def get_popular_artist_last_week():
+def get_popular_artist_last_week(service_id=1):
     last_week=get_last_week_range()
     filename='popular_artist_last_week.sql'
     params={
+        "service_id": service_id,
         "end_date": last_week["end_date"],
         "start_date": last_week["start_date"]
     }
