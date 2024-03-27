@@ -104,3 +104,10 @@ class WFUV(object):
     DAY_JSON="output/wfuv/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
     URL="https://wfuv.org/views/ajax"
     DAY_CSV="output/wfuv/csv/{0}/{1}/{2}.csv"
+
+class KCRW(object):
+    SERVICE_ID=6
+    SERVICE_NAME="kcrw"
+    DAY_JSON="output/kcrw/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
+    DAY_URL="https://tracklist-api.kcrw.com/Simulcast/date/{date.year}/{date.month:02d}/{date.day:02d}?page_size=2000"
+    DAY_CSV="output/kcrw/csv/{0}/{1}/{2}.csv"
