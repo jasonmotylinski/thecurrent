@@ -4,11 +4,11 @@ SELECT
     artist, 
     title,
     CAST(played_at AS DATE) as played_at,
-    year,
-    month,
-    week,
+    CAST(year AS INT) as year,
+    CAST(month AS INT) as month,
+    CAST(week AS INT) as week,
     day_of_week,
-    hour,
+    CAST(hour AS INT) as hour,
     COUNT(*) as ct
 FROM sqlite.songs
 

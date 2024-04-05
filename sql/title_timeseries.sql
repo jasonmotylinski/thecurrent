@@ -29,8 +29,6 @@ FROM (
         week_of_year,
         year || TO_CHAR(week_of_year::int, 'FM00') AS yw
     FROM calendar 
-    WHERE
-        year != 'year'
 ) AS c
 LEFT OUTER JOIN week_count AS wc ON c.year=wc.year AND c.week_of_year=wc.week
 WHERE c.yw >= to_char(CURRENT_DATE - INTERVAL '90 DAY', 'YYYYIW')

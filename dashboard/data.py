@@ -195,16 +195,23 @@ def get_new_yesterday():
         df=pd.read_sql(t, con)
     return df
 
-def get_popular_all_time_timeseries():
-    filename='popular_all_time_timeseries.sql'
-    return get_data(filename, tomorrow_at_105_am_est())
-
-def get_popular_all_time(start_date=None, end_date=None):
-    filename='popular_all_time.sql'
-    return get_data(filename, tomorrow_at_105_am_est())
-
-def get_popular_day_hour_data(hour, day_of_week):
+def get_popular_all_time_timeseries(service_id):
     params={
+        "service_id": service_id
+    }
+    filename='popular_all_time_timeseries.sql'
+    return get_data(filename, tomorrow_at_105_am_est(), params)
+
+def get_popular_all_time(service_id, start_date=None, end_date=None):
+    params={
+        "service_id": service_id
+    }
+    filename='popular_all_time.sql'
+    return get_data(filename, tomorrow_at_105_am_est(), params)
+
+def get_popular_day_hour_data(service_config, hour, day_of_week):
+    params={
+        "service_id": service_config.SERVICE_ID,
         "hour": hour, 
         "day_of_week": day_of_week
     }
@@ -212,9 +219,12 @@ def get_popular_day_hour_data(hour, day_of_week):
     return get_data(filename, in_5_minutes(), params)
 
 
-def get_new_last_90_days():
+def get_new_last_90_days(service_id=1):
+    params={
+        "service_id": service_id
+    }
     filename='new_last_90_days.sql'
-    return get_data(filename,tomorrow_at_105_am_est())
+    return get_data(filename,tomorrow_at_105_am_est(), params)
    
 def get_artists():
     sql="SELECT DISTINCT artist FROM songs WHERE artist != ''"
