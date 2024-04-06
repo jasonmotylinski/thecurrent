@@ -209,9 +209,9 @@ def get_popular_all_time(service_id, start_date=None, end_date=None):
     filename='popular_all_time.sql'
     return get_data(filename, tomorrow_at_105_am_est(), params)
 
-def get_popular_day_hour_data(service_config, hour, day_of_week):
+def get_popular_day_hour_data(SERVICE_ID, hour, day_of_week):
     params={
-        "service_id": service_config.SERVICE_ID,
+        "service_id": SERVICE_ID,
         "hour": hour, 
         "day_of_week": day_of_week
     }

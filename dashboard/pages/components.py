@@ -162,13 +162,13 @@ def popular_all_time(service_config, data):
             ])
         ])
 
-def popular_day_hour(service_id, data):
+def popular_day_hour(service_config, data):
    
     hour=datetime.utcnow().hour
     day_of_week=datetime.utcnow().strftime("%A")
     hour_label=datetime.now().strftime("%-I %p")
 
-    df_now=data.get_popular_day_hour_data(service_id, hour, day_of_week)
+    df_now=data.get_popular_day_hour_data(service_config.SERVICE_ID, hour, day_of_week)
     return dbc.Col([
         html.H3("Top 5 Most Popular Artists Played on {day_of_week} at {hour_label}".format(day_of_week=day_of_week, hour_label=hour_label), className="text-center", id="popular_day_hour_title"),
         dash_table.DataTable(df_now.to_dict('records'), 
