@@ -7,7 +7,7 @@ WHERE
     AND artist != ''
     AND title != ''
     AND day_of_week='%(day_of_week)s'
-    AND hour='%(hour)s'
+    AND hour=%(hour)s
 GROUP BY 
     artist,
     day_of_week,

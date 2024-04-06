@@ -81,6 +81,9 @@ class KEXP(object):
     SERVICE_NAME="kexp"
     LOGO="/assets/kexp.svg"
     TITLE="90.3 KEXP Trends"
+    PATH="/" + SERVICE_NAME
+    TOP_10_PLAYLIST="https://open.spotify.com/playlist/1oatZdfsBNYNuUhnNTXXnn?si=736fb93fdb704c1f"
+
 
 class KUTX(object):
     DAY_URL="https://api.composer.nprstations.org/v1/widget/50ef24ebe1c8a1369593d032/day?date={date.year}-{date.month:02d}-{date.day:02d}&format=json"
@@ -90,6 +93,8 @@ class KUTX(object):
     SERVICE_NAME="kutx"
     LOGO="/assets/kutx.svg"
     TITLE="98.9 KUTX Trends"
+    PATH="/" + SERVICE_NAME
+    TOP_10_PLAYLIST="https://open.spotify.com/playlist/2Rk9whZHSuQ3NgkNYz1mgZ?si=f58695593b704de4"
 
 class WXPN(object):
     DAY_URL="https://origin.xpn.org/utils/playlist/json/{date.year}-{date.month:02d}-{date.day:02d}.json"
@@ -99,12 +104,16 @@ class WXPN(object):
     SERVICE_NAME="wxpn"
     LOGO="/assets/wxpn.png"
     TITLE="88.5 WXPN Trends"
+    PATH="/" + SERVICE_NAME
+    TOP_10_PLAYLIST="https://open.spotify.com/playlist/3HGci9o2R4x46L5t0YTNGr?si=aff43537bf2845de"
 
 class THECURRENT(object):
     TITLE="89.3 The Current Trends"
     SERVICE_ID=1
     SERVICE_NAME="kcmp"
     LOGO="/assets/kcmp.svg"
+    PATH="/" + SERVICE_NAME
+    TOP_10_PLAYLIST="https://open.spotify.com/playlist/0oq9XIzdeGLd90DU2rYxuD?si=d3d228f5bf544161"
 
 class WFUV(object):
     SERVICE_ID=5
@@ -114,6 +123,8 @@ class WFUV(object):
     DAY_CSV="output/wfuv/csv/{0}/{1}/{2}.csv"
     LOGO="/assets/wfuv.png"
     TITLE="90.7 WFUV Trends"
+    PATH="/" + SERVICE_NAME
+    TOP_10_PLAYLIST="https://open.spotify.com/playlist/1SZMsixhwCY0iAyp4FBYHK?si=5fc1437c6a934177"
 
 class KCRW(object):
     SERVICE_ID=6
@@ -123,6 +134,8 @@ class KCRW(object):
     DAY_CSV="output/kcrw/csv/{0}/{1}/{2}.csv"
     TITLE="89.9 KCRW Trends"
     LOGO="/assets/KCRW_Logo_White.png"
+    PATH="/" + SERVICE_NAME
+    TOP_10_PLAYLIST="https://open.spotify.com/playlist/35d08JaVDjHG8aZMSQx6FE?si=4ec97f4a0b444be9"
 
 SERVICES={
         "kexp": KEXP,
