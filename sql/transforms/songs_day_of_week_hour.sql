@@ -21,4 +21,6 @@ GROUP BY
     month,
     week,
     day_of_week, 
-    hour
+    hour;
+
+CREATE INDEX service_title_played_at_idx ON postgres.songs_day_of_week_hour (service_id, artist, title, played_at);
