@@ -23,4 +23,5 @@ GROUP BY
     day_of_week, 
     hour;
 
-CREATE INDEX service_title_played_at_idx ON postgres.songs_day_of_week_hour (service_id, artist, title, played_at);
+CREATE INDEX IF NOT EXISTS service_title_played_at_idx ON postgres.songs_day_of_week_hour (service_id, artist, title, played_at);
+CREATE INDEX IF NOT EXISTS service_artist_title_idx ON postgres.songs_day_of_week_hour (service_id, artist, title);
