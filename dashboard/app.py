@@ -6,7 +6,7 @@ import flask
 import logging
 
 from pages.components import sidebar
-from dash import Dash, html
+from dash import Dash, html, dcc
 from flask_caching import Cache
 from flask.logging import default_handler
 from routes import api_routes
@@ -37,8 +37,10 @@ def serve_layout():
         [
             sidebar(config),
             
+            dcc.Loading(
             dbc.Container(
             [
+
                 dash.page_container,
                 dbc.Row([
                     html.Div(["Developed by ", 
@@ -59,6 +61,7 @@ def serve_layout():
              , style={
                 "padding-left": "60px"
              }   
+            )
             )
         ]
     )
