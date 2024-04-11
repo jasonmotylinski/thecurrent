@@ -8,4 +8,7 @@ dash.register_page(__name__,
                    path=config.KCRW.PATH,
                    title=config.KCRW.TITLE)
 
-layout = service_rows(config.KCRW, data)
+def run():
+     return service_rows(config.KCRW, data)
+
+layout = run

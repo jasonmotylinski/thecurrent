@@ -8,4 +8,7 @@ dash.register_page(__name__,
                    path=config.KEXP.PATH,
                    title=config.KEXP.TITLE)
 
-layout = service_rows(config.KEXP, data)
+def run():
+     return service_rows(config.KEXP, data)
+
+layout = run

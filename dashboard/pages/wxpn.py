@@ -8,4 +8,7 @@ dash.register_page(__name__,
                    path=config.WXPN.PATH,
                    title=config.WXPN.TITLE)
 
-layout = service_rows(config.WXPN, data)
+def run():
+     return service_rows(config.WXPN, data)
+
+layout = run

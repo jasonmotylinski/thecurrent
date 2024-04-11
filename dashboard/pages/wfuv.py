@@ -8,4 +8,7 @@ dash.register_page(__name__,
                    path=config.WFUV.PATH,
                    title=config.WFUV.TITLE)
 
-layout = service_rows(config.WFUV, data)
+def run():
+     return service_rows(config.WFUV, data)
+
+layout = run

@@ -8,4 +8,7 @@ dash.register_page(__name__,
                    path='',
                    title=config.THECURRENT.TITLE)
 
-layout = service_rows(config.THECURRENT, data)
+def run():
+     return service_rows(config.THECURRENT, data)
+
+layout = run
