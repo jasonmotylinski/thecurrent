@@ -3,17 +3,16 @@ from datetime import datetime
 from dotenv import load_dotenv
 from pipelines.thecurrent.playlist import get_hour_html, get_songs
 from rawkit_playlist import playlist
-from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyClientCredentials
 
 PLAYLIST_ID="3PolUEn6bpV7PPQO8EKkAc"
 load_dotenv()
 
 # authenticating
-scope = "playlist-modify-public playlist-modify-private user-library-read"
-spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
+auth_manager = SpotifyClientCredentials()
+spotify = spotipy.Spotify(auth_manager=auth_manager)
 # user ID for all user parameters in future functions
 user = spotify.current_user()["id"]
-
 
 def get_recent_songs():
     dte=datetime.now()
