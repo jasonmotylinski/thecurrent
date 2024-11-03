@@ -23,7 +23,7 @@ app = Dash(__name__,
            external_stylesheets=[dbc.themes.BOOTSTRAP], 
            server=server)
 app.title = "Loading..."
-app.scripts.config.serve_locally = False
+app.scripts.config.serve_locally = True
 
 cache = Cache(app.server, config={
     'CACHE_TYPE': 'redis',
