@@ -6,12 +6,16 @@ from parsers import BaseParser
 
 class KuomParser(BaseParser):
 
-    def get_songs(self, reader):
+    def __init__(self, config):
+        super(config)
+
+    def get_songs(self, reader, date):
         for day in json.load(reader):
             for spin in bs.BeautifulSoup(day['data']).select('li', {'class': 'spinitron_playlist__spin'}):
                 song=spin.find('div',{'class': 'spinitron_playlist__spin--song'}).text.strip()
                 artist=spin.find('div',{'class': 'spinitron_playlist__spin--artist'}).text.strip()
                 tme=spin.find('div',{'class': 'spinitron_playlist__spin--start'}).text.strip()
-                d=datetime.strptime(self._date.strftime("%Y-%m-%d") + " " + tme, "%Y-%m-%d %H:%M %p")
+                d=datetime.strptime(date.strftime("%Y-%m-%d") + " " + tme, "%Y-%m-%d %H:%M %p")
+                print(d)
                 played_at=d.replace(tzinfo=timezone(timedelta(hours=-5)))
                 yield {"song": song, "artist": artist, "played_at": played_at}

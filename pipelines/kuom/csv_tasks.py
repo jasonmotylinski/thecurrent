@@ -20,7 +20,7 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
     def get_rows(self, input):
         parser=KuomParser(self.config)
 
-        for song in parser.get_songs(input):
+        for song in parser.get_songs(input, self.date):
             yield [create_id(song['played_at'], song['artist'], song['song'], self.config.SERVICE_ID), 
                     song['artist'],
                     song['song'],
