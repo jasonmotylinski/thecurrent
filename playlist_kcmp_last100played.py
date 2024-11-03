@@ -48,6 +48,7 @@ def prune_playlist(pl):
     max_playlist_length=100
     
     if len(pl['tracks']['items']) == max_playlist_length:
+        logger.info("prune_playlist: Playlist is at max length. Removing last item")
         spotify.playlist_remove_all_occurrences_of_items(playlist_id=pl['id'], items=[pl['tracks']['items'][max_playlist_length-1]['track']['uri']])
 
 def update_playlist(last100playlist, spotify_details_for_most_recent_played):
@@ -62,6 +63,7 @@ def update_playlist(last100playlist, spotify_details_for_most_recent_played):
     logger.info("update_playlist: should_add: {0}".format(should_add))
     if should_add:
         prune_playlist(last100playlist)
+        logger.info("update_playlist: adding most recent played uri: {0}".format(spotify_details_for_most_recent_played))
         spotify.playlist_add_items(playlist_id=last100playlist['id'],items=[spotify_details_for_most_recent_played],position=0)
 
 
