@@ -1,3 +1,5 @@
+import logging
+import pytz
 import spotipy
 from datetime import datetime
 from dotenv import load_dotenv
@@ -8,18 +10,36 @@ from spotipy.oauth2 import SpotifyOAuth
 PLAYLIST_ID="3PolUEn6bpV7PPQO8EKkAc"
 load_dotenv()
 
+
+logging.basicConfig(level=logging.INFO)
+logger=logging.getLogger(__name__)
+
+
 # authenticating
 scope = "playlist-modify-public user-library-read"
 spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 # user ID for all user parameters in future functions
 user = spotify.current_user()["id"]
 
+def get_timezone_offset():
+    timezone_name = 'America/New_York'  
+    timezone = pytz.timezone(timezone_name)
+    local_time = datetime.now(timezone)
+    is_dst = bool(local_time.dst())
+    
+    logger.info("get_timezone_offset: is_dst: {0}".format(is_dst))
+    if is_dst:
+        return -1
+    else:
+        return 0
+
+
 def get_recent_songs():
     dte=datetime.now()
     year=dte.year
     month=dte.month
     day=dte.day
-    hour=dte.hour-1
+    hour=dte.hour - get_timezone_offset()
 
     html=get_hour_html(year, month, day, hour)
     return get_songs(html)
@@ -39,15 +59,18 @@ def update_playlist(last100playlist, spotify_details_for_most_recent_played):
     else:
         should_add=True
 
-
+    logger.info("update_playlist: should_add: {0}".format(should_add))
     if should_add:
         prune_playlist(last100playlist)
         spotify.playlist_add_items(playlist_id=last100playlist['id'],items=[spotify_details_for_most_recent_played],position=0)
 
 
 if __name__=="__main__": 
+
+
     # get the most recent played from The Current's website
     most_recent_played=list(get_recent_songs())[0]
+    logger.info("main: most_recent_played: {0}".format(most_recent_played))
 
     # Get the spotify details for the most recent played 
     spotify_details_for_most_recent_played=playlist.compile_track_ids([{"artist_name": most_recent_played['artist'], "song_name": most_recent_played["title"]}])[0]

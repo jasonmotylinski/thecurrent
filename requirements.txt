@@ -16,4 +16,5 @@ mysql-connector-python
 python-dotenv
 psycopg[binary,pool]
 duckdb
+pytz
 git+https://github.com/jasonmotylinski/rawkit-playlist.git#egg=rawkit_playlist
