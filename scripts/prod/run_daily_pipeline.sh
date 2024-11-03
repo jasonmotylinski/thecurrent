@@ -9,3 +9,4 @@ luigi --module pipelines BackfillLastXDaysData --last-x-days=7 --service-name=ku
 luigi --module pipelines BackfillLastXDaysData --last-x-days=7 --service-name=wfuv --local-scheduler
 luigi --module pipelines BackfillLastXDaysData --last-x-days=7 --service-name=wxpn --local-scheduler
 luigi --module pipelines BackfillLastXDaysData --last-x-days=7 --service-name=kcrw --local-scheduler
+luigi --module pipelines BackfillLastXDaysData --last-x-days=7 --service-name=kuom --local-scheduler
