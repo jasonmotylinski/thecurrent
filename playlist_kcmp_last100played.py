@@ -8,12 +8,9 @@ from rawkit_playlist import playlist
 from spotipy.oauth2 import SpotifyOAuth
 
 PLAYLIST_ID="3PolUEn6bpV7PPQO8EKkAc"
+
 load_dotenv()
-
-
 logging.basicConfig(level=logging.INFO)
-logger=logging.getLogger(__name__)
-
 
 # authenticating
 scope = "playlist-modify-public user-library-read"
@@ -27,7 +24,7 @@ def get_timezone_offset():
     local_time = datetime.now(timezone)
     is_dst = bool(local_time.dst())
     
-    logger.info("get_timezone_offset: is_dst: {0}".format(is_dst))
+    logging.info("get_timezone_offset: is_dst: {0}".format(is_dst))
     if is_dst:
         return -1
     else:
@@ -48,7 +45,7 @@ def prune_playlist(pl):
     max_playlist_length=100
     
     if len(pl['tracks']['items']) == max_playlist_length:
-        logger.info("prune_playlist: Playlist is at max length. Removing last item")
+        logging.info("prune_playlist: Playlist is at max length. Removing last item")
         spotify.playlist_remove_all_occurrences_of_items(playlist_id=pl['id'], items=[pl['tracks']['items'][max_playlist_length-1]['track']['uri']])
 
 def update_playlist(last100playlist, spotify_details_for_most_recent_played):
@@ -60,10 +57,10 @@ def update_playlist(last100playlist, spotify_details_for_most_recent_played):
     else:
         should_add=True
 
-    logger.info("update_playlist: should_add: {0}".format(should_add))
+    logging.info("update_playlist: should_add: {0}".format(should_add))
     if should_add:
         prune_playlist(last100playlist)
-        logger.info("update_playlist: adding most recent played uri: {0}".format(spotify_details_for_most_recent_played))
+        logging.info("update_playlist: adding most recent played uri: {0}".format(spotify_details_for_most_recent_played))
         spotify.playlist_add_items(playlist_id=last100playlist['id'],items=[spotify_details_for_most_recent_played],position=0)
 
 
@@ -71,14 +68,19 @@ if __name__=="__main__":
 
 
     # get the most recent played from The Current's website
-    most_recent_played=list(get_recent_songs())[0]
-    logger.info("main: most_recent_played: {0}".format(most_recent_played))
+    recent_songs=list(get_recent_songs())
+    if len(recent_songs) > 0:
+        most_recent_played=recent_songs[0]
+        logging.info("main: most_recent_played: {0}".format(most_recent_played))
 
-    # Get the spotify details for the most recent played 
-    spotify_details_for_most_recent_played=playlist.compile_track_ids([{"artist_name": most_recent_played['artist'], "song_name": most_recent_played["title"]}])[0]
+        # Get the spotify details for the most recent played 
+        spotify_details_for_most_recent_played=playlist.compile_track_ids([{"artist_name": most_recent_played['artist'], "song_name": most_recent_played["title"]}])[0]
 
-    # Get the last 100 playlist
-    last100playlist=spotify.playlist(PLAYLIST_ID)
+        # Get the last 100 playlist
+        last100playlist=spotify.playlist(PLAYLIST_ID)
 
-    # Update the playlist with the details
-    update_playlist(last100playlist, spotify_details_for_most_recent_played)
+        # Update the playlist with the details
+        update_playlist(last100playlist, spotify_details_for_most_recent_played)
+    else:
+        logging.error("main: Unable to get_recent_songs. Found 0")
+
