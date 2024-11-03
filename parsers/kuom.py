@@ -16,6 +16,5 @@ class KuomParser(BaseParser):
                 artist=spin.find('div',{'class': 'spinitron_playlist__spin--artist'}).text.strip()
                 tme=spin.find('div',{'class': 'spinitron_playlist__spin--start'}).text.strip()
                 d=datetime.strptime(date.strftime("%Y-%m-%d") + " " + tme, "%Y-%m-%d %H:%M %p")
-                print(d)
                 played_at=d.replace(tzinfo=timezone(timedelta(hours=-5)))
                 yield {"song": song, "artist": artist, "played_at": played_at}
