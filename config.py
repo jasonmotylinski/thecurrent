@@ -144,15 +144,16 @@ class KUOM(object):
     DAY_URL="https://radiok.org/playlist-group/{date.year}-{date.month:02d}-{date.day:02d}T{hour:02d}:00:01/{date.year}-{date.month:02d}-{date.day:02d}T{hour:02d}:59?_wrapper_format=drupal_ajax"
     DAY_CSV="output/kuom/csv/{0}/{1}/{2}.csv"
     TITLE="89.9 KUOM Trends"
-    LOGO="/assets/kuom_Logo_White.png"
+    LOGO="/assets/radiok.svg"
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/"
 
 SERVICES={
-        "kexp": KEXP,
-        "kutx": KUTX,
-        "wxpn": WXPN,
-        "kcmp": THECURRENT,
-        "wfuv": WFUV,
-        "kcrw": KCRW
+    "kexp": KEXP,
+    "kutx": KUTX,
+    "wxpn": WXPN,
+    "kcmp": THECURRENT,
+    "wfuv": WFUV,
+    "kcrw": KCRW,
+    "kuom": KUOM
 }

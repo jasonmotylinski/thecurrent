@@ -37,7 +37,8 @@ def sidebar(config):
                     html.A(html.Img(src=config.KEXP.LOGO, style=BUTTON_STYLE), href=config.KEXP.PATH, id=config.KEXP.SERVICE_NAME),
                     html.A(html.Img(src=config.KUTX.LOGO, style=BUTTON_STYLE), href=config.KUTX.PATH, id=config.KUTX.SERVICE_NAME),
                     html.A(html.Img(src=config.WFUV.LOGO, style=BUTTON_STYLE_WFUV), href=config.WFUV.PATH, id=config.WFUV.SERVICE_NAME),
-                    html.A(html.Img(src=config.WXPN.LOGO, style=BUTTON_STYLE), href=config.WXPN.PATH, id=config.WXPN.SERVICE_NAME)
+                    html.A(html.Img(src=config.WXPN.LOGO, style=BUTTON_STYLE), href=config.WXPN.PATH, id=config.WXPN.SERVICE_NAME),
+                    html.A(html.Img(src=config.KUOM.LOGO, style=BUTTON_STYLE), href=config.KUOM.PATH, id=config.KUOM.SERVICE_NAME)
                 ],
                 vertical=True,
                 pills=True,
