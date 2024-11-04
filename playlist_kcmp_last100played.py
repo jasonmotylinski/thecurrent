@@ -36,7 +36,7 @@ def get_recent_songs():
     year=dte.year
     month=dte.month
     day=dte.day
-    hour=dte.hour - get_timezone_offset()
+    hour=dte.hour + get_timezone_offset()
 
     html=get_hour_html(year, month, day, hour)
     return get_songs(html)
