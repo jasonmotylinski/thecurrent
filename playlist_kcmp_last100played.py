@@ -26,9 +26,9 @@ def get_timezone_offset():
     
     logging.info("get_timezone_offset: is_dst: {0}".format(is_dst))
     if is_dst:
-        return -1
-    else:
         return 0
+    else:
+        return -1
 
 
 def get_recent_songs():
