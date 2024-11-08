@@ -99,3 +99,12 @@ In VSCode change the `Jupyter Notebook File Root` setting to
 ```
 ${workspaceFolder}
 ```
+
+## Backlog of stations to integrate
+* https://theriverboston.com/
+* http://pointfm.com/
+* https://www.mvyradio.org/
+* https://www.wyep.org/
+* https://www.wextradio.org/
+* https://www.kgsr.com/
+* https://kxt.org/playlists/

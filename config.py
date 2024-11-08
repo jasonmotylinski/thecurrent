@@ -146,7 +146,7 @@ class KUOM(object):
     TITLE="770AM KUOM Trends"
     LOGO="/assets/radiok.svg"
     PATH="/" + SERVICE_NAME
-    TOP_10_PLAYLIST="https://open.spotify.com/playlist/"
+    TOP_10_PLAYLIST="https://open.spotify.com/playlist/3E8BsxdRjfe25XHo51ss2P"
 
 SERVICES={
     "kexp": KEXP,
