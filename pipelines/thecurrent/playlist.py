@@ -7,7 +7,6 @@ from dateutil import parser
 from hashlib import sha256
 
 
-
 def create_id(played_at, artist, title): 
     key = "{0}{1}{2}".format(played_at, artist, title)
     m = sha256()

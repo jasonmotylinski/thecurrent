@@ -1,5 +1,6 @@
 import config
 import json
+import logging
 from dashboard import data
 from rawkit_playlist import playlist
 
@@ -10,9 +11,11 @@ def update_popular_artist_title_last_week_playlist(service_id, service_name):
 
 
 if __name__=="__main__": 
+    logging.basicConfig(level=logging.INFO)
     update_popular_artist_title_last_week_playlist(config.THECURRENT.SERVICE_ID, config.THECURRENT.SERVICE_NAME)
     update_popular_artist_title_last_week_playlist(config.KEXP.SERVICE_ID, config.KEXP.SERVICE_NAME)
     update_popular_artist_title_last_week_playlist(config.KUTX.SERVICE_ID, config.KUTX.SERVICE_NAME)
     update_popular_artist_title_last_week_playlist(config.WXPN.SERVICE_ID, config.WXPN.SERVICE_NAME)
     update_popular_artist_title_last_week_playlist(config.WFUV.SERVICE_ID, config.WFUV.SERVICE_NAME)
     update_popular_artist_title_last_week_playlist(config.KCRW.SERVICE_ID, config.KCRW.SERVICE_NAME)
+    update_popular_artist_title_last_week_playlist(config.KUOM.SERVICE_ID, config.KUOM.SERVICE_NAME)
