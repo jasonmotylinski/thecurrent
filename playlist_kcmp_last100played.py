@@ -26,7 +26,7 @@ def get_timezone_offset():
     
     logging.info("get_timezone_offset: is_dst: {0}".format(is_dst))
     if is_dst:
-        return 0
+        return -1
     else:
         return -1
 
