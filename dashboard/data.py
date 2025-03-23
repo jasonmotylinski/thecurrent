@@ -2,12 +2,11 @@ import config
 import logging
 import pandas as pd
 import redis
-import sqlite3
 import time 
 from io import StringIO
 from datetime import datetime, timedelta
-
 from sqlalchemy import create_engine
+
 log = logging.getLogger(config.LOGGER_NAME)
 redis_client = None
 SQL_ROOT ="sql/"
@@ -121,11 +120,8 @@ def get_last_updated():
         datetime: The most recent played_at date for all songs
     """
     filename="last_updated.sql"
-    t=get_sql(filename)
-    con = sqlite3.connect(config.DB)
-    log.debug(t)
-    value=pd.read_sql(t, con).to_dict()['last_updated'][0]
-    return value
+    df=get_data(filename,tomorrow_at_105_am_est())
+    return df["played_at"].max()
 
 def get_title_timeseries(artist, title, start_date, end_date, service_id=1):
 
@@ -166,35 +162,6 @@ def get_popular_artist_last_week(service_id=1):
     }
     return get_data(filename, tomorrow_at_105_am_est(), params)
 
-def get_popular_title_for_each_artist():
-    r=get_redis()
-    df=None
-    key='popular_title_for_each_artist.sql'
-    if r.exists(key):
-        df=pd.read_json(r.get(key).decode())
-    else:
-        t=get_sql(key).format()
-        con = sqlite3.connect(config.DB)
-        log.debug(t)
-        df=pd.read_sql(t, con)
-    return df
-
-def get_new_yesterday():
-
-    r=get_redis()
-    df=None
-    key='new_yesterday.sql'
-    if r.exists(key):
-        df=pd.read_json(r.get(key).decode())
-    else:
-        yesterday=get_yesterday()
-        t=get_sql(key).format(yesterday=yesterday)
-
-        con = sqlite3.connect(config.DB)
-        log.debug(t)
-        df=pd.read_sql(t, con)
-    return df
-
 def get_popular_all_time_timeseries(service_id):
     params={
         "service_id": service_id
@@ -225,34 +192,3 @@ def get_new_last_90_days(service_id=1):
     }
     filename='new_last_90_days.sql'
     return get_data(filename,tomorrow_at_105_am_est(), params)
-   
-def get_artists():
-    sql="SELECT DISTINCT artist FROM songs WHERE artist != ''"
-    con = sqlite3.connect(config.DB)
-    log.debug(sql)
-    return pd.read_sql(sql, con)
-
-def get_artists_titles():
-    sql="SELECT DISTINCT artist, title FROM songs WHERE artist != '' AND title != ''"
-    con = sqlite3.connect(config.DB)
-    log.debug(sql)
-    return pd.read_sql(sql, con)
-
-def get_artists_titles_with_no_release_date():
-    sql="""
-    SELECT 
-        DISTINCT
-        s.artist,
-        s.title,
-        sm.first_release_date
-    FROM songs s
-    LEFT OUTER JOIN songs_metadata sm
-    ON s.artist=sm.artist AND s.title=sm.title
-    WHERE 
-        s.artist != ''
-        AND s.title != ''
-        AND sm.first_release_date IS NULL
-    """
-    con = sqlite3.connect(config.DB)
-    log.debug(sql)
-    return pd.read_sql(sql, con)

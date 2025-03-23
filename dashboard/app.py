@@ -49,7 +49,7 @@ def serve_layout():
                             className="text-center")
                 ]),
                 dbc.Row([
-                    html.Div(["Data last updated:" + data.get_last_updated()], 
+                    html.Div([f"Data last updated: {data.get_last_updated().strftime('%Y-%m-%d')}"], 
                             className='text-center')]),
                 dbc.Row([
                     html.Div([
