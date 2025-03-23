@@ -60,7 +60,7 @@ WIKIPEDIA_URLS ={
 DISCOGS_URL="https://www.discogs.com/search/ac?searchType=artist&q={artist}&type=a_m_r_13"
 DISCOGS_ARTISTS_JSON="output/discogs/artists_discogs.json"
 
-REDIS_HOST="127.0.0.1"
+REDIS_HOST = os.getenv("REDIS_HOST", "127.0.0.1")
 REDIS_PORT=6379
 REDIS_DB=0
 REDIS_URL="redis://{host}:{port}/{db}".format(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
