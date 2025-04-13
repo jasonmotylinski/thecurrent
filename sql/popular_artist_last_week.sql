@@ -25,3 +25,5 @@ WHERE
 GROUP BY 
     a.artist, 
     a.title
+ORDER BY
+    ct DESC
