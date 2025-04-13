@@ -81,7 +81,7 @@ createApp({
                     }
                 }
                 
-                Plotly.newPlot(graphId, [trace], layout)
+                Plotly.newPlot(graphId, [trace], layout,{displaylogo: false})
             } catch (error) {
                 console.error('Error creating graph:', error)
             }
@@ -159,7 +159,7 @@ createApp({
                 modeBarButtonsToRemove: ['toImage'],
                 colorway: ["#67001f", "#b2182b", "#d6604d", "#f4a582", "#fddbc7", "#d1e5f0", "#92c5de","#4393c3","#2166ac","#053061"]
             }
-            Plotly.newPlot('popular-artists-last-week', trace, layout)
+            Plotly.newPlot('popular-artists-last-week', trace, layout,{displaylogo: false})
         }
 
         const createNewLast90DaysGraph = async (stationId) => {
@@ -238,7 +238,7 @@ createApp({
                 }
             }
             
-            Plotly.newPlot('popular-songs-last-90-days', [trace], layout)
+            Plotly.newPlot('popular-songs-last-90-days', [trace], layout,{displaylogo: false})
         }
 
         const createPopularDayHourGraph = async (stationId) => {
@@ -306,7 +306,7 @@ createApp({
                     }
                 }
                 
-                Plotly.newPlot('popular-all-time-graph', traces, layout)
+                Plotly.newPlot('popular-all-time-graph', traces, layout, {displaylogo: false})
             } catch (error) {
                 console.error('Error creating popular all time graph:', error)
             }
