@@ -11,7 +11,7 @@ class KuomParser(BaseParser):
 
     def get_songs(self, reader, date):
         for day in json.load(reader):
-            for spin in bs.BeautifulSoup(day['data'],features="lxml").select('li', {'class': 'spinitron_playlist__spin'}):
+            for spin in bs.BeautifulSoup(day['data']).select('li', {'class': 'spinitron_playlist__spin'}):
                 song=spin.find('div',{'class': 'spinitron_playlist__spin--song'}).text.strip()
                 artist=spin.find('div',{'class': 'spinitron_playlist__spin--artist'}).text.strip()
                 tme=spin.find('div',{'class': 'spinitron_playlist__spin--start'}).text.strip()
