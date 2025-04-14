@@ -102,3 +102,10 @@ def get_title_timeseries(service_name):
         return api_response(records)
     except Exception as e:
         return api_error(str(e), 500)
+    
+@api_routes.route('/api/last_updated')
+def last_updated():
+    last_update = data.get_last_updated()
+    return jsonify({
+        'last_updated': last_update.isoformat()
+    })
