@@ -119,7 +119,7 @@ class WFUV(object):
     SERVICE_ID=5
     SERVICE_NAME="wfuv"
     DAY_JSON="output/wfuv/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
-    URL="https://wfuv.org/views/ajax"
+    URL="https://wfuv.org/views/ajax?created[min]={date}&created[max]={date}&view_name=on_air_playlist&view_display_id=block_wfuv_on_air_playlist"
     DAY_CSV="output/wfuv/csv/{0}/{1}/{2}.csv"
     LOGO="/assets/wfuv.png"
     TITLE="90.7 WFUV Trends"

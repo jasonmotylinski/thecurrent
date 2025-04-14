@@ -9,13 +9,6 @@ class SaveDayJsonToLocal(BaseSaveDayJsonToLocal):
         self.config=config.WFUV
 
     def get_json(self):
-        data={
-            'created[min]': self.date,
-            'created[max]': self.date,
-            'view_name': 'on_air_playlist',
-            'view_display_id': 'block_wfuv_on_air_playlist'
-        }
-
-        r=requests.post(self.config.URL, data=data)
+        r=requests.get(self.config.URL.format(date=self.date))
         return r.json()
     
