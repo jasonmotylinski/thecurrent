@@ -157,6 +157,15 @@ class KKXT(object):
     LOGO="/assets/kkxt.svg"
     TITLE="91.7 KKXT Trends"
 
+class WEHM(object):
+    DAY_URL="https://wehm.tunegenie.com/api/v1/brand/nowplaying/"
+    DAY_JSON="output/wehm/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
+    DAY_CSV="output/wehm/csv/{0}/{1}/{2}.csv"
+    SERVICE_ID=9
+    SERVICE_NAME="wehm"
+    LOGO="/assets/wehm.png"
+    TITLE="92.9 & 96.9 WEHM Trends"
+
 SERVICES={
     "kexp": KEXP,
     "kutx": KUTX,
@@ -165,5 +174,6 @@ SERVICES={
     "wfuv": WFUV,
     "kcrw": KCRW,
     "kuom": KUOM,
-    "kkxt": KKXT
+    "kkxt": KKXT,
+    "wehm": WEHM
 }

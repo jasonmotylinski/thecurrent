@@ -16,7 +16,8 @@ const STATIONS = [
     { id: 'wfuv', name: 'WFUV', logo: '/assets/wfuv.png', style: 'button-style-wfuv' },
     { id: 'wxpn', name: 'WXPN', logo: '/assets/wxpn.png', style: 'button-style' },
     { id: 'kuom', name: 'KUOM', logo: '/assets/radiok.svg', style: 'button-style' },
-    { id: 'kkxt', name: 'KKXT', logo: '/assets/kxt.png', style: 'button-style' }
+    { id: 'kkxt', name: 'KKXT', logo: '/assets/kxt.png', style: 'button-style' },
+    { id: 'wehm', name: 'WEHM', logo: '/assets/wehm.png', style: 'button-style' }
 ];
 
 const TREEMAP_COLORWAY = [
