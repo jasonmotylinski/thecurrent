@@ -15,7 +15,7 @@ spotipy>=2.24.0
 mysql-connector-python
 python-dotenv
 psycopg[binary,pool]
-duckdb==1.1.2
+duckdb==1.1.3
 pytz
 git+https://github.com/jasonmotylinski/rawkit-playlist.git#egg=rawkit_playlist
 pytest
