@@ -155,6 +155,7 @@ class KKXT(object):
     SERVICE_ID=8
     SERVICE_NAME="kkxt"
     LOGO="/assets/kkxt.svg"
+    TITLE="91.7 KKXT Trends"
 
 SERVICES={
     "kexp": KEXP,
