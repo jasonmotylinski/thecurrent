@@ -15,7 +15,7 @@ def test_kuom_parser():
         
         # Get songs from parser
         songs = list(parser.get_songs(f, test_date))
-        print(songs)
+  
         # Verify the first song
         assert len(songs) > 0
         first_song = songs[0]

@@ -14,12 +14,7 @@ def index():
 def serve_asset(filename):
     return send_from_directory('assets', filename)
 
-@app.route('/api/last_updated')
-def last_updated():
-    last_update = data.get_last_updated()
-    return jsonify({
-        'last_updated': last_update.isoformat()
-    })
+
 
 if __name__ == '__main__':
     app.run(debug=config.DEBUG) 

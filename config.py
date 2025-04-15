@@ -148,6 +148,14 @@ class KUOM(object):
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/3E8BsxdRjfe25XHo51ss2P"
 
+class KKXT(object):
+    DAY_URL="https://kkxt.tunegenie.com/api/v1/brand/nowplaying/"
+    DAY_JSON="output/kkxt/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
+    DAY_CSV="output/kkxt/csv/{0}/{1}/{2}.csv"
+    SERVICE_ID=8
+    SERVICE_NAME="kkxt"
+    LOGO="/assets/kkxt.svg"
+
 SERVICES={
     "kexp": KEXP,
     "kutx": KUTX,
@@ -155,5 +163,6 @@ SERVICES={
     "kcmp": THECURRENT,
     "wfuv": WFUV,
     "kcrw": KCRW,
-    "kuom": KUOM
+    "kuom": KUOM,
+    "kkxt": KKXT
 }
