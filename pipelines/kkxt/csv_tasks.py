@@ -21,13 +21,13 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
     def get_rows(self, input):
         records=json.load(input)["response"]
         for s in records :
-            yield [create_id(s["played_at"], s["artist"], s["song"], config.WEHM.SERVICE_ID), 
+            yield [create_id(s["played_at"], s["artist"], s["song"], config.KKXT.SERVICE_ID), 
                     s["artist"],
                     s["song"],
                     '', # album
                     s["played_at"],
                     '', # Duration
-                    config.WEHM.SERVICE_ID, # Service ID
+                    config.KKXT.SERVICE_ID, # Service ID
                     '',
                     '',
                     '',
