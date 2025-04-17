@@ -166,6 +166,15 @@ class WEHM(object):
     LOGO="/assets/wehm.png"
     TITLE="92.9 & 96.9 WEHM Trends"
 
+class WNXP(object):
+    DAY_URL="https://wnxp.tunegenie.com/api/v1/brand/nowplaying/"
+    DAY_JSON="output/wnxp/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
+    DAY_CSV="output/wnxp/csv/{0}/{1}/{2}.csv"
+    SERVICE_ID=10
+    SERVICE_NAME="wnxp"
+    LOGO="/assets/wnxp.png"
+    TITLE="91.1 WNXP Trends"
+
 SERVICES={
     "kexp": KEXP,
     "kutx": KUTX,
@@ -175,5 +184,6 @@ SERVICES={
     "kcrw": KCRW,
     "kuom": KUOM,
     "kkxt": KKXT,
-    "wehm": WEHM
+    "wehm": WEHM,
+    "wnxp": WNXP
 }
