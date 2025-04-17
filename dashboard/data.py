@@ -98,7 +98,7 @@ def get_data(filename, cache_expire_at, params={}):
     
     key=filename + "_".join([str(v) for v in params.values()])
 
-    if not r.exists(key):
+    if not r.exists(key) or config.DEBUG:
         log.info("get_data:INFO:cache miss:key:{0}".format(key))
         t=get_sql(filename) % (params)
         with get_engine().connect() as conn:
