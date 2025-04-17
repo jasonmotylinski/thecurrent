@@ -12,7 +12,7 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
 
     def __init__(self, *args, **kwargs):
         super(ConvertDayJsonToCsv, self).__init__(*args, **kwargs)
-        self.config= config.wnxp
+        self.config= config.WNXP
 
     def requires(self):
         """Requires."""
@@ -21,13 +21,13 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
     def get_rows(self, input):
         records=json.load(input)["response"]
         for s in records :
-            yield [create_id(s["played_at"], s["artist"], s["song"], config.wnxp.SERVICE_ID), 
+            yield [create_id(s["played_at"], s["artist"], s["song"], config.WNXP.SERVICE_ID), 
                     s["artist"],
                     s["song"],
                     '', # album
                     s["played_at"],
                     '', # Duration
-                    config.wnxp.SERVICE_ID, # Service ID
+                    config.WNXP.SERVICE_ID, # Service ID
                     '',
                     '',
                     '',
