@@ -13,3 +13,4 @@ luigi --module pipelines BackfillLastXDaysData --last-x-days=7 --service-name=ku
 luigi --module pipelines BackfillLastXDaysData --last-x-days=7 --service-name=kkxt --local-scheduler
 luigi --module pipelines BackfillLastXDaysData --last-x-days=7 --service-name=wehm --local-scheduler
 luigi --module pipelines BackfillLastXDaysData --last-x-days=7 --service-name=wnxp --local-scheduler
+luigi --module pipelines BackfillLastXDaysData --last-x-days=7 --service-name=wyep --local-scheduler

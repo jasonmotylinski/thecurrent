@@ -18,7 +18,8 @@ const STATIONS = [
     { id: 'kuom', name: 'KUOM', logo: '/assets/radiok.svg', style: 'button-style' },
     { id: 'kkxt', name: 'KKXT', logo: '/assets/kxt.png', style: 'button-style' },
     { id: 'wehm', name: 'WEHM', logo: '/assets/wehm.png', style: 'button-style' },
-    { id: 'wnxp', name: 'WNXP', logo: '/assets/wnxp.png', style: 'button-style' }
+    { id: 'wnxp', name: 'WNXP', logo: '/assets/wnxp.png', style: 'button-style' },
+    { id: 'wyep', name: 'WYEP', logo: '/assets/wyep.png', style: 'button-style' }
 ];
 
 const TREEMAP_COLORWAY = [

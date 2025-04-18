@@ -175,6 +175,14 @@ class WNXP(object):
     LOGO="/assets/wnxp.png"
     TITLE="91.1 WNXP Trends"
 
+class WYEP(object):
+    DAY_URL="https://api.composer.nprstations.org/v1/widget/50e451b6a93e91ee0a00028e/day?date={date.year}-{date.month:02d}-{date.day:02d}&format=json"
+    DAY_JSON="output/wyep/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
+    DAY_CSV="output/wyep/csv/{0}/{1}/{2}.csv"
+    SERVICE_ID=11
+    SERVICE_NAME="wyep"
+    LOGO="/assets/wyep.png"
+    TITLE="91.3 WYEP Trends"
 SERVICES={
     "kexp": KEXP,
     "kutx": KUTX,
