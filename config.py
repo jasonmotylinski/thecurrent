@@ -193,5 +193,6 @@ SERVICES={
     "kuom": KUOM,
     "kkxt": KKXT,
     "wehm": WEHM,
-    "wnxp": WNXP
+    "wnxp": WNXP,
+    "wyep": WYEP
 }
