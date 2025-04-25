@@ -6,7 +6,7 @@ SELECT
     c.hour,
     CASE WHEN h.ct IS NULL THEN 0 ELSE h.ct END AS ct
 FROM ( 
-    SELECT service_id, cr.* FROM(VALUES(1),(2),(3),(4),(5),(6),(7), (8), (9)) AS s(service_id)
+    SELECT service_id, cr.* FROM(VALUES(1),(2),(3),(4),(5),(6),(7), (8), (9), (10), (11)) AS s(service_id)
     RIGHT JOIN(
     SELECT 
         DISTINCT day_of_week, CAST(day_of_week_int AS INT) AS day_of_week_int, CAST(hour AS INT) AS hour
