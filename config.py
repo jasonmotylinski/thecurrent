@@ -25,9 +25,9 @@ CSV_HEADER_ROW = ['id', 'artist', 'title', 'album', 'played_at', 'duration', 'se
 CALENDAR_HEADER_ROW= ['year','month', 'day','hour','day_of_week','day_of_week_int', 'week_of_year']
 CALENDAR_CSV="output/calendar/calendar.csv"
 
-
-THECURRENT_HOUR_URL="https://www.thecurrent.org/playlist/{year}-{month:02d}-{day:02d}/{hour:02d}"
-THECURRENT_DAY_URL="https://www.thecurrent.org/playlist/{year}-{month:02d}-{day:02d}/"
+      
+THECURRENT_HOUR_URL="https://www.thecurrent.org/playlist/the-current/{year}-{month:02d}-{day:02d}/{hour:02d}"
+THECURRENT_DAY_URL="https://www.thecurrent.org/playlist/the-current/{year}-{month:02d}-{day:02d}/"
 THECURRENT_SCHEDULE_DAY_URL="https://www.thecurrent.org/schedule/the-current/{date.year}-{date.month}-{date.day}"
 THECURRENT_DAY_CSV="output/thecurrent/csv/{0}/{1}/{2}.csv"
 THECURRENT_YEAR_CSV="output/thecurrent/csv/{0}.csv"

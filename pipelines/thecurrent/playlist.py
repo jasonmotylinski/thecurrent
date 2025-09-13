@@ -1,9 +1,10 @@
 import config
+import json
 import logging
 import requests
+import re
 
-from bs4 import BeautifulSoup
-from dateutil import parser
+from datetime import datetime
 from hashlib import sha256
 
 
@@ -15,31 +16,21 @@ def create_id(played_at, artist, title):
 
 def get_songs(html):
     """Get the articles for a given year, month, day, hour."""
-    bs=BeautifulSoup(html, "html.parser")
-    data=bs.find_all("li", {"class": "playlist-card"})
-    dt=bs.find("input", {"name": "playlistDate"}).attrs['value']
-
-    for c in data:
-        artist_album = c.find_all("div", {"class": "playlist-artist"})
-        artist = ''
-        if len(artist_album) > 0:
-             artist = artist_album[0].text
-        album = ''
-        if len(artist_album) == 2:
-            album = artist_album[1].text
-
-        playlist_time = c.find("div", {"class": "playlist-time"}).text
-        playlist_datetime = parser.parse(dt + " " + playlist_time + " -5:00")
-        item = {
-            "title": c.find("h4").text,
-            "artist": artist,
-            "album":  album,
-            "played_at": playlist_datetime.isoformat()
-        }
+    pattern = r'\\"plays\\":(.*)},\\"d'
+    match = re.search(pattern, html)
+    if match:
+        data = json.loads(match.group(1).replace('\\"', '"'))
         
-        item["id"] = create_id(item['played_at'], item['artist'], item['title'])
-        item["played_at_dt"] = playlist_datetime
-        yield(item)
+        for d in data:
+            item = {
+                    "title": d['song']['title'],
+                    "artist": d['song']['artist'],
+                    "album":  d['song']['album'],
+                    "played_at": datetime.fromisoformat(d['played_at'])
+                }
+            item["id"] = create_id(item['played_at'], item['artist'], item['title'])
+            item["played_at_dt"] = item['played_at']
+            yield(item)
 
 def get_hour_html(year:int, month:int, day:int, hour:int):
     url=config.THECURRENT_HOUR_URL.format(year=year, month=month, day=day, hour=hour)
