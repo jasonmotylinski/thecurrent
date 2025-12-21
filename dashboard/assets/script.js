@@ -493,7 +493,7 @@ createApp({
                 x: data.x,
                 y: data.y,
                 type: 'scatter',
-                mode: 'lines+markers',
+                mode: 'lines',
                 name: station
             }));
 
