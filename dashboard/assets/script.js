@@ -597,8 +597,6 @@ createApp({
         };
 
         const closeAnalytics = async () => {
-            // Show loading overlay immediately
-            pageLoading.value = true;
             analyticsView.value = false;
             analyticsType.value = '';
             analyticsTitle.value = '';
@@ -606,32 +604,37 @@ createApp({
             analyticsTopSongs.value = [];
             // Clear URL hash
             history.pushState(null, '', window.location.pathname);
-            // Reload dashboard data to repopulate charts
-            try {
-                await setCurrentStation(currentStation.value);
-            } finally {
-                pageLoading.value = false;
-            }
+            // Reload dashboard data to repopulate charts (with loading screen)
+            await setCurrentStation(currentStation.value);
         };
 
         // Station change handler
-        const setCurrentStation = async (station) => {
-            currentStation.value = station;
-            await Promise.all([
-                updateStationTitle(station),
-                createPopularSongs(station),
-                createArtistTreemap(station),
-                createNewLast90DaysGraph(station),
-                createPopularAllTime(station),
-                createPopularAllTimeGraph(station),
-                createPopularDayHourGraph(station),
-                updateLastUpdated()
-            ]);
+        const setCurrentStation = async (station, showLoading = true) => {
+            if (showLoading) {
+                pageLoading.value = true;
+            }
+            try {
+                currentStation.value = station;
+                await Promise.all([
+                    updateStationTitle(station),
+                    createPopularSongs(station),
+                    createArtistTreemap(station),
+                    createNewLast90DaysGraph(station),
+                    createPopularAllTime(station),
+                    createPopularAllTimeGraph(station),
+                    createPopularDayHourGraph(station),
+                    updateLastUpdated()
+                ]);
+            } finally {
+                if (showLoading) {
+                    pageLoading.value = false;
+                }
+            }
         };
 
         // Watchers
         watch(currentStation, () => {
-            setCurrentStation(currentStation.value);
+            setCurrentStation(currentStation.value, false);
         });
 
         // URL routing
