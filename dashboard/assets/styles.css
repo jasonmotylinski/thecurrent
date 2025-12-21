@@ -41,6 +41,52 @@
     background-color: #fff;
 }
 
-.popular-songs-table > :not(caption) > * > * { 
+.popular-songs-table > :not(caption) > * > * {
     border-bottom-width: 0px;
+}
+
+/* Search styles */
+.search-container {
+    margin-top: 1rem;
+}
+
+.search-results {
+    top: 100%;
+    left: 0;
+    margin-top: 4px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.search-result-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.search-result-item:hover {
+    background-color: #f8f9fa;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+/* Analytics styles */
+.analytics-container {
+    padding: 20px 0;
+}
+
+.analytics-container h2 {
+    margin-bottom: 1.5rem;
+}
+
+.analytics-container h4 {
+    margin-bottom: 1rem;
+    color: #333;
 } 

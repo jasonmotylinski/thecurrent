@@ -45,6 +45,102 @@
                         <h1 class="display-3 text-center">{{ stationTitle }}</h1>
                     </div>
                 </div>
+
+                <!-- Search Section -->
+                <div class="row mb-4">
+                    <div class="col-md-6 offset-md-3">
+                        <div class="search-container position-relative">
+                            <input
+                                type="text"
+                                class="form-control form-control-lg"
+                                v-model="searchQuery"
+                                @input="onSearchInput"
+                                @focus="showSearchResults = searchResults.length > 0"
+                                @blur="hideSearchResultsDelayed"
+                                placeholder="Search artists...">
+                            <!-- Search Results Dropdown -->
+                            <div v-if="showSearchResults && searchResults.length > 0"
+                                 class="search-results position-absolute w-100">
+                                <div v-for="result in searchResults"
+                                     :key="result.artist"
+                                     class="search-result-item"
+                                     @mousedown="selectSearchResult(result)">
+                                    {{ result.artist }}
+                                </div>
+                            </div>
+                            <!-- No Results Message -->
+                            <div v-if="showSearchResults && searchQuery.length >= 2 && searchResults.length === 0 && !searchLoading"
+                                 class="search-results position-absolute w-100 p-3 text-muted text-center">
+                                No results found for "{{ searchQuery }}"
+                            </div>
+                            <!-- Loading Indicator -->
+                            <div v-if="searchLoading"
+                                 class="search-results position-absolute w-100 p-3 text-muted text-center">
+                                Searching...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics View (shown when user selects a search result) -->
+                <div v-if="analyticsView" class="analytics-container">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <button class="btn btn-outline-secondary" @click="closeAnalytics">
+                                &larr; Back to Dashboard
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col">
+                            <h2 class="text-center">{{ analyticsTitle }}</h2>
+                        </div>
+                    </div>
+
+                    <!-- Plays Over Time Chart -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h4 class="text-center">Plays Over Time by Station</h4>
+                            <div id="analytics-timeseries"></div>
+                        </div>
+                    </div>
+
+                    <!-- Top Songs (artist analytics only) -->
+                    <div class="row mb-4" v-if="analyticsType === 'artist' && analyticsTopSongs.length > 0">
+                        <div class="col-md-6 offset-md-3">
+                            <h4 class="text-center">Top 5 Songs</h4>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Total Plays</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="song in analyticsTopSongs" :key="song.title">
+                                        <td>
+                                            <a href="#" @click.prevent="loadSongAnalytics(analyticsArtist, song.title)">
+                                                {{ song.title }}
+                                            </a>
+                                        </td>
+                                        <td>{{ song.total_plays }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Top Songs Plays Over Time (artist analytics only) -->
+                    <div class="row mb-4" v-if="analyticsType === 'artist' && analyticsTopSongs.length > 0">
+                        <div class="col-12">
+                            <h4 class="text-center">Top 5 Songs - Plays Over Time by Station</h4>
+                            <div id="top-songs-timeseries"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Dashboard Content (hidden when analytics view is active) -->
+                <div v-if="!analyticsView">
                 <!-- Popular Songs Table -->
                 <div class="row">
                     <div class="col-md-6">
@@ -63,7 +159,7 @@
                                         <td>{{ song.artist }}</td>
                                         <td>{{ song.title }}</td>
                                         <td>
-                                            <div :id="'graph-' + song.artist + '-' + song.title" style="width: 200px;"></div>
+                                            <div :id="'graph-' + song.artist.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase() + '-' + song.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()" style="width: 200px;"></div>
                                             {{ song.plays }}
                                         </td>
                                     </tr>
@@ -133,6 +229,7 @@
                         </div>
                     </div>
                 </div>
+                </div> <!-- End of v-if="!analyticsView" -->
                 <!-- Footer -->
                 <div class="row mt-4">
                     <div class="col-12 text-center">
@@ -148,4 +245,4 @@
     <!-- Custom JavaScript -->
     <script src="/assets/script.js"></script>
 </body>
-</html> 
+</html>

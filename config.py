@@ -79,8 +79,9 @@ class KEXP(object):
     DAY_CSV="output/kexp/csv/{0}/{1}/{2}.csv"
     SERVICE_ID=2
     SERVICE_NAME="kexp"
+    SERVICE_DISPLAY_NAME="90.3 KEXP"
     LOGO="/assets/kexp.svg"
-    TITLE="90.3 KEXP Trends"
+    TITLE=SERVICE_DISPLAY_NAME + " Trends"
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/1oatZdfsBNYNuUhnNTXXnn"
 
@@ -91,8 +92,9 @@ class KUTX(object):
     DAY_CSV="output/kutx/csv/{0}/{1}/{2}.csv"
     SERVICE_ID=3
     SERVICE_NAME="kutx"
+    SERVICE_DISPLAY_NAME="98.9 KUTX"
     LOGO="/assets/kutx.svg"
-    TITLE="98.9 KUTX Trends"
+    TITLE=SERVICE_DISPLAY_NAME + " Trends"
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/2Rk9whZHSuQ3NgkNYz1mgZ"
 
@@ -102,15 +104,17 @@ class WXPN(object):
     DAY_CSV="output/wxpn/csv/{0}/{1}/{2}.csv"
     SERVICE_ID=4
     SERVICE_NAME="wxpn"
+    SERVICE_DISPLAY_NAME="88.5 WXPN"
     LOGO="/assets/wxpn.png"
-    TITLE="88.5 WXPN Trends"
+    TITLE=SERVICE_DISPLAY_NAME + " Trends"
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/3HGci9o2R4x46L5t0YTNGr"
 
 class THECURRENT(object):
-    TITLE="89.3 The Current Trends"
     SERVICE_ID=1
     SERVICE_NAME="kcmp"
+    SERVICE_DISPLAY_NAME="89.3 The Current"
+    TITLE=SERVICE_DISPLAY_NAME + " Trends"
     LOGO="/assets/kcmp.svg"
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/0oq9XIzdeGLd90DU2rYxuD"
@@ -118,21 +122,23 @@ class THECURRENT(object):
 class WFUV(object):
     SERVICE_ID=5
     SERVICE_NAME="wfuv"
+    SERVICE_DISPLAY_NAME="90.7 WFUV"
     DAY_JSON="output/wfuv/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
     URL="https://wfuv.org/views/ajax?created[min]={date}&created[max]={date}&view_name=on_air_playlist&view_display_id=block_wfuv_on_air_playlist"
     DAY_CSV="output/wfuv/csv/{0}/{1}/{2}.csv"
     LOGO="/assets/wfuv.png"
-    TITLE="90.7 WFUV Trends"
+    TITLE=SERVICE_DISPLAY_NAME + " Trends"
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/1SZMsixhwCY0iAyp4FBYHK"
 
 class KCRW(object):
     SERVICE_ID=6
     SERVICE_NAME="kcrw"
+    SERVICE_DISPLAY_NAME="89.9 KCRW"
     DAY_JSON="output/kcrw/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
     DAY_URL="https://tracklist-api.kcrw.com/Simulcast/date/{date.year}/{date.month:02d}/{date.day:02d}?page_size=2000"
     DAY_CSV="output/kcrw/csv/{0}/{1}/{2}.csv"
-    TITLE="89.9 KCRW Trends"
+    TITLE=SERVICE_DISPLAY_NAME + " Trends"
     LOGO="/assets/KCRW_Logo_White.png"
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/35d08JaVDjHG8aZMSQx6FE"
@@ -140,10 +146,11 @@ class KCRW(object):
 class KUOM(object):
     SERVICE_ID=7
     SERVICE_NAME="kuom"
+    SERVICE_DISPLAY_NAME="770AM KUOM"
     DAY_JSON="output/kuom/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
     DAY_URL="https://radiok.org/playlist-group/{date.year}-{date.month:02d}-{date.day:02d}T{hour:02d}:00:01/{date.year}-{date.month:02d}-{date.day:02d}T{hour:02d}:59?_wrapper_format=drupal_ajax"
     DAY_CSV="output/kuom/csv/{0}/{1}/{2}.csv"
-    TITLE="770AM KUOM Trends"
+    TITLE=SERVICE_DISPLAY_NAME + " Trends"
     LOGO="/assets/radiok.svg"
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/3E8BsxdRjfe25XHo51ss2P"
@@ -154,8 +161,9 @@ class KKXT(object):
     DAY_CSV="output/kkxt/csv/{0}/{1}/{2}.csv"
     SERVICE_ID=8
     SERVICE_NAME="kkxt"
+    SERVICE_DISPLAY_NAME="91.7 KKXT"
     LOGO="/assets/kkxt.svg"
-    TITLE="91.7 KKXT Trends"
+    TITLE=SERVICE_DISPLAY_NAME + " Trends"
 
 class WEHM(object):
     DAY_URL="https://wehm.tunegenie.com/api/v1/brand/nowplaying/"
@@ -163,8 +171,9 @@ class WEHM(object):
     DAY_CSV="output/wehm/csv/{0}/{1}/{2}.csv"
     SERVICE_ID=9
     SERVICE_NAME="wehm"
+    SERVICE_DISPLAY_NAME="92.9 & 96.9 WEHM"
     LOGO="/assets/wehm.png"
-    TITLE="92.9 & 96.9 WEHM Trends"
+    TITLE=SERVICE_DISPLAY_NAME + " Trends"
 
 class WNXP(object):
     DAY_URL="https://wnxp.tunegenie.com/api/v1/brand/nowplaying/"
@@ -172,8 +181,9 @@ class WNXP(object):
     DAY_CSV="output/wnxp/csv/{0}/{1}/{2}.csv"
     SERVICE_ID=10
     SERVICE_NAME="wnxp"
+    SERVICE_DISPLAY_NAME="91.1 WNXP"
     LOGO="/assets/wnxp.png"
-    TITLE="91.1 WNXP Trends"
+    TITLE=SERVICE_DISPLAY_NAME + " Trends"
 
 class WYEP(object):
     DAY_URL="https://api.composer.nprstations.org/v1/widget/50e451b6a93e91ee0a00028e/day?date={date.year}-{date.month:02d}-{date.day:02d}&format=json"
@@ -181,8 +191,10 @@ class WYEP(object):
     DAY_CSV="output/wyep/csv/{0}/{1}/{2}.csv"
     SERVICE_ID=11
     SERVICE_NAME="wyep"
+    SERVICE_DISPLAY_NAME="91.3 WYEP"
     LOGO="/assets/wyep.png"
-    TITLE="91.3 WYEP Trends"
+    TITLE=SERVICE_DISPLAY_NAME + " Trends"
+
 SERVICES={
     "kexp": KEXP,
     "kutx": KUTX,

@@ -1,3 +1,3 @@
 #!/bin/sh
 
-scp easyvm:/var/projects/thecurrent/thecurrent.sqlite3 .
+scp rawkit-01:/var/projects/thecurrent/thecurrent.sqlite3 .

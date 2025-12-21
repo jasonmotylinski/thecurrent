@@ -1,4 +1,4 @@
-const { createApp, ref, onMounted, watch } = Vue
+const { createApp, ref, onMounted, watch, nextTick } = Vue
 
 // Constants
 const API_BASE_URL = '/api';
@@ -69,6 +69,20 @@ createApp({
         const hourLabel = ref('');
         const stationTitle = ref('');
 
+        // Search state
+        const searchQuery = ref('');
+        const searchResults = ref([]);
+        const showSearchResults = ref(false);
+        const searchLoading = ref(false);
+        let searchDebounceTimer = null;
+
+        // Analytics state
+        const analyticsView = ref(false);
+        const analyticsType = ref('');
+        const analyticsTitle = ref('');
+        const analyticsArtist = ref('');
+        const analyticsTopSongs = ref([]);
+
         // Station data
         const stations = ref(STATIONS);
 
@@ -111,9 +125,27 @@ createApp({
 
         const createPopularSongs = async (stationId) => {
             try {
-                const data = await fetchStationData(stationId, 'popular/last_week/artist_title');
-                popularSongs.value = data;
-                popularSongs.value.forEach(song => createGraph(song, stationId));
+                // Fetch songs and timeseries in parallel (reduces 11 API calls to 2)
+                const [songsData, timeseriesData] = await Promise.all([
+                    fetchStationData(stationId, 'popular/last_week/artist_title'),
+                    fetchStationData(stationId, 'popular/last_week/artist_title_timeseries')
+                ]);
+
+                popularSongs.value = songsData;
+                await nextTick();
+
+                // Group timeseries data by song
+                const timeseriesBySong = {};
+                timeseriesData.forEach(item => {
+                    const key = `${item.artist}|||${item.title}`;
+                    if (!timeseriesBySong[key]) timeseriesBySong[key] = [];
+                    timeseriesBySong[key].push(item);
+                });
+
+                // Create all graphs in parallel using pre-fetched data
+                await Promise.all(popularSongs.value.map(song =>
+                    createGraphFromData(song, timeseriesBySong[`${song.artist}|||${song.title}`] || [])
+                ));
             } catch (error) {
                 console.error('Error loading popular songs:', error);
                 popularSongs.value = [];
@@ -131,18 +163,9 @@ createApp({
         };
 
         // Graph Creation Functions
-        const createGraph = async (song, stationId) => {
+        const createGraphFromData = async (song, timeseriesData) => {
             try {
-                const endDate = new Date();
-                const startDate = new Date();
-                startDate.setDate(startDate.getDate() - 7);
-                
-                const timeseriesData = await fetchStationData(
-                    stationId,
-                    `title_timeseries?artist=${encodeURIComponent(song.artist)}&title=${encodeURIComponent(song.title)}&start_date=${formatDate(startDate)}&end_date=${formatDate(endDate)}`
-                );
-                
-                const graphId = `graph-${song.artist}-${song.title}`;
+                const graphId = `graph-${song.artist.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}-${song.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`;
                 const trace = {
                     x: timeseriesData.map(d => d.yw),
                     y: timeseriesData.map(d => d.ct),
@@ -150,7 +173,7 @@ createApp({
                     mode: 'lines',
                     line: { color: '#007bff', width: 2 }
                 };
-                
+
                 const layout = {
                     margin: { l: 0, r: 0, t: 0, b: 0 },
                     ...PLOTLY_CONFIG,
@@ -169,7 +192,7 @@ createApp({
                         zeroline: false
                     }
                 };
-                
+
                 Plotly.newPlot(graphId, [trace], layout, { displaylogo: false });
             } catch (error) {
                 console.error('Error creating graph:', error);
@@ -369,6 +392,206 @@ createApp({
             }
         };
 
+        // Search functions
+        const onSearchInput = () => {
+            if (searchDebounceTimer) {
+                clearTimeout(searchDebounceTimer);
+            }
+
+            if (searchQuery.value.length < 2) {
+                searchResults.value = [];
+                showSearchResults.value = false;
+                searchLoading.value = false;
+                return;
+            }
+
+            searchLoading.value = true;
+            showSearchResults.value = true;
+
+            searchDebounceTimer = setTimeout(async () => {
+                try {
+                    const response = await fetch(
+                        `${API_BASE_URL}/search?q=${encodeURIComponent(searchQuery.value)}`
+                    );
+                    if (response.ok) {
+                        const data = await response.json();
+                        searchResults.value = data;
+                    } else {
+                        searchResults.value = [];
+                    }
+                } catch (error) {
+                    console.error('Search error:', error);
+                    searchResults.value = [];
+                } finally {
+                    searchLoading.value = false;
+                }
+            }, 300);
+        };
+
+        const hideSearchResultsDelayed = () => {
+            setTimeout(() => {
+                showSearchResults.value = false;
+            }, 200);
+        };
+
+        const selectSearchResult = (result) => {
+            searchQuery.value = '';
+            searchResults.value = [];
+            showSearchResults.value = false;
+            // Update URL and load analytics
+            window.location.hash = `/artist/${encodeURIComponent(result.artist)}`;
+        };
+
+        // Analytics functions
+        const loadArtistAnalytics = (artist) => {
+            // Update URL - hashchange handler will load the data
+            window.location.hash = `/artist/${encodeURIComponent(artist)}`;
+        };
+
+        const loadSongAnalytics = async (artist, title, updateUrl = true) => {
+            try {
+                // Update URL if requested
+                if (updateUrl) {
+                    window.location.hash = `/song/${encodeURIComponent(artist)}/${encodeURIComponent(title)}`;
+                    return; // hashchange handler will call this function again with updateUrl=false
+                }
+
+                const response = await fetch(
+                    `${API_BASE_URL}/song/analytics?artist=${encodeURIComponent(artist)}&title=${encodeURIComponent(title)}`
+                );
+                if (!response.ok) throw new Error('Failed to fetch song analytics');
+
+                analyticsView.value = true;
+                analyticsType.value = 'song';
+                analyticsTitle.value = `${artist} - ${title}`;
+                analyticsArtist.value = artist;
+                analyticsTopSongs.value = [];
+                const data = await response.json();
+
+                // Wait for DOM to update before rendering charts
+                await nextTick();
+
+                createAnalyticsTimeseries(data.analytics);
+            } catch (error) {
+                console.error('Error loading song analytics:', error);
+            }
+        };
+
+        const createAnalyticsTimeseries = (analytics) => {
+            const stationData = {};
+
+            analytics.forEach(item => {
+                const stationName = item.station_name || 'Unknown';
+                if (!stationData[stationName]) {
+                    stationData[stationName] = { x: [], y: [] };
+                }
+                stationData[stationName].x.push(item.month);
+                stationData[stationName].y.push(item.plays);
+            });
+
+            const traces = Object.entries(stationData).map(([station, data]) => ({
+                x: data.x,
+                y: data.y,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: station
+            }));
+
+            const layout = {
+                margin: { l: 50, r: 20, t: 20, b: 50 },
+                height: 350,
+                showlegend: true,
+                legend: {
+                    orientation: 'h',
+                    y: -0.2,
+                    x: 0.5,
+                    xanchor: 'center'
+                },
+                xaxis: {
+                    title: 'Month',
+                    fixedrange: true
+                },
+                yaxis: {
+                    title: 'Plays',
+                    fixedrange: true
+                }
+            };
+
+            Plotly.newPlot('analytics-timeseries', traces, layout, PLOTLY_CONFIG);
+        };
+
+        const createTopSongsTimeseries = (data) => {
+            // Get all unique months and songs
+            const monthsSet = new Set();
+            const songsSet = new Set();
+
+            data.forEach(item => {
+                // Format month as YYYY-MM for grouping
+                const monthStr = item.month.substring(0, 7);
+                monthsSet.add(monthStr);
+                songsSet.add(item.title);
+            });
+
+            const months = Array.from(monthsSet).sort();
+            const songs = Array.from(songsSet);
+
+            // Aggregate plays by song and month (sum across all stations)
+            const songMonthPlays = {};
+            songs.forEach(song => {
+                songMonthPlays[song] = {};
+                months.forEach(month => {
+                    songMonthPlays[song][month] = 0;
+                });
+            });
+
+            data.forEach(item => {
+                const monthStr = item.month.substring(0, 7);
+                songMonthPlays[item.title][monthStr] += item.plays;
+            });
+
+            // Create traces - one per song (stacked)
+            const traces = songs.map(song => ({
+                x: months,
+                y: months.map(month => songMonthPlays[song][month]),
+                type: 'bar',
+                name: song
+            }));
+
+            const layout = {
+                margin: { l: 50, r: 20, t: 20, b: 80 },
+                height: 400,
+                barmode: 'stack',
+                showlegend: true,
+                legend: {
+                    orientation: 'h',
+                    y: -0.25,
+                    x: 0.5,
+                    xanchor: 'center'
+                },
+                xaxis: {
+                    title: 'Month',
+                    fixedrange: true,
+                    tickangle: -45
+                },
+                yaxis: {
+                    title: 'Plays',
+                    fixedrange: true
+                }
+            };
+
+            Plotly.newPlot('top-songs-timeseries', traces, layout, PLOTLY_CONFIG);
+        };
+
+        const closeAnalytics = () => {
+            analyticsView.value = false;
+            analyticsType.value = '';
+            analyticsTitle.value = '';
+            analyticsArtist.value = '';
+            analyticsTopSongs.value = [];
+            // Clear URL hash
+            history.pushState(null, '', window.location.pathname);
+        };
+
         // Station change handler
         const setCurrentStation = async (station) => {
             currentStation.value = station;
@@ -389,11 +612,69 @@ createApp({
             setCurrentStation(currentStation.value);
         });
 
+        // URL routing
+        const handleRoute = async () => {
+            const hash = window.location.hash;
+
+            if (hash.startsWith('#/artist/')) {
+                const artist = decodeURIComponent(hash.replace('#/artist/', ''));
+                await loadArtistAnalyticsFromUrl(artist);
+            } else if (hash.startsWith('#/song/')) {
+                const parts = hash.replace('#/song/', '').split('/');
+                if (parts.length >= 2) {
+                    const artist = decodeURIComponent(parts[0]);
+                    const title = decodeURIComponent(parts.slice(1).join('/'));
+                    await loadSongAnalytics(artist, title, false);
+                }
+            } else {
+                // No hash or unrecognized - show dashboard
+                if (analyticsView.value) {
+                    analyticsView.value = false;
+                    analyticsType.value = '';
+                    analyticsTitle.value = '';
+                    analyticsArtist.value = '';
+                    analyticsTopSongs.value = [];
+                }
+            }
+        };
+
+        // Load artist analytics from URL (doesn't update URL again)
+        const loadArtistAnalyticsFromUrl = async (artist) => {
+            try {
+                const response = await fetch(
+                    `${API_BASE_URL}/artist/${encodeURIComponent(artist)}/analytics`
+                );
+                if (!response.ok) throw new Error('Failed to fetch artist analytics');
+
+                analyticsView.value = true;
+                analyticsType.value = 'artist';
+                analyticsTitle.value = artist;
+                analyticsArtist.value = artist;
+
+                const data = await response.json();
+                analyticsTopSongs.value = data.top_songs || [];
+
+                await nextTick();
+
+                createAnalyticsTimeseries(data.analytics);
+                if (data.top_songs_timeseries) {
+                    createTopSongsTimeseries(data.top_songs_timeseries);
+                }
+            } catch (error) {
+                console.error('Error loading artist analytics:', error);
+            }
+        };
+
         // Lifecycle hooks
         onMounted(async () => {
-            await Promise.all([
-                setCurrentStation(currentStation.value)
-            ]);
+            // Listen for hash changes (browser back/forward)
+            window.addEventListener('hashchange', handleRoute);
+
+            // Load initial station data
+            await setCurrentStation(currentStation.value);
+
+            // Handle initial URL
+            await handleRoute();
         });
 
         return {
@@ -407,7 +688,24 @@ createApp({
             dayOfWeek,
             hourLabel,
             stationTitle,
-            setCurrentStation
+            setCurrentStation,
+            // Search
+            searchQuery,
+            searchResults,
+            showSearchResults,
+            searchLoading,
+            onSearchInput,
+            hideSearchResultsDelayed,
+            selectSearchResult,
+            // Analytics
+            analyticsView,
+            analyticsType,
+            analyticsTitle,
+            analyticsArtist,
+            analyticsTopSongs,
+            loadArtistAnalytics,
+            loadSongAnalytics,
+            closeAnalytics
         };
     }
-}).mount('#app') 
+}).mount('#app')

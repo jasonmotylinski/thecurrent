@@ -15,6 +15,13 @@ def api_error(message, status=400):
     """Helper function to create consistent error responses"""
     return jsonify({'error': message}), status
 
+def get_station_by_id(service_id):
+    """Get station info by service_id"""
+    for key, service_class in config.SERVICES.items():
+        if service_class.SERVICE_ID == service_id:
+            return {'id': key, 'name': service_class.SERVICE_DISPLAY_NAME}
+    return None
+
 @api_routes.route('/api/<service_name>')
 def get_service(service_name):
     service = config.SERVICES[service_name]
@@ -25,6 +32,19 @@ def get_popular_artist_title_last_week(service_name):
     try:
         df = data.get_popular_artist_title_last_week(config.SERVICES[service_name].SERVICE_ID)
         records = df.to_dict('records')
+        return api_response(records)
+    except Exception as e:
+        return api_error(str(e), 500)
+
+@api_routes.route('/api/<service_name>/popular/last_week/artist_title_timeseries')
+def get_popular_artist_title_timeseries_route(service_name):
+    """Get weekly timeseries data for top 10 popular songs in a single batch call."""
+    try:
+        df = data.get_popular_artist_title_timeseries(config.SERVICES[service_name].SERVICE_ID)
+        records = df.to_dict('records')
+        # Convert year/week to yw format for sparkline compatibility
+        for record in records:
+            record['yw'] = f"{record['year']}{str(record['week']).zfill(2)}"
         return api_response(records)
     except Exception as e:
         return api_error(str(e), 500)
@@ -109,3 +129,105 @@ def last_updated():
     return jsonify({
         'last_updated': last_update.isoformat()
     })
+
+@api_routes.route('/api/search')
+def search():
+    query = request.args.get('q', '').strip()
+
+    if len(query) < 2:
+        return api_error('Search query must be at least 2 characters', 400)
+
+    if len(query) > 100:
+        return api_error('Search query too long', 400)
+
+    try:
+        df = data.search_songs(query)
+        records = df.to_dict('records')
+
+        return api_response(records)
+    except Exception as e:
+        return api_error(str(e), 500)
+
+@api_routes.route('/api/artist/<artist>/analytics')
+def get_artist_analytics_route(artist):
+    try:
+        analytics_df = data.get_artist_analytics(artist)
+        top_songs_df = data.get_artist_top_songs(artist)
+        top_songs_timeseries_df = data.get_artist_top_songs_timeseries(artist)
+
+        analytics_records = analytics_df.to_dict('records')
+        for record in analytics_records:
+            station_info = get_station_by_id(record['service_id'])
+            record['station_name'] = station_info['name'] if station_info else 'Unknown'
+            record['station_id'] = station_info['id'] if station_info else None
+            if 'month' in record and record['month'] is not None:
+                month_val = record['month']
+                if hasattr(month_val, 'isoformat'):
+                    record['month'] = month_val.isoformat()
+                elif isinstance(month_val, (int, float)):
+                    record['month'] = datetime.fromtimestamp(month_val / 1000).isoformat()
+
+        top_songs_records = top_songs_df.to_dict('records')
+
+        top_songs_timeseries_records = top_songs_timeseries_df.to_dict('records')
+        for record in top_songs_timeseries_records:
+            station_info = get_station_by_id(record['service_id'])
+            record['station_name'] = station_info['name'] if station_info else 'Unknown'
+            record['station_id'] = station_info['id'] if station_info else None
+            if 'month' in record and record['month'] is not None:
+                month_val = record['month']
+                if hasattr(month_val, 'isoformat'):
+                    record['month'] = month_val.isoformat()
+                elif isinstance(month_val, (int, float)):
+                    record['month'] = datetime.fromtimestamp(month_val / 1000).isoformat()
+
+        return api_response({
+            'artist': artist,
+            'analytics': analytics_records,
+            'top_songs': top_songs_records,
+            'top_songs_timeseries': top_songs_timeseries_records
+        })
+    except Exception as e:
+        return api_error(str(e), 500)
+
+@api_routes.route('/api/song/analytics')
+def get_song_analytics_route():
+    artist = request.args.get('artist', '').strip()
+    title = request.args.get('title', '').strip()
+
+    if not artist or not title:
+        return api_error('Missing required parameters: artist and title', 400)
+
+    try:
+        df = data.get_song_analytics(artist, title)
+        records = df.to_dict('records')
+
+        for record in records:
+            station_info = get_station_by_id(record['service_id'])
+            record['station_name'] = station_info['name'] if station_info else 'Unknown'
+            record['station_id'] = station_info['id'] if station_info else None
+            if 'month' in record and record['month'] is not None:
+                month_val = record['month']
+                if hasattr(month_val, 'isoformat'):
+                    record['month'] = month_val.isoformat()
+                elif isinstance(month_val, (int, float)):
+                    record['month'] = datetime.fromtimestamp(month_val / 1000).isoformat()
+
+        return api_response({
+            'artist': artist,
+            'title': title,
+            'analytics': records
+        })
+    except Exception as e:
+        return api_error(str(e), 500)
+
+@api_routes.route('/api/stations')
+def get_stations():
+    stations = []
+    for key, service_class in config.SERVICES.items():
+        stations.append({
+            'id': key,
+            'name': service_class.TITLE,
+            'service_id': service_class.SERVICE_ID
+        })
+    return api_response(stations)

@@ -67,6 +67,15 @@ def in_5_minutes():
     dt=datetime.utcnow() + timedelta(minutes=5)
     return int(time.mktime(dt.timetuple()))
 
+def in_30_seconds():
+    """Calculates the time in 30 seconds. Used for short-lived cache for search queries.
+
+    Returns:
+        int: The datetime as an integer used by Redis to expire the cache at
+    """
+    dt=datetime.utcnow() + timedelta(seconds=30)
+    return int(time.mktime(dt.timetuple()))
+
 def get_sql(filename):
     """Retrieves the given SQL file contains from disk.
 
@@ -192,3 +201,121 @@ def get_new_last_90_days(service_id=1):
     }
     filename='new_last_90_days.sql'
     return get_data(filename,tomorrow_at_105_am_est(), params)
+
+def _execute_sql_with_wildcards(filename, params, cache_expire_at):
+    """Execute SQL that contains ILIKE wildcards (% characters).
+
+    This is needed because psycopg interprets % as format specifiers,
+    so we need to double them after Python string formatting.
+    """
+    r = get_redis()
+    key = filename + "_".join([str(v) for v in params.values()])
+
+    if not r.exists(key) or config.DEBUG:
+        log.info("_execute_sql_with_wildcards:INFO:cache miss:key:{0}".format(key))
+        t = get_sql(filename) % params
+        # Escape % for psycopg by doubling them (after Python formatting is done)
+        t = t.replace('%', '%%')
+        with get_engine().connect() as conn:
+            log.info("_execute_sql_with_wildcards:INFO:executing SQL:{0}".format(t))
+            value = pd.read_sql(t, conn).to_json()
+            r.set(key, value, exat=cache_expire_at)
+            log.info("_execute_sql_with_wildcards:INFO:set key:{0} exat: {1}".format(key, cache_expire_at))
+    try:
+        log.info("_execute_sql_with_wildcards:INFO:reading key from cache:key:{0}".format(key))
+        return pd.read_json(StringIO(r.get(key).decode()))
+    except Exception as e:
+        log.error("_execute_sql_with_wildcards:ERROR:key:{0}: {1}".format(key, e))
+        return pd.DataFrame([])
+
+def search_songs(query):
+    """Search for songs by artist or title across all stations.
+
+    Args:
+        query (string): The search term
+
+    Returns:
+        DataFrame: Matching songs with artist, title, service_id, and total_plays
+    """
+    filename = 'search.sql'
+    search_term = '%' + query.replace("'", "''") + '%'
+    params = {"search_term": search_term}
+    return _execute_sql_with_wildcards(filename, params, in_30_seconds())
+
+def get_artist_analytics(artist):
+    """Get cross-station play analytics for an artist.
+
+    Args:
+        artist (string): The artist name
+
+    Returns:
+        DataFrame: Monthly play counts by station
+    """
+    filename = 'artist_analytics.sql'
+    params = {
+        "artist": artist.replace("'", "''")
+    }
+    return _execute_sql_with_wildcards(filename, params, tomorrow_at_105_am_est())
+
+def get_artist_top_songs(artist):
+    """Get top 5 songs by an artist across all stations.
+
+    Args:
+        artist (string): The artist name
+
+    Returns:
+        DataFrame: Top 5 songs with play counts
+    """
+    filename = 'artist_top_songs.sql'
+    params = {
+        "artist": artist.replace("'", "''")
+    }
+    return _execute_sql_with_wildcards(filename, params, tomorrow_at_105_am_est())
+
+def get_artist_top_songs_timeseries(artist):
+    """Get timeseries play data for an artist's top 5 songs across all stations.
+
+    Args:
+        artist (string): The artist name
+
+    Returns:
+        DataFrame: Monthly play counts by song and station
+    """
+    filename = 'artist_top_songs_timeseries.sql'
+    params = {
+        "artist": artist.replace("'", "''")
+    }
+    return _execute_sql_with_wildcards(filename, params, tomorrow_at_105_am_est())
+
+def get_song_analytics(artist, title):
+    """Get cross-station play analytics for a specific song.
+
+    Args:
+        artist (string): The artist name
+        title (string): The song title
+
+    Returns:
+        DataFrame: Monthly play counts by station
+    """
+    filename = 'song_analytics.sql'
+    params = {
+        "artist": artist.replace("'", "''"),
+        "title": title.replace("'", "''")
+    }
+    return _execute_sql_with_wildcards(filename, params, tomorrow_at_105_am_est())
+
+def get_popular_artist_title_timeseries(service_id):
+    """Get weekly play timeseries for top 10 popular songs of a station.
+
+    This batches the timeseries data for all top 10 songs in a single query,
+    reducing the number of API calls from 10 to 1.
+
+    Args:
+        service_id (int): The service/station ID
+
+    Returns:
+        DataFrame: Weekly play counts for each top song (artist, title, year, week, ct)
+    """
+    filename = 'popular_artist_title_timeseries.sql'
+    params = {"service_id": service_id}
+    return get_data(filename, tomorrow_at_105_am_est(), params)
