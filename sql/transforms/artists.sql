@@ -2,7 +2,7 @@ CREATE OR REPLACE TABLE postgres.artists AS
 SELECT
     s.artist,
     SUM(s.ct) as total_plays
-FROM songs_day_of_week_hour s
+FROM sqlite.songs s
 WHERE
     s.artist != ''
 GROUP BY s.artist
