@@ -82,6 +82,7 @@ createApp({
         const analyticsTitle = ref('');
         const analyticsArtist = ref('');
         const analyticsTopSongs = ref([]);
+        const analyticsLoading = ref(false);
 
         // Station data
         const stations = ref(STATIONS);
@@ -456,6 +457,7 @@ createApp({
                     return; // hashchange handler will call this function again with updateUrl=false
                 }
 
+                analyticsLoading.value = true;
                 const response = await fetch(
                     `${API_BASE_URL}/song/analytics?artist=${encodeURIComponent(artist)}&title=${encodeURIComponent(title)}`
                 );
@@ -474,6 +476,8 @@ createApp({
                 createAnalyticsTimeseries(data.analytics);
             } catch (error) {
                 console.error('Error loading song analytics:', error);
+            } finally {
+                analyticsLoading.value = false;
             }
         };
 
@@ -582,7 +586,7 @@ createApp({
             Plotly.newPlot('top-songs-timeseries', traces, layout, PLOTLY_CONFIG);
         };
 
-        const closeAnalytics = () => {
+        const closeAnalytics = async () => {
             analyticsView.value = false;
             analyticsType.value = '';
             analyticsTitle.value = '';
@@ -590,6 +594,8 @@ createApp({
             analyticsTopSongs.value = [];
             // Clear URL hash
             history.pushState(null, '', window.location.pathname);
+            // Reload dashboard data to repopulate charts
+            await setCurrentStation(currentStation.value);
         };
 
         // Station change handler
@@ -641,6 +647,7 @@ createApp({
         // Load artist analytics from URL (doesn't update URL again)
         const loadArtistAnalyticsFromUrl = async (artist) => {
             try {
+                analyticsLoading.value = true;
                 const response = await fetch(
                     `${API_BASE_URL}/artist/${encodeURIComponent(artist)}/analytics`
                 );
@@ -662,6 +669,8 @@ createApp({
                 }
             } catch (error) {
                 console.error('Error loading artist analytics:', error);
+            } finally {
+                analyticsLoading.value = false;
             }
         };
 
@@ -703,6 +712,7 @@ createApp({
             analyticsTitle,
             analyticsArtist,
             analyticsTopSongs,
+            analyticsLoading,
             loadArtistAnalytics,
             loadSongAnalytics,
             closeAnalytics

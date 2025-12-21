@@ -97,8 +97,18 @@
                         </div>
                     </div>
 
+                    <!-- Loading Indicator -->
+                    <div v-if="analyticsLoading" class="row mb-4">
+                        <div class="col-12 text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-3">Loading analytics...</p>
+                        </div>
+                    </div>
+
                     <!-- Plays Over Time Chart -->
-                    <div class="row mb-4">
+                    <div v-if="!analyticsLoading" class="row mb-4">
                         <div class="col-12">
                             <h4 class="text-center">Plays Over Time by Station</h4>
                             <div id="analytics-timeseries"></div>
@@ -133,7 +143,7 @@
                     <!-- Top Songs Plays Over Time (artist analytics only) -->
                     <div class="row mb-4" v-if="analyticsType === 'artist' && analyticsTopSongs.length > 0">
                         <div class="col-12">
-                            <h4 class="text-center">Top 5 Songs - Plays Over Time by Station</h4>
+                            <h4 class="text-center">Top 5 Songs - Plays Over Time</h4>
                             <div id="top-songs-timeseries"></div>
                         </div>
                     </div>
