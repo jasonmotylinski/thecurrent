@@ -171,9 +171,6 @@ def get_artist_analytics_route(artist):
 
         top_songs_timeseries_records = top_songs_timeseries_df.to_dict('records')
         for record in top_songs_timeseries_records:
-            station_info = get_station_by_id(record['service_id'])
-            record['station_name'] = station_info['name'] if station_info else 'Unknown'
-            record['station_id'] = station_info['id'] if station_info else None
             if 'month' in record and record['month'] is not None:
                 month_val = record['month']
                 if hasattr(month_val, 'isoformat'):

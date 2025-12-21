@@ -479,14 +479,14 @@ createApp({
                 analyticsTopSongs.value = [];
                 const data = await response.json();
 
-                // Wait for DOM to update before rendering charts
+                // Set analyticsLoading to false before nextTick so chart divs are rendered
+                analyticsLoading.value = false;
                 await nextTick();
 
                 createAnalyticsTimeseries(data.analytics);
             } catch (error) {
                 console.error('Error loading song analytics:', error);
             } finally {
-                analyticsLoading.value = false;
                 pageLoading.value = false;
             }
         };
@@ -681,6 +681,8 @@ createApp({
                 const data = await response.json();
                 analyticsTopSongs.value = data.top_songs || [];
 
+                // Set analyticsLoading to false before nextTick so chart divs are rendered
+                analyticsLoading.value = false;
                 await nextTick();
 
                 createAnalyticsTimeseries(data.analytics);
@@ -690,7 +692,6 @@ createApp({
             } catch (error) {
                 console.error('Error loading artist analytics:', error);
             } finally {
-                analyticsLoading.value = false;
                 pageLoading.value = false;
             }
         };
