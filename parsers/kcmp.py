@@ -5,7 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from hashlib import sha256
 
-def create_id(show): 
+def create_id(show):
     key = "{0}{1}{2}".format(show["show_id"], show["host_name"], show["show_name"],show["start_time"], show["end_time"])
     m = sha256()
     m.update(key.encode("UTF-8"))
@@ -22,8 +22,8 @@ def get_shows(html):
     for h in data['props']['pageProps']['data']['hosts']:
         show={
             'show_id': h['id'],
-            'host_name': h['hostName'], 
-            'show_name': h['showName'], 
+            'host_name': h['hostName'],
+            'show_name': h['showName'],
             'start_time': h['startTime'],
             'end_time': h['endTime']
         }

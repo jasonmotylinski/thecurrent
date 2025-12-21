@@ -5,7 +5,7 @@ from calendar import monthrange
 from datetime import datetime
 from luigi.format import UTF8
 from pipelines.thecurrent.playlist import get_hour_html, get_day_html
-from pipelines.thecurrent.schedule import get_schedule_html
+from parsers.kcmp import get_schedule_html
 
 class SaveHourHtmlToLocal(luigi.Task):
     """Get an hour of playlist."""

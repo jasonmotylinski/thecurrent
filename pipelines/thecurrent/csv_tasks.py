@@ -9,7 +9,7 @@ from datetime import datetime
 from pipelines.thecurrent.html_tasks import SaveDayHtmlToLocal, SaveScheduleDayHtmlToLocal
 from luigi.format import UTF8
 from pipelines.thecurrent.playlist import get_songs
-from pipelines.thecurrent.schedule import get_shows
+from parsers.kcmp import get_shows
 
 class ConvertDayHtmlToCsv(luigi.Task):
     """Parse the articles from the HTML for the given day."""
