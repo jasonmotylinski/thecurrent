@@ -8,6 +8,5 @@ WHERE
 GROUP BY s.artist
 ORDER BY total_plays DESC;
 
-
-CREATE INDEX IF NOT EXISTS idx_artist_trgm
-ON artists USING GIN (artist gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_artist 
+ON postgres.artists (artist);
