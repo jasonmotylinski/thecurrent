@@ -9,5 +9,5 @@ GROUP BY s.artist
 ORDER BY total_plays DESC;
 
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artist_trgm
+CREATE INDEX IF NOT EXISTS idx_artist_trgm
 ON artists USING GIN (artist gin_trgm_ops);
