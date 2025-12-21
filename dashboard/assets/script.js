@@ -84,6 +84,9 @@ createApp({
         const analyticsTopSongs = ref([]);
         const analyticsLoading = ref(false);
 
+        // Page loading state (for full-page loading overlay)
+        const pageLoading = ref(false);
+
         // Station data
         const stations = ref(STATIONS);
 
@@ -439,12 +442,16 @@ createApp({
             searchQuery.value = '';
             searchResults.value = [];
             showSearchResults.value = false;
+            // Show loading overlay immediately
+            pageLoading.value = true;
             // Update URL and load analytics
             window.location.hash = `/artist/${encodeURIComponent(result.artist)}`;
         };
 
         // Analytics functions
         const loadArtistAnalytics = (artist) => {
+            // Show loading overlay immediately
+            pageLoading.value = true;
             // Update URL - hashchange handler will load the data
             window.location.hash = `/artist/${encodeURIComponent(artist)}`;
         };
@@ -453,6 +460,8 @@ createApp({
             try {
                 // Update URL if requested
                 if (updateUrl) {
+                    // Show loading overlay immediately
+                    pageLoading.value = true;
                     window.location.hash = `/song/${encodeURIComponent(artist)}/${encodeURIComponent(title)}`;
                     return; // hashchange handler will call this function again with updateUrl=false
                 }
@@ -478,6 +487,7 @@ createApp({
                 console.error('Error loading song analytics:', error);
             } finally {
                 analyticsLoading.value = false;
+                pageLoading.value = false;
             }
         };
 
@@ -587,6 +597,8 @@ createApp({
         };
 
         const closeAnalytics = async () => {
+            // Show loading overlay immediately
+            pageLoading.value = true;
             analyticsView.value = false;
             analyticsType.value = '';
             analyticsTitle.value = '';
@@ -595,7 +607,11 @@ createApp({
             // Clear URL hash
             history.pushState(null, '', window.location.pathname);
             // Reload dashboard data to repopulate charts
-            await setCurrentStation(currentStation.value);
+            try {
+                await setCurrentStation(currentStation.value);
+            } finally {
+                pageLoading.value = false;
+            }
         };
 
         // Station change handler
@@ -623,9 +639,13 @@ createApp({
             const hash = window.location.hash;
 
             if (hash.startsWith('#/artist/')) {
+                // Show loading overlay for direct URL navigation
+                pageLoading.value = true;
                 const artist = decodeURIComponent(hash.replace('#/artist/', ''));
                 await loadArtistAnalyticsFromUrl(artist);
             } else if (hash.startsWith('#/song/')) {
+                // Show loading overlay for direct URL navigation
+                pageLoading.value = true;
                 const parts = hash.replace('#/song/', '').split('/');
                 if (parts.length >= 2) {
                     const artist = decodeURIComponent(parts[0]);
@@ -671,6 +691,7 @@ createApp({
                 console.error('Error loading artist analytics:', error);
             } finally {
                 analyticsLoading.value = false;
+                pageLoading.value = false;
             }
         };
 
@@ -715,7 +736,9 @@ createApp({
             analyticsLoading,
             loadArtistAnalytics,
             loadSongAnalytics,
-            closeAnalytics
+            closeAnalytics,
+            // Page loading
+            pageLoading
         };
     }
 }).mount('#app')
