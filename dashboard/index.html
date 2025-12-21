@@ -156,7 +156,7 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="song in popularSongs" :key="song.artist + song.title">
-                                        <td>{{ song.artist }}</td>
+                                        <td><a :href="'#/artist/' + song.artist">{{ song.artist }}</a></td>
                                         <td>{{ song.title }}</td>
                                         <td>
                                             <div :id="'graph-' + song.artist.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase() + '-' + song.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()" style="width: 200px;"></div>
