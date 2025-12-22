@@ -68,6 +68,12 @@ createApp({
         const dayOfWeek = ref('');
         const hourLabel = ref('');
         const stationTitle = ref('');
+        const stationDisplayName = ref('');
+
+        // Phase 1 Analytics state
+        const stationExclusives = ref([]);
+        const deepCuts = ref([]);
+        const genreByHour = ref([]);
 
         // Search state
         const searchQuery = ref('');
@@ -114,6 +120,15 @@ createApp({
                 document.title = `${stationTitle.value}`;
             } catch (error) {
                 console.error('Error updating station title:', error);
+            }
+        };
+
+        const updateStationDisplayName = async (stationId) => {
+            try {
+                const data = await fetchData(stationId);
+                stationDisplayName.value = data.display_name;
+            } catch (error) {
+                console.error('Error updating station display name:', error);
             }
         };
 
@@ -608,6 +623,77 @@ createApp({
             await setCurrentStation(currentStation.value);
         };
 
+        // Phase 1 Analytics Functions
+        const loadStationExclusives = async (stationId) => {
+            try {
+                const data = await fetchStationData(stationId, 'exclusives');
+                stationExclusives.value = data.slice(0, 20); // Show top 20
+            } catch (error) {
+                console.error('Error loading station exclusives:', error);
+                stationExclusives.value = [];
+            }
+        };
+
+        const loadDeepCuts = async () => {
+            try {
+                const data = await fetchData('deep-cuts');
+                deepCuts.value = data.slice(0, 20); // Show top 20
+            } catch (error) {
+                console.error('Error loading deep cuts:', error);
+                deepCuts.value = [];
+            }
+        };
+
+        const createGenreByHourHeatmap = async () => {
+            try {
+                const data = await fetchData('genres/by-hour');
+
+                // Group data by genre and hour
+                const genreMap = {};
+                data.forEach(item => {
+                    if (!genreMap[item.genre]) {
+                        genreMap[item.genre] = Array(24).fill(0);
+                    }
+                    genreMap[item.genre][item.hour] = item.plays;
+                });
+
+                // Sort genres by total plays
+                const genres = Object.keys(genreMap).sort((a, b) => {
+                    const sumA = genreMap[a].reduce((sum, val) => sum + val, 0);
+                    const sumB = genreMap[b].reduce((sum, val) => sum + val, 0);
+                    return sumB - sumA;
+                }).slice(0, 15); // Top 15 genres
+
+                const hours = Array.from({length: 24}, (_, i) => i.toString());
+                const zData = genres.map(genre => genreMap[genre]);
+
+                const trace = {
+                    z: zData,
+                    x: hours,
+                    y: genres,
+                    type: 'heatmap',
+                    colorscale: HEATMAP_COLORSCALE,
+                    hovertemplate: 'Genre: %{y}<br>Hour: %{x}:00<br>Plays: %{z}<extra></extra>'
+                };
+
+                const layout = {
+                    margin: { l: 120, r: 0, t: 0, b: 50 },
+                    height: 500,
+                    xaxis: {
+                        title: 'Hour of Day',
+                        fixedrange: true
+                    },
+                    yaxis: {
+                        fixedrange: true
+                    }
+                };
+
+                Plotly.newPlot('genre-by-hour-heatmap', [trace], layout, { displaylogo: false });
+            } catch (error) {
+                console.error('Error creating genre by hour heatmap:', error);
+            }
+        };
+
         // Station change handler
         const setCurrentStation = async (station, showLoading = true) => {
             if (showLoading) {
@@ -617,12 +703,16 @@ createApp({
                 currentStation.value = station;
                 await Promise.all([
                     updateStationTitle(station),
+                    updateStationDisplayName(station),
                     createPopularSongs(station),
                     createArtistTreemap(station),
                     createNewLast90DaysGraph(station),
                     createPopularAllTime(station),
                     createPopularAllTimeGraph(station),
                     createPopularDayHourGraph(station),
+                    loadStationExclusives(station),
+                    loadDeepCuts(),
+                    createGenreByHourHeatmap(),
                     updateLastUpdated()
                 ]);
             } finally {
@@ -722,7 +812,12 @@ createApp({
             dayOfWeek,
             hourLabel,
             stationTitle,
+            stationDisplayName,
             setCurrentStation,
+            // Phase 1 Analytics
+            stationExclusives,
+            deepCuts,
+            genreByHour,
             // Search
             searchQuery,
             searchResults,

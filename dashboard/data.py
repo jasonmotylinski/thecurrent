@@ -319,3 +319,37 @@ def get_popular_artist_title_timeseries(service_id):
     filename = 'popular_artist_title_timeseries.sql'
     params = {"service_id": service_id}
     return get_data(filename, tomorrow_at_105_am_est(), params)
+
+def get_station_exclusives(service_id):
+    """Get artists played exclusively on one station in the last 90 days.
+
+    Args:
+        service_id (int): The service/station ID
+
+    Returns:
+        DataFrame: Artists exclusive to the station with play counts
+    """
+    filename = 'station_exclusives.sql'
+    params = {"service_id": service_id}
+    return get_data(filename, tomorrow_at_105_am_est(), params)
+
+def get_deep_cuts():
+    """Get songs with low play counts but played across multiple stations.
+
+    These are quality songs that multiple stations independently choose,
+    indicating curator consensus despite low overall play counts.
+
+    Returns:
+        DataFrame: Songs played on 4+ stations with low total plays
+    """
+    filename = 'deep_cuts.sql'
+    return get_data(filename, tomorrow_at_105_am_est())
+
+def get_genre_by_hour():
+    """Get genre distribution by hour of day across all stations.
+
+    Returns:
+        DataFrame: Play counts by genre and hour
+    """
+    filename = 'genre_by_hour.sql'
+    return get_data(filename, tomorrow_at_105_am_est())

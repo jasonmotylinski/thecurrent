@@ -25,7 +25,7 @@ def get_station_by_id(service_id):
 @api_routes.route('/api/<service_name>')
 def get_service(service_name):
     service = config.SERVICES[service_name]
-    return api_response({"title": service.TITLE, "logo": service.LOGO})
+    return api_response({"title": service.TITLE, "logo": service.LOGO, "display_name": service.SERVICE_DISPLAY_NAME, "service_id": service.SERVICE_ID})
 
 @api_routes.route('/api/<service_name>/popular/last_week/artist_title')
 def get_popular_artist_title_last_week(service_name):
@@ -228,3 +228,33 @@ def get_stations():
             'service_id': service_class.SERVICE_ID
         })
     return api_response(stations)
+
+@api_routes.route('/api/<service_name>/exclusives')
+def get_station_exclusives_route(service_name):
+    """Get artists played exclusively on this station in the last 90 days."""
+    try:
+        df = data.get_station_exclusives(config.SERVICES[service_name].SERVICE_ID)
+        records = df.to_dict('records')
+        return api_response(records)
+    except Exception as e:
+        return api_error(str(e), 500)
+
+@api_routes.route('/api/deep-cuts')
+def get_deep_cuts_route():
+    """Get songs with low play counts but played across multiple stations."""
+    try:
+        df = data.get_deep_cuts()
+        records = df.to_dict('records')
+        return api_response(records)
+    except Exception as e:
+        return api_error(str(e), 500)
+
+@api_routes.route('/api/genres/by-hour')
+def get_genre_by_hour_route():
+    """Get genre distribution by hour of day across all stations."""
+    try:
+        df = data.get_genre_by_hour()
+        records = df.to_dict('records')
+        return api_response(records)
+    except Exception as e:
+        return api_error(str(e), 500)
