@@ -1,0 +1,35 @@
+<!-- Search Section -->
+<div class="row mb-4">
+    <div class="col-md-6 offset-md-3">
+        <div class="search-container position-relative">
+            <input
+                type="text"
+                class="form-control form-control-lg"
+                v-model="searchQuery"
+                @input="onSearchInput"
+                @focus="showSearchResults = searchResults.length > 0"
+                @blur="hideSearchResultsDelayed"
+                placeholder="Search artists...">
+            <!-- Search Results Dropdown -->
+            <div v-if="showSearchResults && searchResults.length > 0"
+                 class="search-results position-absolute w-100">
+                <div v-for="result in searchResults"
+                     :key="result.artist"
+                     class="search-result-item"
+                     @mousedown="selectSearchResult(result)">
+                    ${ result.artist }
+                </div>
+            </div>
+            <!-- No Results Message -->
+            <div v-if="showSearchResults && searchQuery.length >= 2 && searchResults.length === 0 && !searchLoading"
+                 class="search-results position-absolute w-100 p-3 text-muted text-center">
+                No results found for "${ searchQuery }"
+            </div>
+            <!-- Loading Indicator -->
+            <div v-if="searchLoading"
+                 class="search-results position-absolute w-100 p-3 text-muted text-center">
+                Searching...
+            </div>
+        </div>
+    </div>
+</div>

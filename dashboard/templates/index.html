@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ station_title }}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="/assets/styles.css" rel="stylesheet">
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
+    <!-- Vue.js -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Google Analytics -->
+    <script src="https://www.googletagmanager.com/gtag/js?id=G-HB05PVK153"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-HB05PVK153');
+    </script>
+</head>
+<body>
+    <div id="app">
+        {% include 'partials/loading.html' %}
+        {% include 'partials/sidebar.html' %}
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <h1 class="display-3 text-center">${ analyticsView ? (analyticsType === 'artist' ? 'Artist trends' : 'Song trends') : stationTitle }</h1>
+                    </div>
+                </div>
+
+                {% include 'partials/search.html' %}
+                {% include 'partials/analytics.html' %}
+                {% include 'partials/dashboard.html' %}
+                {% include 'partials/footer.html' %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Custom JavaScript (load in dependency order) -->
+    <script src="/assets/constants.js"></script>
+    <script src="/assets/utils.js"></script>
+    <script src="/assets/charts.js"></script>
+    <script src="/assets/script.js"></script>
+</body>
+</html>

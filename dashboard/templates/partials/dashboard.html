@@ -1,0 +1,163 @@
+<!-- Main Dashboard Content (hidden when analytics view is active) -->
+<div v-if="!analyticsView">
+<!-- Popular Songs Table -->
+<div class="row">
+    <div class="col-md-6">
+        <h3 class="text-center">Top 10 Most Popular Songs in the Last Week</h3>
+        <div class="table-responsive">
+            <table class="table popular-songs-table">
+                <thead>
+                    <tr>
+                        <th>Artist</th>
+                        <th>Title</th>
+                        <th>Plays</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="song in popularSongs" :key="song.artist + song.title">
+                        <td><a href="#" @click.prevent="loadArtistAnalytics(song.artist)">${ song.artist }</a></td>
+                        <td>${ song.title }</td>
+                        <td>
+                            <div :id="'graph-' + song.artist.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase() + '-' + song.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()" style="width: 200px;"></div>
+                            ${ song.plays }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <h3 class="text-center">Top 10 Most Popular Artists in the Last Week</h3>
+        <div id="popular-artists-last-week">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <h3 class="text-center">Time of Week New Music is Played</h3>
+        <div id="popular-songs-last-90-days">
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h3 class="text-center">Top 5 Most Popular Artists Played on ${ dayOfWeek } at ${ hourLabel }</h3>
+        <div id="popular-day-hour">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col">Artist</th>
+                        <th scope="col">Total Plays</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="artist in popularDayHour" :key="artist.artist">
+                        <td>${ artist.artist }</td>
+                        <td>${ artist.ct }</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Popular All Time Section -->
+<div class="row">
+    <div class="col-12">
+        <h3 class="text-center">Top 5 Most Popular Artists of All-Time</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <div id="popular-all-time-table">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th scope="col">Artist</th>
+                                <th scope="col">Total Plays</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="artist in popularAllTime" :key="artist.artist">
+                                <td>${ artist.artist }</td>
+                                <td>${ artist.ct }</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div id="popular-all-time-graph"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Phase 1 New Analytics -->
+<div class="row mt-5">
+    <div class="col-md-6">
+        <h3 class="text-center">Station Exclusives</h3>
+        <p class="text-center text-muted">Artists played only on ${ stationDisplayName } (last 90 days)</p>
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Artist</th>
+                        <th>Plays</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(exclusive, index) in stationExclusives" :key="exclusive.artist">
+                        <td>
+                            <span class="text-muted me-2" style="font-weight: 500;">${ index + 1 }.</span>
+                            <a href="#" @click.prevent="loadArtistAnalytics(exclusive.artist)">
+                                ${ exclusive.artist }
+                            </a>
+                        </td>
+                        <td>${ exclusive.total_plays }</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <!--
+        <h3 class="text-center">Deep Cuts</h3>
+        <p class="text-center text-muted">Quality tracks played across 4+ stations but under the radar</p>
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Artist - Title</th>
+                        <th>Stations</th>
+                        <th>Plays</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="cut in deepCuts" :key="cut.artist + cut.title">
+                        <td>
+                            <a href="#" @click.prevent="loadArtistAnalytics(cut.artist)">
+                                ${ cut.artist }
+                            </a> - ${ cut.title }
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">${ cut.station_count } stations</span>
+                        </td>
+                        <td>${ cut.total_plays }</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        -->
+    </div>
+
+</div>
+
+<!--
+<div class="row mt-5">
+    <div class="col-12">
+        <h3 class="text-center">What Time Do Genres Play?</h3>
+        <p class="text-center text-muted">Genre patterns by hour of day across all stations (last 90 days)</p>
+        <div id="genre-by-hour-heatmap"></div>
+    </div>
+</div>
+-->
+
+</div> <!-- End of v-if="!analyticsView" -->

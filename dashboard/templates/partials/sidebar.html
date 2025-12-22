@@ -1,0 +1,13 @@
+<!-- Sidebar -->
+<nav class="sidebar">
+    <div class="sidebar-sticky">
+        <ul class="nav flex-column">
+            <li class="nav-item" v-for="station in stations" :key="station.id">
+                <a class="nav-link" :class="[station.style, { active: currentStation === station.id }]"
+                   :href="'#' + station.id" @click="setCurrentStation(station.id)">
+                    <img :src="station.logo" :alt="station.name" style="width: 40px;">
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
