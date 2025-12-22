@@ -19,7 +19,7 @@ def get_songs(html):
     pattern = r'\\"plays\\":(.*)},\\"d'
     match = re.search(pattern, html)
     if match:
-        data = json.loads(match.group(1).replace('\\"', '"'))
+        data = json.loads(match.group(1).replace('\\\\', '\\').replace('\\"', '"'))
         
         for d in data:
             item = {
