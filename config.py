@@ -73,6 +73,14 @@ MUSICBRAINZ_RECORDINGS_JSON="output/musicbrainz/recordings.json"
 
 SPOTIFY_ARTISTS_JSON="output/spotify/artists.json"
 
+class SPOTIFY(object):
+    """Configuration for Spotify artist enrichment pipeline."""
+    SERVICE_NAME = "spotify"
+    ARTISTS_JSON_BY_DAY = "output/spotify/artists/json/by_day/{year}/{month:02d}/{date}.json"
+    ARTISTS_BACKFILL_JSON = "output/spotify/artists/json/backfill/{timestamp}.json"
+    RATE_LIMIT_DELAY = 0.1  # seconds between API calls
+    BATCH_SIZE = 100  # max artists per run
+
 class KEXP(object):
     DAY_URL="https://api.kexp.org/v2/plays/?limit=1000&airdate_after={date.year}-{date.month:02d}-{date.day:02d}T00:00:00&airdate_before={date.year}-{date.month:02d}-{date.day:02d}T23:59:59"
     DAY_JSON="output/kexp/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"

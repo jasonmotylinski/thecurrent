@@ -161,6 +161,18 @@ def get_popular_artist_title_last_week(service_id=1):
   
     return get_data(filename, tomorrow_at_105_am_est(), params)
 
+def get_artist_titles_from_yesterday():
+    yesterday = get_yesterday().date()
+    start_date = datetime.combine(yesterday, datetime.min.time())
+    end_date = datetime.combine(yesterday, datetime.max.time())
+    filename = 'artist_titles_from_yesterday.sql'
+    params = {
+        "start_date": start_date,
+        "end_date": end_date
+    }
+
+    return get_data(filename, tomorrow_at_105_am_est(), params)
+
 def get_popular_artist_last_week(service_id=1):
     last_week=get_last_week_range()
     filename='popular_artist_last_week.sql'

@@ -1,5 +1,31 @@
 # New Analytics Implementation Plan
 
+## Completed: File Decomposition ✅
+
+Refactored frontend code into modular files:
+
+### JavaScript (load in order):
+- `dashboard/assets/constants.js` - API config, stations, color schemes (48 lines)
+- `dashboard/assets/utils.js` - Date formatting, API fetch helpers (28 lines)
+- `dashboard/assets/charts.js` - Plotly chart functions (352 lines)
+- `dashboard/assets/script.js` - Vue app only (449 lines, down from 843)
+
+### HTML Templates (Jinja2 includes):
+- `dashboard/templates/index.html` - Main template
+- `dashboard/templates/partials/loading.html` - Loading overlay
+- `dashboard/templates/partials/sidebar.html` - Station navigation
+- `dashboard/templates/partials/search.html` - Search input & results
+- `dashboard/templates/partials/analytics.html` - Artist/song analytics view
+- `dashboard/templates/partials/dashboard.html` - Main dashboard content
+- `dashboard/templates/partials/footer.html` - Footer links
+
+### Key Changes:
+- Vue uses `${...}` delimiters to avoid Jinja2 conflicts
+- Flask uses `render_template()` instead of `send_from_directory()`
+- Old `dashboard/index.html` can be deleted
+
+---
+
 ## Completed: Phase 1 (Quick Wins) ✅
 
 ### 1. Station Exclusives ✅
@@ -7,6 +33,7 @@
 - **Data**: `data.get_station_exclusives(service_id)` with daily cache
 - **API**: `GET /api/<service_name>/exclusives`
 - **Frontend**: Table with numbered rankings (gray text), clickable artists
+- **Optimization**: Rewrote query with window function to avoid 82M row nested loop join (54s → <1s)
 - **Status**: COMPLETE
 
 ### 2. Deep Cuts Finder ✅
@@ -196,11 +223,35 @@
 
 ---
 
-## Database Optimization Considerations
+## Database Optimization Completed ✅
+
+### Indexes added to `songs_day_of_week_hour`:
+```sql
+-- Existing indexes
+CREATE INDEX service_title_played_at_idx ON songs_day_of_week_hour (service_id, artist, title, played_at);
+CREATE INDEX service_artist_title_idx ON songs_day_of_week_hour (service_id, artist, title);
+
+-- New indexes for date-range queries
+CREATE INDEX played_at_service_artist_idx ON songs_day_of_week_hour (played_at, service_id, artist);
+CREATE INDEX played_at_artist_service_idx ON songs_day_of_week_hour (played_at, artist, service_id);
+CREATE INDEX played_at_artist_lower_service_idx ON songs_day_of_week_hour (played_at, artist_lower, service_id);
+```
+
+### Column added:
+- `artist_lower` - Lowercase artist name for case-insensitive matching without runtime `LOWER()` calls
+
+### Query optimization pattern:
+- Use CTEs with window functions instead of self-joins
+- Example: `COUNT(*) OVER (PARTITION BY artist_lower)` to count stations per artist in single pass
+- Avoid nested loops that cause O(n²) comparisons
+
+---
+
+## Database Optimization Considerations (Future)
 
 For Phase 3 complex queries, consider:
 
-1. **Indexes to add:**
+1. **Additional indexes if needed:**
    ```sql
    CREATE INDEX idx_artist_played_at ON songs_day_of_week_hour(artist, played_at);
    CREATE INDEX idx_service_artist ON songs_day_of_week_hour(service_id, artist);
