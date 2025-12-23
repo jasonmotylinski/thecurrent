@@ -316,7 +316,7 @@ const app = createApp({
                     createPopularDayHourGraph(station),
                     loadStationExclusives(station),
                     loadDeepCuts(),
-                    //loadGenreByHourHeatmap(),
+                    loadGenreByHourHeatmap(),
                     updateLastUpdated()
                 ]);
             } finally {
