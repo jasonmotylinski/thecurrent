@@ -249,11 +249,12 @@ def get_deep_cuts_route():
     except Exception as e:
         return api_error(str(e), 500)
 
-@api_routes.route('/api/genres/by-hour')
-def get_genre_by_hour_route():
-    """Get genre distribution by hour of day across all stations."""
+@api_routes.route('/api/genres/by-hour/<service_name>')
+def get_genre_by_hour_route(service_name):
+    """Get genre distribution by hour of day for a station."""
     try:
-        df = data.get_genre_by_hour()
+        service_id = config.SERVICES[service_name].SERVICE_ID
+        df = data.get_genre_by_hour(service_id)
         records = df.to_dict('records')
         return api_response(records)
     except Exception as e:

@@ -341,10 +341,32 @@ const createGenreByHourHeatmap = (elementId, data) => {
             },
             yaxis: {
                 fixedrange: true
-            }
+            },
+            shapes: []
         };
 
         Plotly.newPlot(elementId, [trace], layout, { displaylogo: false });
+
+        // Add column highlight on hover
+        const plotElement = document.getElementById(elementId);
+        plotElement.on('plotly_hover', (eventData) => {
+            const hourIndex = parseInt(eventData.points[0].x);
+            Plotly.relayout(elementId, {
+                shapes: [{
+                    type: 'rect',
+                    x0: hourIndex - 0.5,
+                    x1: hourIndex + 0.5,
+                    y0: -0.5,
+                    y1: genres.length - 0.5,
+                    fillcolor: 'rgba(255, 255, 255, 0.15)',
+                    line: { color: 'rgba(255, 255, 255, 0.5)', width: 2 }
+                }]
+            });
+        });
+
+        plotElement.on('plotly_unhover', () => {
+            Plotly.relayout(elementId, { shapes: [] });
+        });
     } catch (error) {
         console.error('Error creating genre by hour heatmap:', error);
     }

@@ -289,9 +289,9 @@ const app = createApp({
             }
         };
 
-        const loadGenreByHourHeatmap = async () => {
+        const loadGenreByHourHeatmap = async (stationId) => {
             try {
-                const data = await fetchData('genres/by-hour');
+                const data = await fetchData(`genres/by-hour/${stationId}`);
                 createGenreByHourHeatmap('genre-by-hour-heatmap', data);
             } catch (error) {
                 console.error('Error creating genre by hour heatmap:', error);
@@ -316,7 +316,7 @@ const app = createApp({
                     createPopularDayHourGraph(station),
                     loadStationExclusives(station),
                     loadDeepCuts(),
-                    loadGenreByHourHeatmap(),
+                    loadGenreByHourHeatmap(station),
                     updateLastUpdated()
                 ]);
             } finally {

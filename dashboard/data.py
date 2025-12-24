@@ -357,11 +357,15 @@ def get_deep_cuts():
     filename = 'deep_cuts.sql'
     return get_data(filename, tomorrow_at_105_am_est())
 
-def get_genre_by_hour():
-    """Get genre distribution by hour of day across all stations.
+def get_genre_by_hour(service_id):
+    """Get genre distribution by hour of day for a station.
+
+    Args:
+        service_id (int): The service/station ID
 
     Returns:
         DataFrame: Play counts by genre and hour
     """
     filename = 'genre_by_hour.sql'
-    return get_data(filename, tomorrow_at_105_am_est())
+    params = {"service_id": service_id}
+    return get_data(filename, tomorrow_at_105_am_est(), params)
