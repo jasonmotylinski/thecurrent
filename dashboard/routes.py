@@ -239,6 +239,16 @@ def get_station_exclusives_route(service_name):
     except Exception as e:
         return api_error(str(e), 500)
 
+@api_routes.route('/api/<service_name>/hidden-gems')
+def get_station_hidden_gems_route(service_name):
+    """Get songs this station champions that aren't getting play elsewhere."""
+    try:
+        df = data.get_station_hidden_gems(config.SERVICES[service_name].SERVICE_ID)
+        records = df.to_dict('records')
+        return api_response(records)
+    except Exception as e:
+        return api_error(str(e), 500)
+
 @api_routes.route('/api/deep-cuts')
 def get_deep_cuts_route():
     """Get songs with low play counts but played across multiple stations."""

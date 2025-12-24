@@ -21,7 +21,7 @@ const app = createApp({
 
         // Phase 1 Analytics state
         const stationExclusives = ref([]);
-        const deepCuts = ref([]);
+        const hiddenGems = ref([]);
         const genreByHour = ref([]);
 
         // Search state
@@ -279,13 +279,13 @@ const app = createApp({
             }
         };
 
-        const loadDeepCuts = async () => {
+        const loadHiddenGems = async (stationId) => {
             try {
-                const data = await fetchData('deep-cuts');
-                deepCuts.value = data.slice(0, 20); // Show top 20
+                const data = await fetchStationData(stationId, 'hidden-gems');
+                hiddenGems.value = data.slice(0, 20); // Show top 20
             } catch (error) {
-                console.error('Error loading deep cuts:', error);
-                deepCuts.value = [];
+                console.error('Error loading hidden gems:', error);
+                hiddenGems.value = [];
             }
         };
 
@@ -315,7 +315,7 @@ const app = createApp({
                     createPopularAllTimeGraph(station),
                     createPopularDayHourGraph(station),
                     loadStationExclusives(station),
-                    loadDeepCuts(),
+                    loadHiddenGems(station),
                     loadGenreByHourHeatmap(station),
                     updateLastUpdated()
                 ]);
@@ -420,7 +420,7 @@ const app = createApp({
             setCurrentStation,
             // Phase 1 Analytics
             stationExclusives,
-            deepCuts,
+            hiddenGems,
             genreByHour,
             // Search
             searchQuery,

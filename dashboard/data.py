@@ -369,3 +369,16 @@ def get_genre_by_hour(service_id):
     filename = 'genre_by_hour.sql'
     params = {"service_id": service_id}
     return get_data(filename, tomorrow_at_105_am_est(), params)
+
+def get_station_hidden_gems(service_id):
+    """Get songs this station champions that aren't getting play elsewhere.
+
+    Args:
+        service_id (int): The service/station ID
+
+    Returns:
+        DataFrame: Songs with plays_here >= 3 and plays_elsewhere < 20
+    """
+    filename = 'station_hidden_gems.sql'
+    params = {"service_id": service_id}
+    return get_data(filename, tomorrow_at_105_am_est(), params)

@@ -36,18 +36,19 @@ Refactored frontend code into modular files:
 - **Optimization**: Rewrote query with window function to avoid 82M row nested loop join (54s → <1s)
 - **Status**: COMPLETE
 
-### 2. Deep Cuts Finder ✅
-- **SQL**: `sql/deep_cuts.sql` - Songs played on 4+ stations but <100 total plays
-- **Data**: `data.get_deep_cuts()` with daily cache
-- **API**: `GET /api/deep-cuts`
-- **Frontend**: Table with station count badges (gray), artist links
+### 2. Hidden Gems (formerly Deep Cuts) ✅
+- **SQL**: `sql/station_hidden_gems.sql` - Songs this station plays 3+ times but <20 plays elsewhere
+- **Data**: `data.get_station_hidden_gems(service_id)` with daily cache
+- **API**: `GET /api/<service_name>/hidden-gems`
+- **Frontend**: Table showing plays here vs elsewhere, artist links
+- **Rationale**: Original "Deep Cuts" (cross-station consensus) didn't make sense for single-station view. Hidden Gems shows what THIS station uniquely champions.
 - **Status**: COMPLETE
 
 ### 3. Time-of-Day Genre Patterns ✅
-- **SQL**: `sql/genre_by_hour.sql` - Genre distribution by hour from Spotify metadata
-- **Data**: `data.get_genre_by_hour()` with daily cache
-- **API**: `GET /api/genres/by-hour`
-- **Frontend**: Plotly heatmap (15 genres × 24 hours)
+- **SQL**: `sql/genre_by_hour.sql` - Genre distribution by hour from Spotify metadata, filtered by station
+- **Data**: `data.get_genre_by_hour(service_id)` with daily cache
+- **API**: `GET /api/genres/by-hour/<service_name>`
+- **Frontend**: Plotly heatmap (15 genres × 24 hours) with column highlight on hover
 - **Status**: COMPLETE
 
 ---

@@ -118,34 +118,30 @@
     </div>
 
     <div class="col-md-6">
-        <!--
-        <h3 class="text-center">Deep Cuts</h3>
-        <p class="text-center text-muted">Quality tracks played across 4+ stations but under the radar</p>
+        <h3 class="text-center">Hidden Gems</h3>
+        <p class="text-center text-muted">Songs ${ stationDisplayName } champions that others aren't playing</p>
         <div class="table-responsive">
             <table class="table table-sm">
                 <thead>
                     <tr>
                         <th>Artist - Title</th>
-                        <th>Stations</th>
-                        <th>Plays</th>
+                        <th>Here</th>
+                        <th>Elsewhere</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="cut in deepCuts" :key="cut.artist + cut.title">
+                    <tr v-for="gem in hiddenGems" :key="gem.artist + gem.title">
                         <td>
-                            <a href="#" @click.prevent="loadArtistAnalytics(cut.artist)">
-                                ${ cut.artist }
-                            </a> - ${ cut.title }
+                            <a href="#" @click.prevent="loadArtistAnalytics(gem.artist)">
+                                ${ gem.artist }
+                            </a> - ${ gem.title }
                         </td>
-                        <td>
-                            <span class="badge bg-secondary">${ cut.station_count } stations</span>
-                        </td>
-                        <td>${ cut.total_plays }</td>
+                        <td>${ gem.plays_here }</td>
+                        <td>${ gem.plays_elsewhere }</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        -->
     </div>
 
 </div>
