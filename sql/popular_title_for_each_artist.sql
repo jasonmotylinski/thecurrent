@@ -2,19 +2,19 @@ SELECT
     artist, title, ct, rnk
 FROM (
 SELECT
-    artist,
-    title,
+    MAX(artist) AS artist,
+    MAX(title) AS title,
     COUNT(*) AS ct,
     DENSE_RANK() OVER(
-        PARTITION BY artist
+        PARTITION BY LOWER(artist)
         order by COUNT(*) DESC
     ) as rnk
 FROM 
     songs
-WHERE service_id=1 AND artist != '' and title != ''
+WHERE service_id=1 AND LOWER(artist) != '' and LOWER(title) != ''
 GROUP BY
-    artist,
-    title
+    LOWER(artist),
+    LOWER(title)
 ORDER BY
     ct DESC
 ) 

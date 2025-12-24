@@ -1,11 +1,11 @@
 WITH top_songs AS (
-    SELECT artist, title
+    SELECT MAX(artist) AS artist, MAX(title) AS title, artist_lower, title_lower
     FROM songs_day_of_week_hour
     WHERE service_id = %(service_id)s
         AND played_at >= CURRENT_DATE - INTERVAL '7 DAY'
         AND played_at <= CURRENT_DATE
-        AND artist != '' AND title != ''
-    GROUP BY artist, title
+        AND artist_lower != '' AND title_lower != ''
+    GROUP BY artist_lower, title_lower
     ORDER BY SUM(ct) DESC
     LIMIT 10
 ),
@@ -26,8 +26,8 @@ SELECT
     COALESCE(SUM(s.ct), 0) AS ct
 FROM top_songs ts
 CROSS JOIN weeks w
-LEFT JOIN songs_day_of_week_hour s ON s.artist = ts.artist
-    AND s.title = ts.title
+LEFT JOIN songs_day_of_week_hour s ON s.artist_lower = ts.artist_lower
+    AND s.title_lower = ts.title_lower
     AND s.year = w.year
     AND s.week = w.week
     AND s.service_id = %(service_id)s

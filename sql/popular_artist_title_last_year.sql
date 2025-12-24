@@ -36,32 +36,34 @@ LEFT OUTER JOIN
             INNER JOIN
             (
                 SELECT 
-                    artist,
-                    title,
+                    MAX(artist) AS artist,
+                    MAX(title) AS title,
+                    LOWER(artist) AS artist_lower,
+                    LOWER(title) AS title_lower,
                     COUNT(*) AS ct
                 FROM 
                     songs
                 WHERE 
                     played_at >= DATETIME('now', '-1 year')
-                    AND artist != ''
-                    AND title != ''
+                    AND LOWER(artist) != ''
+                    AND LOWER(title) != ''
                 GROUP BY
-                    artist,
-                    title
+                    LOWER(artist),
+                    LOWER(title)
                 ORDER BY
                     ct DESC
                 LIMIT 20
-            ) s2 ON s1.artist=s2.artist AND s1.title=s2.title
+            ) s2 ON LOWER(s1.artist)=s2.artist_lower AND LOWER(s1.title)=s2.title_lower
             WHERE
                 s1.played_at >= DATETIME('now', '-1 year')
             GROUP BY    
-                s1.artist,
-                s1.title,
+                LOWER(s1.artist),
+                LOWER(s1.title),
                 s1.year,
                 s1.week
             ORDER BY
-                s1.artist ASC,
-                s1.title ASC,
+                LOWER(s1.artist) ASC,
+                LOWER(s1.title) ASC,
                 ct DESC
         )
     )
