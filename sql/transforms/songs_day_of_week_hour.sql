@@ -4,6 +4,7 @@ SELECT
     artist, 
     LOWER(artist) AS artist_lower,
     title,
+    LOWER(title) AS title_lower,
     CAST(played_at AS DATE) as played_at,
     CAST(year AS INT) as year,
     CAST(month AS INT) as month,
@@ -31,3 +32,5 @@ CREATE INDEX IF NOT EXISTS service_artist_title_idx ON postgres.songs_day_of_wee
 CREATE INDEX IF NOT EXISTS played_at_service_artist_idx ON postgres.songs_day_of_week_hour (played_at, service_id, artist);
 CREATE INDEX IF NOT EXISTS played_at_artist_service_idx ON postgres.songs_day_of_week_hour (played_at, artist, service_id);
 CREATE INDEX IF NOT EXISTS played_at_artist_lower_service_idx ON postgres.songs_day_of_week_hour (played_at, artist_lower, service_id);
+CREATE INDEX IF NOT EXISTS played_at_artist_lower_title_lower_idx
+    ON postgres.songs_day_of_week_hour (played_at, artist_lower, title_lower);
