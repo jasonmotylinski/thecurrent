@@ -65,8 +65,13 @@ class WfmuParser(BaseParser):
             'submit': 'Find the song or show!'
         }
      
-        print(data)
-        response = requests.post(url, data=data)
+        try:
+            response = requests.post(url, data=data, timeout=10)
+            response.raise_for_status()  # Raise for bad status codes
+        except requests.exceptions.RequestException as e:
+            print(f"Request failed for time slot {time_slot}: {e}")
+            return []  # Return empty list on error
+        
         soup = bs.BeautifulSoup(response.text, 'html.parser')
         
         songs = []
