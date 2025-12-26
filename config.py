@@ -203,6 +203,17 @@ class WYEP(object):
     LOGO="/assets/wyep.png"
     TITLE=SERVICE_DISPLAY_NAME + " Trends"
 
+class WFMU(object):
+    SERVICE_ID=12
+    SERVICE_NAME="wfmu"
+    SERVICE_DISPLAY_NAME="91.1 WFMU"
+    DAY_JSON="output/wfmu/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
+    DAY_CSV="output/wfmu/csv/{0}/{1}/{2}.csv"
+    TITLE=SERVICE_DISPLAY_NAME + " Trends"
+    LOGO="/assets/wfmu.png"
+    PATH="/" + SERVICE_NAME
+    TOP_10_PLAYLIST="https://open.spotify.com/playlist/1oatZdfsBNYNuUhnNTXXnn"  # placeholder
+
 SERVICES={
     "kexp": KEXP,
     "kutx": KUTX,
@@ -214,5 +225,6 @@ SERVICES={
     "kkxt": KKXT,
     "wehm": WEHM,
     "wnxp": WNXP,
-    "wyep": WYEP
+    "wyep": WYEP,
+    "wfmu": WFMU
 }
