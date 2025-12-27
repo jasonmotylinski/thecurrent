@@ -19,3 +19,4 @@ if __name__=="__main__":
     update_popular_artist_title_last_week_playlist(config.WFUV.SERVICE_ID, config.WFUV.SERVICE_NAME)
     update_popular_artist_title_last_week_playlist(config.KCRW.SERVICE_ID, config.KCRW.SERVICE_NAME)
     update_popular_artist_title_last_week_playlist(config.KUOM.SERVICE_ID, config.KUOM.SERVICE_NAME)
+    update_popular_artist_title_last_week_playlist(config.KSBR.SERVICE_ID, config.KSBR.SERVICE_NAME)

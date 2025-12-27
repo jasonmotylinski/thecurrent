@@ -214,6 +214,18 @@ class WFMU(object):
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/1oatZdfsBNYNuUhnNTXXnn"  # placeholder
 
+class KSBR(object):
+    SERVICE_ID=13
+    SERVICE_NAME="ksbr"
+    SERVICE_DISPLAY_NAME="88.5 KSBR"
+    DAY_URL="https://www.thesocalsound.org/on-the-socal-sound/playlist/?date={date.month:02d}%2F{date.day:02d}%2F{date.year}&host=&action_doPlayListSearch=search"
+    DAY_JSON="output/ksbr/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
+    DAY_CSV="output/ksbr/csv/{0}/{1}/{2}.csv"
+    LOGO="/assets/ksbr.svg"
+    TITLE=SERVICE_DISPLAY_NAME + " Trends"
+    PATH="/ksbr"
+    TOP_10_PLAYLIST=""  # to be determined
+
 SERVICES={
     "kexp": KEXP,
     "kutx": KUTX,
@@ -226,5 +238,6 @@ SERVICES={
     "wehm": WEHM,
     "wnxp": WNXP,
     "wyep": WYEP,
-    "wfmu": WFMU
+    "wfmu": WFMU,
+    "ksbr": KSBR
 }
