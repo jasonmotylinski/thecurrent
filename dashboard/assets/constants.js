@@ -20,7 +20,7 @@ const STATIONS = [
     { id: 'wnxp', name: 'WNXP', logo: '/assets/wnxp.png', style: 'button-style' },
     { id: 'wyep', name: 'WYEP', logo: '/assets/wyep.png', style: 'button-style' },
     { id: 'wfmu', name: 'WFMU', logo: '/assets/wfmu.png', style: 'button-style' },
-    { id: 'ksbr', name: 'KSBR', logo: '/assets/ksbr.svg', style: 'button-style' }
+    { id: 'ksbr', name: 'KSBR', logo: '/assets/ksbr.png', style: 'button-style' }
 ];
 
 // Chart Color Schemes

@@ -28,7 +28,11 @@ def get_engine():
     Returns:
         Engine: Postgres engine
     """
-    return create_engine(config.DB_PG_CONN)
+    return create_engine(config.DB_PG_CONN,    
+                         pool_size=10, 
+                         max_overflow=5,
+                         pool_timeout=30,
+                         pool_recycle=1800)
 
 def get_yesterday():
     """Calculates yesterday's date based on today's UTC

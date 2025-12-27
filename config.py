@@ -221,7 +221,7 @@ class KSBR(object):
     DAY_URL="https://www.thesocalsound.org/on-the-socal-sound/playlist/?date={date.month:02d}%2F{date.day:02d}%2F{date.year}&host=&action_doPlayListSearch=search"
     DAY_JSON="output/ksbr/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
     DAY_CSV="output/ksbr/csv/{0}/{1}/{2}.csv"
-    LOGO="/assets/ksbr.svg"
+    LOGO="/assets/ksbr.png"
     TITLE=SERVICE_DISPLAY_NAME + " Trends"
     PATH="/ksbr"
     TOP_10_PLAYLIST=""  # to be determined
