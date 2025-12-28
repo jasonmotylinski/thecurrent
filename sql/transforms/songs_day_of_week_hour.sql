@@ -25,6 +25,16 @@ GROUP BY
     day_of_week, 
     hour;
 
+-- Indexes for new_last_90_days query
+-- Optimizes filtering by service_id + played_at, then partitioning/ordering by artist/title
+CREATE INDEX IF NOT EXISTS service_played_at_artist_title_idx
+    ON postgres.songs_day_of_week_hour (service_id, played_at, artist, title);
+
+-- Index for efficient filtering on date range
+CREATE INDEX IF NOT EXISTS service_id_played_at_idx
+    ON postgres.songs_day_of_week_hour (service_id, played_at);
+
+-- Existing indexes for other queries
 CREATE INDEX IF NOT EXISTS service_title_played_at_idx ON postgres.songs_day_of_week_hour (service_id, artist, title, played_at);
 CREATE INDEX IF NOT EXISTS service_artist_title_idx ON postgres.songs_day_of_week_hour (service_id, artist, title);
 
