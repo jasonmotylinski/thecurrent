@@ -446,4 +446,7 @@ const app = createApp({
     }
 })
 
-app.mount('#app')
+// Wait for stations to load before mounting the app
+stationsLoaded.then(() => {
+    app.mount('#app');
+});

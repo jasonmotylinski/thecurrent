@@ -88,7 +88,8 @@ class KEXP(object):
     SERVICE_ID=2
     SERVICE_NAME="kexp"
     SERVICE_DISPLAY_NAME="90.3 KEXP"
-    LOGO="/assets/kexp.svg"
+    LOGO="/assets/logos/kexp.svg"
+    CSS_CLASS="button-style"
     TITLE=SERVICE_DISPLAY_NAME + " Trends"
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/1oatZdfsBNYNuUhnNTXXnn"
@@ -101,7 +102,8 @@ class KUTX(object):
     SERVICE_ID=3
     SERVICE_NAME="kutx"
     SERVICE_DISPLAY_NAME="98.9 KUTX"
-    LOGO="/assets/kutx.svg"
+    LOGO="/assets/logos/kutx.svg"
+    CSS_CLASS="button-style"
     TITLE=SERVICE_DISPLAY_NAME + " Trends"
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/2Rk9whZHSuQ3NgkNYz1mgZ"
@@ -113,7 +115,8 @@ class WXPN(object):
     SERVICE_ID=4
     SERVICE_NAME="wxpn"
     SERVICE_DISPLAY_NAME="88.5 WXPN"
-    LOGO="/assets/wxpn.png"
+    LOGO="/assets/logos/wxpn.png"
+    CSS_CLASS="button-style"
     TITLE=SERVICE_DISPLAY_NAME + " Trends"
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/3HGci9o2R4x46L5t0YTNGr"
@@ -123,7 +126,8 @@ class THECURRENT(object):
     SERVICE_NAME="kcmp"
     SERVICE_DISPLAY_NAME="89.3 The Current"
     TITLE=SERVICE_DISPLAY_NAME + " Trends"
-    LOGO="/assets/kcmp.svg"
+    LOGO="/assets/logos/kcmp.svg"
+    CSS_CLASS="button-style"
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/0oq9XIzdeGLd90DU2rYxuD"
 
@@ -134,7 +138,8 @@ class WFUV(object):
     DAY_JSON="output/wfuv/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
     URL="https://wfuv.org/views/ajax?created[min]={date}&created[max]={date}&view_name=on_air_playlist&view_display_id=block_wfuv_on_air_playlist"
     DAY_CSV="output/wfuv/csv/{0}/{1}/{2}.csv"
-    LOGO="/assets/wfuv.png"
+    LOGO="/assets/logos/wfuv.png"
+    CSS_CLASS="button-style-wfuv"
     TITLE=SERVICE_DISPLAY_NAME + " Trends"
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/1SZMsixhwCY0iAyp4FBYHK"
@@ -147,7 +152,8 @@ class KCRW(object):
     DAY_URL="https://tracklist-api.kcrw.com/Simulcast/date/{date.year}/{date.month:02d}/{date.day:02d}?page_size=2000"
     DAY_CSV="output/kcrw/csv/{0}/{1}/{2}.csv"
     TITLE=SERVICE_DISPLAY_NAME + " Trends"
-    LOGO="/assets/KCRW_Logo_White.png"
+    LOGO="/assets/logos/KCRW_Logo_White.png"
+    CSS_CLASS="button-style"
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/35d08JaVDjHG8aZMSQx6FE"
 
@@ -159,7 +165,8 @@ class KUOM(object):
     DAY_URL="https://radiok.org/playlist-group/{date.year}-{date.month:02d}-{date.day:02d}T{hour:02d}:00:01/{date.year}-{date.month:02d}-{date.day:02d}T{hour:02d}:59?_wrapper_format=drupal_ajax"
     DAY_CSV="output/kuom/csv/{0}/{1}/{2}.csv"
     TITLE=SERVICE_DISPLAY_NAME + " Trends"
-    LOGO="/assets/radiok.svg"
+    LOGO="/assets/logos/radiok.svg"
+    CSS_CLASS="button-style"
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/3E8BsxdRjfe25XHo51ss2P"
 
@@ -170,7 +177,8 @@ class KKXT(object):
     SERVICE_ID=8
     SERVICE_NAME="kkxt"
     SERVICE_DISPLAY_NAME="91.7 KKXT"
-    LOGO="/assets/kkxt.svg"
+    LOGO="/assets/logos/kxt.png"
+    CSS_CLASS="button-style"
     TITLE=SERVICE_DISPLAY_NAME + " Trends"
 
 class WEHM(object):
@@ -180,7 +188,8 @@ class WEHM(object):
     SERVICE_ID=9
     SERVICE_NAME="wehm"
     SERVICE_DISPLAY_NAME="92.9 & 96.9 WEHM"
-    LOGO="/assets/wehm.png"
+    LOGO="/assets/logos/wehm.png"
+    CSS_CLASS="button-style"
     TITLE=SERVICE_DISPLAY_NAME + " Trends"
 
 class WNXP(object):
@@ -190,7 +199,8 @@ class WNXP(object):
     SERVICE_ID=10
     SERVICE_NAME="wnxp"
     SERVICE_DISPLAY_NAME="91.1 WNXP"
-    LOGO="/assets/wnxp.png"
+    LOGO="/assets/logos/wnxp.png"
+    CSS_CLASS="button-style"
     TITLE=SERVICE_DISPLAY_NAME + " Trends"
 
 class WYEP(object):
@@ -200,7 +210,8 @@ class WYEP(object):
     SERVICE_ID=11
     SERVICE_NAME="wyep"
     SERVICE_DISPLAY_NAME="91.3 WYEP"
-    LOGO="/assets/wyep.png"
+    LOGO="/assets/logos/wyep.png"
+    CSS_CLASS="button-style"
     TITLE=SERVICE_DISPLAY_NAME + " Trends"
 
 class WFMU(object):
@@ -210,7 +221,8 @@ class WFMU(object):
     DAY_JSON="output/wfmu/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
     DAY_CSV="output/wfmu/csv/{0}/{1}/{2}.csv"
     TITLE=SERVICE_DISPLAY_NAME + " Trends"
-    LOGO="/assets/wfmu.png"
+    LOGO="/assets/logos/wfmu.png"
+    CSS_CLASS="button-style"
     PATH="/" + SERVICE_NAME
     TOP_10_PLAYLIST="https://open.spotify.com/playlist/1oatZdfsBNYNuUhnNTXXnn"  # placeholder
 
@@ -221,7 +233,8 @@ class KSBR(object):
     DAY_URL="https://www.thesocalsound.org/on-the-socal-sound/playlist/?date={date.month:02d}%2F{date.day:02d}%2F{date.year}&host=&action_doPlayListSearch=search"
     DAY_JSON="output/ksbr/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
     DAY_CSV="output/ksbr/csv/{0}/{1}/{2}.csv"
-    LOGO="/assets/ksbr.png"
+    LOGO="/assets/logos/ksbr.png"
+    CSS_CLASS="button-style"
     TITLE=SERVICE_DISPLAY_NAME + " Trends"
     PATH="/ksbr"
     TOP_10_PLAYLIST=""  # to be determined
@@ -232,7 +245,8 @@ class KWSS(object):
     SERVICE_DISPLAY_NAME="KWSS 93.9 FM"
     DAY_JSON="output/kwss/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
     DAY_CSV="output/kwss/csv/{0}/{1}/{2}.csv"
-    LOGO="/assets/kwss.svg"
+    LOGO="/assets/logos/kwss.png"
+    CSS_CLASS="button-style"
     TITLE=SERVICE_DISPLAY_NAME + " Trends"
     PATH="/kwss"
     TOP_10_PLAYLIST=""  # to be determined

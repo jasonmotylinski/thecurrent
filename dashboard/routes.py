@@ -220,12 +220,14 @@ def get_song_analytics_route():
 
 @api_routes.route('/api/stations')
 def get_stations():
+    """Get all station configurations from config.py"""
     stations = []
-    for key, service_class in config.SERVICES.items():
+    for service_name, service_class in config.SERVICES.items():
         stations.append({
-            'id': key,
-            'name': service_class.TITLE,
-            'service_id': service_class.SERVICE_ID
+            'id': service_name,
+            'name': service_class.SERVICE_DISPLAY_NAME,
+            'logo': service_class.LOGO,
+            'style': service_class.CSS_CLASS
         })
     return api_response(stations)
 
