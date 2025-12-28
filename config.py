@@ -226,6 +226,17 @@ class KSBR(object):
     PATH="/ksbr"
     TOP_10_PLAYLIST=""  # to be determined
 
+class KWSS(object):
+    SERVICE_ID=14
+    SERVICE_NAME="kwss"
+    SERVICE_DISPLAY_NAME="KWSS 93.9 FM"
+    DAY_JSON="output/kwss/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
+    DAY_CSV="output/kwss/csv/{0}/{1}/{2}.csv"
+    LOGO="/assets/kwss.svg"
+    TITLE=SERVICE_DISPLAY_NAME + " Trends"
+    PATH="/kwss"
+    TOP_10_PLAYLIST=""  # to be determined
+
 SERVICES={
     "kexp": KEXP,
     "kutx": KUTX,
@@ -239,5 +250,6 @@ SERVICES={
     "wnxp": WNXP,
     "wyep": WYEP,
     "wfmu": WFMU,
-    "ksbr": KSBR
+    "ksbr": KSBR,
+    "kwss": KWSS
 }
