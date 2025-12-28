@@ -13,6 +13,6 @@ GROUP BY
     a.artist, 
     a.title
 ORDER BY
-    ct DESC
+    ct DESC,
     artist ASC
 LIMIT 10
