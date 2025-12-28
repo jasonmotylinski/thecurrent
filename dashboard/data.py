@@ -9,6 +9,7 @@ from sqlalchemy import create_engine
 
 log = logging.getLogger(config.LOGGER_NAME)
 redis_client = None
+_engine = None
 SQL_ROOT ="sql/"
 
 def get_redis():
@@ -23,16 +24,24 @@ def get_redis():
     return redis_client
 
 def get_engine():
-    """Creates a Postgres engine which can be used by Pandas
+    """Returns a singleton Postgres engine which can be reused by Pandas.
+
+    Creates the engine once per worker process and reuses it for all database
+    connections. This prevents connection leaks that occur when creating a new
+    engine (with its own connection pool) on every database query.
 
     Returns:
-        Engine: Postgres engine
+        Engine: Singleton Postgres engine
     """
-    return create_engine(config.DB_PG_CONN,    
-                         pool_size=10, 
-                         max_overflow=5,
-                         pool_timeout=30,
-                         pool_recycle=1800)
+    global _engine
+    if _engine is None:
+        _engine = create_engine(config.DB_PG_CONN,
+                                pool_size=10,
+                                max_overflow=5,
+                                pool_timeout=30,
+                                pool_recycle=1800,
+                                pool_pre_ping=True)
+    return _engine
 
 def get_yesterday():
     """Calculates yesterday's date based on today's UTC

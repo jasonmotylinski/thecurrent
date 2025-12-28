@@ -1,4 +1,5 @@
 from flask import Flask, send_from_directory, render_template
+import atexit
 import dashboard.data as data
 import config
 from dashboard.routes import api_routes
@@ -19,6 +20,21 @@ def index():
 def serve_asset(filename):
     return send_from_directory('assets', filename)
 
+
+def shutdown_engine():
+    """Cleanly dispose of the database engine on shutdown.
+
+    This ensures all PostgreSQL connections are properly closed when the
+    application terminates, rather than being left in a hanging state.
+    """
+    engine = data.get_engine()
+    if engine:
+        engine.dispose()
+        app.logger.info('Database engine disposed on shutdown')
+
+
+# Register cleanup handler
+atexit.register(shutdown_engine)
 
 
 if __name__ == '__main__':
