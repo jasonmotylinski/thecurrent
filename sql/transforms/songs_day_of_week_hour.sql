@@ -1,7 +1,7 @@
-CREATE OR REPLACE TABLE postgres.songs_day_of_week_hour AS 
-SELECT 
+CREATE OR REPLACE TABLE postgres.songs_day_of_week_hour AS
+SELECT
     CAST(service_id AS INT) as service_id,
-    artist, 
+    artist,
     LOWER(artist) AS artist_lower,
     title,
     LOWER(title) AS title_lower,
@@ -10,19 +10,29 @@ SELECT
     CAST(month AS INT) as month,
     CAST(week AS INT) as week,
     day_of_week,
+    CASE
+        WHEN day_of_week = 'Sunday' THEN 0
+        WHEN day_of_week = 'Monday' THEN 1
+        WHEN day_of_week = 'Tuesday' THEN 2
+        WHEN day_of_week = 'Wednesday' THEN 3
+        WHEN day_of_week = 'Thursday' THEN 4
+        WHEN day_of_week = 'Friday' THEN 5
+        WHEN day_of_week = 'Saturday' THEN 6
+        ELSE NULL
+    END as day_of_week_int,
     CAST(hour AS INT) as hour,
     COUNT(*) as ct
 FROM sqlite.songs
 
-GROUP BY 
+GROUP BY
     service_id,
-    artist, 
+    artist,
     title,
     CAST(played_at AS DATE),
     year,
     month,
     week,
-    day_of_week, 
+    day_of_week,
     hour;
 
 -- Indexes for new_last_90_days query
