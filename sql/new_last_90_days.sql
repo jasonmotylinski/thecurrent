@@ -31,7 +31,7 @@ all_hours AS (
         DISTINCT day_of_week,
         CAST(day_of_week_int AS INT) as day_of_week_int,
         CAST(hour AS INT) as hour
-    FROM postgres.calendar
+    FROM calendar
 )
 SELECT
     a.day_of_week,
