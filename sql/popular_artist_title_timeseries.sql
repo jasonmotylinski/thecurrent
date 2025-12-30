@@ -16,8 +16,8 @@ WITH top_songs AS (
 ),
 weeks AS (
     SELECT DISTINCT
-        EXTRACT(YEAR FROM played_at) AS year,
-        EXTRACT(WEEK FROM played_at) AS week
+        year,
+        week
     FROM songs_day_of_week_hour
     WHERE played_at >= CURRENT_DATE - INTERVAL '90 DAY'
         AND played_at <= CURRENT_DATE
