@@ -21,3 +21,4 @@ if __name__=="__main__":
     update_popular_artist_title_last_week_playlist(config.KUOM.SERVICE_ID, config.KUOM.SERVICE_NAME)
     update_popular_artist_title_last_week_playlist(config.KSBR.SERVICE_ID, config.KSBR.SERVICE_NAME)
     update_popular_artist_title_last_week_playlist(config.KWSS.SERVICE_ID, config.KWSS.SERVICE_NAME)
+    update_popular_artist_title_last_week_playlist(config.WEXT.SERVICE_ID, config.WEXT.SERVICE_NAME)

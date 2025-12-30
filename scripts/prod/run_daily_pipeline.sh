@@ -12,6 +12,7 @@ luigi --module pipelines BackfillLastXDaysData --last-x-days=7 --service-name=kc
 luigi --module pipelines BackfillLastXDaysData --last-x-days=7 --service-name=kuom --local-scheduler
 luigi --module pipelines BackfillLastXDaysData --last-x-days=7 --service-name=ksbr --local-scheduler
 luigi --module pipelines BackfillLastXDaysData --last-x-days=7 --service-name=kwss --local-scheduler
+luigi --module pipelines BackfillLastXDaysData --last-x-days=7 --service-name=wext --local-scheduler
 
 # Spotify artist enrichment (runs after all station data is loaded)
 luigi --module pipelines.spotify.db_tasks SpotifyArtistsBackfillLastXDays --last-x-days=7 --local-scheduler

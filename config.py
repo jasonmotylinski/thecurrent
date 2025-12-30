@@ -251,6 +251,19 @@ class KWSS(object):
     PATH="/kwss"
     TOP_10_PLAYLIST=""  # to be determined
 
+class WEXT(object):
+    DAY_URL="https://api.composer.nprstations.org/v1/widget/5182cfc4e1c891fe553a5b52/day?date={date.year}-{date.month:02d}-{date.day:02d}&format=json"
+    DAY_JSON="output/wext/json/by_day/{year}/{month:02d}/playlist_{year}{month:02d}{day:02d}.json"
+    DAY_CSV="output/wext/csv/{0}/{1}/{2}.csv"
+    SERVICE_ID=15
+    SERVICE_NAME="wext"
+    SERVICE_DISPLAY_NAME="90.1 WEXT"
+    LOGO="/assets/logos/wext.png"
+    CSS_CLASS="button-style-wfuv"
+    TITLE=SERVICE_DISPLAY_NAME + " Trends"
+    PATH="/" + SERVICE_NAME
+    TOP_10_PLAYLIST=""  # to be determined
+
 SERVICES={
     "kexp": KEXP,
     "kutx": KUTX,
@@ -265,5 +278,6 @@ SERVICES={
     "wyep": WYEP,
     "wfmu": WFMU,
     "ksbr": KSBR,
-    "kwss": KWSS
+    "kwss": KWSS,
+    "wext": WEXT
 }

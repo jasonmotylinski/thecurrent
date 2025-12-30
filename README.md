@@ -101,10 +101,10 @@ ${workspaceFolder}
 ```
 
 ## Backlog of stations to integrate
+* https://www.wtmd.org/radio/listen/#playlist
 * https://theriverboston.com/
 * http://pointfm.com/
 * https://www.mvyradio.org/
-* https://www.wyep.org/
+
 * https://www.wextradio.org/
 * https://www.kgsr.com/
-* https://kxt.org/playlists/
