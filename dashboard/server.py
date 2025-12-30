@@ -20,6 +20,10 @@ def index():
 def serve_asset(filename):
     return send_from_directory('assets', filename)
 
+@app.route('/robots.txt')
+def serve_robots():
+    return send_from_directory('', 'robots.txt')
+
 
 def shutdown_engine():
     """Cleanly dispose of the database engine on shutdown.
