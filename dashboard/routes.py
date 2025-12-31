@@ -220,7 +220,7 @@ def get_song_analytics_route():
 
 @api_routes.route('/api/stations')
 def get_stations():
-    """Get all station configurations from config.py"""
+    """Get all station configurations from config.py, sorted by name"""
     stations = []
     for service_name, service_class in config.SERVICES.items():
         stations.append({
@@ -229,6 +229,8 @@ def get_stations():
             'logo': service_class.LOGO,
             'style': service_class.CSS_CLASS
         })
+    # Sort stations alphabetically by name
+    stations.sort(key=lambda x: x['name'])
     return api_response(stations)
 
 @api_routes.route('/api/<service_name>/exclusives')

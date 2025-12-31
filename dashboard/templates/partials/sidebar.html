@@ -1,11 +1,41 @@
+<!-- Hamburger Menu Button -->
+<button
+    class="hamburger-btn"
+    @click="toggleMenu"
+    aria-label="Toggle navigation menu"
+    aria-expanded="${ menuOpen }"
+    aria-controls="sidebar-nav">
+    <span class="hamburger-icon"></span>
+    <span class="hamburger-icon"></span>
+    <span class="hamburger-icon"></span>
+</button>
+
+<!-- Backdrop Overlay -->
+<div
+    v-if="menuOpen"
+    class="menu-backdrop"
+    @click="closeMenu"
+    aria-hidden="true">
+</div>
+
 <!-- Sidebar -->
-<nav class="sidebar">
+<nav
+    id="sidebar-nav"
+    class="sidebar"
+    :class="{ 'sidebar-open': menuOpen }"
+    role="navigation"
+    aria-label="Station navigation">
     <div class="sidebar-sticky">
-        <ul class="nav flex-column">
+        <ul class="nav sidebar-grid">
             <li class="nav-item" v-for="station in stations" :key="station.id">
-                <a class="nav-link" :class="[station.style, { active: currentStation === station.id }]"
-                   :href="'#' + station.id" @click="setCurrentStation(station.id)">
-                    <img :src="station.logo" :alt="station.name" style="width: 40px;">
+                <a class="nav-link"
+                   :class="[station.style, { active: currentStation === station.id }]"
+                   :href="'#' + station.id"
+                   @click="setCurrentStation(station.id)"
+                   role="button"
+                   :aria-label="'Select ' + station.name + ' radio station'">
+                    <div><img :src="station.logo" :alt="station.name + ' logo'" style="width: 80px;"></div>
+                    <div>${ station.name }</div>
                 </a>
             </li>
         </ul>

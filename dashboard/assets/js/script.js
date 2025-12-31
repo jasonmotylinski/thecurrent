@@ -42,6 +42,9 @@ const app = createApp({
         // Page loading state (for full-page loading overlay)
         const pageLoading = ref(false);
 
+        // Menu state
+        const menuOpen = ref(false);
+
         // Station data
         const stations = ref(STATIONS);
 
@@ -298,8 +301,18 @@ const app = createApp({
             }
         };
 
+        // Menu functions
+        const toggleMenu = () => {
+            menuOpen.value = !menuOpen.value;
+        };
+
+        const closeMenu = () => {
+            menuOpen.value = false;
+        };
+
         // Station change handler
         const setCurrentStation = async (station, showLoading = true) => {
+            closeMenu(); // Auto-close menu when selecting station
             if (showLoading) {
                 pageLoading.value = true;
             }
@@ -398,6 +411,13 @@ const app = createApp({
             // Listen for hash changes (browser back/forward)
             window.addEventListener('hashchange', handleRoute);
 
+            // Listen for ESC key to close menu
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && menuOpen.value) {
+                    closeMenu();
+                }
+            });
+
             // Load initial station data
             await setCurrentStation(currentStation.value);
 
@@ -441,7 +461,11 @@ const app = createApp({
             loadSongAnalytics,
             closeAnalytics,
             // Page loading
-            pageLoading
+            pageLoading,
+            // Menu
+            menuOpen,
+            toggleMenu,
+            closeMenu
         };
     }
 })

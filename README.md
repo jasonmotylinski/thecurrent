@@ -105,6 +105,7 @@ ${workspaceFolder}
 * https://theriverboston.com/
 * http://pointfm.com/
 * https://www.mvyradio.org/
-
-* https://www.wextradio.org/
 * https://www.kgsr.com/
+* https://www.wncw.org/playlist-search
+* https://www.wmpg.org/
+* https://krystal93.com/krystal-93/
