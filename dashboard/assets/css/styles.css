@@ -232,17 +232,21 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .sidebar {
-        width: 250px;
+        width: 400px;
     }
 
     .sidebar-grid {
         grid-template-columns: repeat(3, 1fr);
     }
+
+    .main-content {
+        padding-top: 70px;
+    }
 }
 
 @media (max-width: 480px) {
     .sidebar {
-        width: 200px;
+        width: 320px;
     }
 
     .sidebar-grid {
@@ -258,5 +262,9 @@
 
     .hamburger-icon {
         width: 25px;
+    }
+
+    .main-content {
+        padding-top: 70px;
     }
 }
