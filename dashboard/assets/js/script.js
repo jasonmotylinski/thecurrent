@@ -46,6 +46,9 @@ const app = createApp({
         const top100Songs = ref([]);
         const top100Timeseries = ref([]);
 
+        // Popular songs timeseries state
+        const popularSongsTimeseries = ref([]);
+
         // Page loading state (for full-page loading overlay)
         const pageLoading = ref(false);
 
@@ -94,6 +97,7 @@ const app = createApp({
                 ]);
 
                 popularSongs.value = songsData;
+                popularSongsTimeseries.value = timeseriesData;
                 await nextTick();
 
                 // Group timeseries data by song
@@ -113,6 +117,7 @@ const app = createApp({
             } catch (error) {
                 console.error('Error loading popular songs:', error);
                 popularSongs.value = [];
+                popularSongsTimeseries.value = [];
             }
         };
 
@@ -325,15 +330,40 @@ const app = createApp({
         const calculateTrend = (timeseriesData) => {
             if (!timeseriesData || timeseriesData.length < 2) return '─';
 
-            const sorted = [...timeseriesData].sort((a, b) =>
-                new Date(b.month) - new Date(a.month)
-            );
+            // Determine data type (weekly for popular songs, monthly for top100)
+            const isWeekly = timeseriesData[0].yw !== undefined;
 
-            const currentMonthPlays = sorted[0]?.plays || 0;
-            const previousMonthPlays = sorted[1]?.plays || 0;
+            let sorted;
+            if (isWeekly) {
+                // Sort by year-week
+                sorted = [...timeseriesData].sort((a, b) =>
+                    a.yw.localeCompare(b.yw)
+                );
+            } else {
+                // Sort by month
+                sorted = [...timeseriesData].sort((a, b) =>
+                    a.month.localeCompare(b.month)
+                );
+            }
 
-            if (currentMonthPlays > previousMonthPlays) return '▲';
-            if (currentMonthPlays < previousMonthPlays) return '▼';
+            // Split data in half
+            const midpoint = Math.ceil(sorted.length / 2);
+            const firstHalf = sorted.slice(0, midpoint);
+            const secondHalf = sorted.slice(midpoint);
+
+            // Calculate average plays for each half
+            const firstHalfAvg = firstHalf.reduce((sum, item) => {
+                const plays = item.ct !== undefined ? item.ct : item.plays;
+                return sum + plays;
+            }, 0) / firstHalf.length;
+
+            const secondHalfAvg = secondHalf.reduce((sum, item) => {
+                const plays = item.ct !== undefined ? item.ct : item.plays;
+                return sum + plays;
+            }, 0) / secondHalf.length;
+
+            if (secondHalfAvg > firstHalfAvg) return '▲';
+            if (secondHalfAvg < firstHalfAvg) return '▼';
             return '─';
         };
 
@@ -500,6 +530,7 @@ const app = createApp({
             currentStation,
             stations,
             popularSongs,
+            popularSongsTimeseries,
             popularDayHour,
             popularAllTime,
             dayOfWeek,

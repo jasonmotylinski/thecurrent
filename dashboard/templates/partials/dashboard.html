@@ -10,6 +10,7 @@
                     <tr>
                         <th>Artist</th>
                         <th>Title</th>
+                        <th>Trend</th>
                         <th>90-day Trend</th>
                     </tr>
                 </thead>
@@ -17,6 +18,15 @@
                     <tr v-for="song in popularSongs" :key="song.artist + song.title">
                         <td><a href="#" @click.prevent="loadArtistAnalytics(song.artist)">${ song.artist }</a></td>
                         <td>${ song.title }</td>
+                        <td class="text-center trend-indicator"
+                            :class="{
+                                'text-success': calculateTrend(popularSongsTimeseries.filter(t => t.artist === song.artist && t.title === song.title)) === '▲',
+                                'text-danger': calculateTrend(popularSongsTimeseries.filter(t => t.artist === song.artist && t.title === song.title)) === '▼'
+                            }">
+                            ${ calculateTrend(popularSongsTimeseries.filter(t =>
+                                t.artist === song.artist && t.title === song.title
+                            )) }
+                        </td>
                         <td>
                             <div :id="'graph-' + song.artist.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase() + '-' + song.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()" style="width: 200px;"></div>
                             ${ song.plays }
