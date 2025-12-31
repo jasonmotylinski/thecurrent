@@ -1,0 +1,62 @@
+<!-- Top 100 Songs View -->
+<div v-if="currentView === 'top100'" class="top100-container">
+    <div class="row mb-3">
+        <div class="col">
+            <button class="btn btn-outline-secondary" @click="setCurrentStation(currentStation, false); currentView = 'dashboard'">
+                &larr; Back to Dashboard
+            </button>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="text-center">Top 100 Songs of 2025</h2>
+            <p class="text-center text-muted">Most played songs on ${ stationDisplayName } this year</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-striped top100-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">Rank</th>
+                            <th style="width: 30%;">Artist</th>
+                            <th style="width: 30%;">Title</th>
+                            <th style="width: 100px;">Plays</th>
+                            <th style="width: 50px;">Trend</th>
+                            <th style="width: 200px;">2025 Trend</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(song, index) in top100Songs" :key="song.artist + song.title">
+                            <td class="text-center">
+                                <span class="rank-badge">${ index + 1 }</span>
+                            </td>
+                            <td>
+                                <a href="#" @click.prevent="loadArtistAnalytics(song.artist)">
+                                    ${ song.artist }
+                                </a>
+                            </td>
+                            <td>${ song.title }</td>
+                            <td class="text-center">${ song.total_plays }</td>
+                            <td class="text-center trend-indicator"
+                                :class="{
+                                    'text-success': calculateTrend(top100Timeseries.filter(t => t.artist === song.artist && t.title === song.title)) === '▲',
+                                    'text-danger': calculateTrend(top100Timeseries.filter(t => t.artist === song.artist && t.title === song.title)) === '▼'
+                                }">
+                                ${ calculateTrend(top100Timeseries.filter(t =>
+                                    t.artist === song.artist && t.title === song.title
+                                )) }
+                            </td>
+                            <td>
+                                <div :id="'top100-sparkline-' + index" style="width: 200px; height: 30px;"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

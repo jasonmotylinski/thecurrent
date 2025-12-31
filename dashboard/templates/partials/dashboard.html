@@ -1,5 +1,5 @@
-<!-- Main Dashboard Content (hidden when analytics view is active) -->
-<div v-if="!analyticsView">
+<!-- Main Dashboard Content (hidden when analytics or top100 view is active) -->
+<div v-if="currentView === 'dashboard'">
 <!-- Popular Songs Table -->
 <div class="row">
     <div class="col-md-6">

@@ -24,19 +24,26 @@
 <body>
     <div id="app">
         {% include 'partials/loading.html' %}
+        {% include 'partials/navbar.html' %}
         {% include 'partials/sidebar.html' %}
 
         <!-- Main Content -->
-        <main class="main-content">
+        <main class="main-content main-content-with-navbar">
             <div class="container">
                 <div class="row">
                     <div class="col">
-                        <h1 class="display-3 text-center">${ analyticsView ? (analyticsType === 'artist' ? 'Artist trends' : 'Song trends') : stationTitle }</h1>
+                        <h1 class="display-3 text-center">${
+                            currentView === 'analytics'
+                                ? (analyticsType === 'artist' ? 'Artist trends' : 'Song trends')
+                                : currentView === 'top100'
+                                    ? 'Top 100 Songs of 2025'
+                                    : stationTitle
+                        }</h1>
                     </div>
                 </div>
 
-                {% include 'partials/search.html' %}
                 {% include 'partials/analytics.html' %}
+                {% include 'partials/top100.html' %}
                 {% include 'partials/dashboard.html' %}
                 {% include 'partials/footer.html' %}
             </div>

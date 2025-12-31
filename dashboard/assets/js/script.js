@@ -39,6 +39,13 @@ const app = createApp({
         const analyticsTopSongs = ref([]);
         const analyticsLoading = ref(false);
 
+        // View state (dashboard | analytics | top100)
+        const currentView = ref('dashboard');
+
+        // Top 100 state
+        const top100Songs = ref([]);
+        const top100Timeseries = ref([]);
+
         // Page loading state (for full-page loading overlay)
         const pageLoading = ref(false);
 
@@ -260,6 +267,7 @@ const app = createApp({
         };
 
         const closeAnalytics = async () => {
+            currentView.value = 'dashboard';
             analyticsView.value = false;
             analyticsType.value = '';
             analyticsTitle.value = '';
@@ -269,6 +277,64 @@ const app = createApp({
             history.pushState(null, '', window.location.pathname);
             // Reload dashboard data to repopulate charts (with loading screen)
             await setCurrentStation(currentStation.value);
+        };
+
+        const loadTop100View = async (stationId) => {
+            try {
+                pageLoading.value = true;
+                currentView.value = 'top100';
+                analyticsView.value = false;
+
+                // Fetch both in parallel
+                const [songsData, timeseriesData] = await Promise.all([
+                    fetchStationData(stationId, 'top-100/current-year'),
+                    fetchStationData(stationId, 'top-100/current-year/timeseries')
+                ]);
+
+                top100Songs.value = songsData;
+                top100Timeseries.value = timeseriesData;
+
+                await nextTick();
+                await renderTop100Sparklines();
+            } catch (error) {
+                console.error('Error loading top 100:', error);
+                top100Songs.value = [];
+                top100Timeseries.value = [];
+            } finally {
+                pageLoading.value = false;
+            }
+        };
+
+        const renderTop100Sparklines = async () => {
+            // Group timeseries by song
+            const timeseriesBySong = {};
+            top100Timeseries.value.forEach(item => {
+                const key = `${item.artist}|||${item.title}`;
+                if (!timeseriesBySong[key]) timeseriesBySong[key] = [];
+                timeseriesBySong[key].push(item);
+            });
+
+            // Render all sparklines in parallel
+            await Promise.all(top100Songs.value.map((song, index) => {
+                const graphId = `top100-sparkline-${index}`;
+                const songTimeseries = timeseriesBySong[`${song.artist}|||${song.title}`] || [];
+                createTop100Sparkline(graphId, songTimeseries);
+            }));
+        };
+
+        const calculateTrend = (timeseriesData) => {
+            if (!timeseriesData || timeseriesData.length < 2) return '─';
+
+            const sorted = [...timeseriesData].sort((a, b) =>
+                new Date(b.month) - new Date(a.month)
+            );
+
+            const currentMonthPlays = sorted[0]?.plays || 0;
+            const previousMonthPlays = sorted[1]?.plays || 0;
+
+            if (currentMonthPlays > previousMonthPlays) return '▲';
+            if (currentMonthPlays < previousMonthPlays) return '▼';
+            return '─';
         };
 
         // Phase 1 Analytics Functions
@@ -352,10 +418,12 @@ const app = createApp({
                 // Show loading overlay for direct URL navigation
                 pageLoading.value = true;
                 const artist = decodeURIComponent(hash.replace('#/artist/', ''));
+                currentView.value = 'analytics';
                 await loadArtistAnalyticsFromUrl(artist);
             } else if (hash.startsWith('#/song/')) {
                 // Show loading overlay for direct URL navigation
                 pageLoading.value = true;
+                currentView.value = 'analytics';
                 const parts = hash.replace('#/song/', '').split('/');
                 if (parts.length >= 2) {
                     const artist = decodeURIComponent(parts[0]);
@@ -364,7 +432,8 @@ const app = createApp({
                 }
             } else {
                 // No hash or unrecognized - show dashboard
-                if (analyticsView.value) {
+                if (currentView.value !== 'dashboard') {
+                    currentView.value = 'dashboard';
                     analyticsView.value = false;
                     analyticsType.value = '';
                     analyticsTitle.value = '';
@@ -460,6 +529,12 @@ const app = createApp({
             loadArtistAnalytics,
             loadSongAnalytics,
             closeAnalytics,
+            // View state and Top 100
+            currentView,
+            top100Songs,
+            top100Timeseries,
+            loadTop100View,
+            calculateTrend,
             // Page loading
             pageLoading,
             // Menu

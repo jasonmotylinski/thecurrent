@@ -1,5 +1,5 @@
 <!-- Analytics View (shown when user selects a search result) -->
-<div v-if="analyticsView" class="analytics-container">
+<div v-if="currentView === 'analytics'" class="analytics-container">
     <div class="row mb-3">
         <div class="col">
             <button class="btn btn-outline-secondary" @click="closeAnalytics">

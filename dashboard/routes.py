@@ -273,3 +273,31 @@ def get_genre_by_hour_route(service_name):
         return api_response(records)
     except Exception as e:
         return api_error(str(e), 500)
+
+@api_routes.route('/api/<service_name>/top-100/current-year')
+def get_top_100_current_year(service_name):
+    """Get top 100 songs for current calendar year."""
+    try:
+        df = data.get_top_100_songs_current_year(config.SERVICES[service_name].SERVICE_ID)
+        records = df.to_dict('records')
+        return api_response(records)
+    except Exception as e:
+        return api_error(str(e), 500)
+
+@api_routes.route('/api/<service_name>/top-100/current-year/timeseries')
+def get_top_100_timeseries_route(service_name):
+    """Get monthly timeseries data for top 100 songs in a single batch call."""
+    try:
+        df = data.get_top_100_songs_timeseries(config.SERVICES[service_name].SERVICE_ID)
+        records = df.to_dict('records')
+        # Convert month to ISO format
+        for record in records:
+            if 'month' in record and record['month'] is not None:
+                month_val = record['month']
+                if hasattr(month_val, 'isoformat'):
+                    record['month'] = month_val.isoformat()
+                elif isinstance(month_val, (int, float)):
+                    record['month'] = datetime.fromtimestamp(month_val / 1000).isoformat()
+        return api_response(records)
+    except Exception as e:
+        return api_error(str(e), 500)

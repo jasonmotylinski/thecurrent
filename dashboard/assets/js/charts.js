@@ -371,3 +371,41 @@ const createGenreByHourHeatmap = (elementId, data) => {
         console.error('Error creating genre by hour heatmap:', error);
     }
 };
+
+// Sparkline for Top 100 table (monthly granularity)
+const createTop100Sparkline = (graphId, timeseriesData) => {
+    try {
+        const trace = {
+            x: timeseriesData.map(d => d.month.substring(0, 7)), // 'YYYY-MM' format
+            y: timeseriesData.map(d => d.plays),
+            type: 'scatter',
+            mode: 'lines',
+            line: { color: '#007bff', width: 1.5 },
+            marker: { size: 3, color: '#007bff' }
+        };
+
+        const layout = {
+            margin: { l: 0, r: 0, t: 0, b: 0 },
+            height: 30,
+            showlegend: false,
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            xaxis: {
+                showgrid: false,
+                showticklabels: false,
+                fixedrange: true,
+                zeroline: false
+            },
+            yaxis: {
+                showgrid: false,
+                showticklabels: false,
+                fixedrange: true,
+                zeroline: false
+            }
+        };
+
+        Plotly.newPlot(graphId, [trace], layout, { displaylogo: false, staticPlot: true });
+    } catch (error) {
+        console.error('Error creating top 100 sparkline:', error);
+    }
+};

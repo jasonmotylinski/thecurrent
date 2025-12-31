@@ -1,0 +1,58 @@
+<!-- Top Navigation Bar -->
+<nav class="top-navbar">
+    <div class="navbar-container">
+        <!-- Left: Hamburger Button -->
+        <div class="navbar-left">
+            <button class="hamburger-btn-navbar"
+                    @click="toggleMenu"
+                    aria-label="Toggle navigation menu"
+                    aria-expanded="${ menuOpen }"
+                    aria-controls="sidebar-nav">
+                <span class="hamburger-icon"></span>
+                <span class="hamburger-icon"></span>
+                <span class="hamburger-icon"></span>
+            </button>
+        </div>
+
+        <!-- Center: Search Bar -->
+        <div class="navbar-center">
+            <div class="search-container-navbar position-relative">
+                <input type="text"
+                       class="form-control"
+                       v-model="searchQuery"
+                       @input="onSearchInput"
+                       @focus="showSearchResults = searchResults.length > 0"
+                       @blur="hideSearchResultsDelayed"
+                       placeholder="Search artists...">
+                <!-- Search Results Dropdown -->
+                <div v-if="showSearchResults && searchResults.length > 0"
+                     class="search-results-navbar position-absolute">
+                    <div v-for="result in searchResults"
+                         :key="result.artist"
+                         class="search-result-item"
+                         @mousedown="selectSearchResult(result)">
+                        ${ result.artist }
+                    </div>
+                </div>
+                <!-- No Results Message -->
+                <div v-if="showSearchResults && searchQuery.length >= 2 && searchResults.length === 0 && !searchLoading"
+                     class="search-results-navbar position-absolute p-3 text-muted text-center">
+                    No results found
+                </div>
+                <!-- Loading Indicator -->
+                <div v-if="searchLoading"
+                     class="search-results-navbar position-absolute p-3 text-muted text-center">
+                    Searching...
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Top 100 Button -->
+        <div class="navbar-right">
+            <button class="btn btn-navbar-top100"
+                    @click="loadTop100View(currentStation)">
+                Top 100 of 2025
+            </button>
+        </div>
+    </div>
+</nav>

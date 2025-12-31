@@ -19,7 +19,7 @@
     position: relative;
     top: 0;
     height: 100vh;
-    padding-top: 70px;
+    padding-top: 90px;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -28,35 +28,11 @@
     padding-left: 0;
 }
 
-/* Hamburger Button */
+/* Hamburger Button (deprecated - now in navbar) */
 .hamburger-btn {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 1060;
-    width: 50px;
-    height: 50px;
-    background-color: #000000;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 6px;
-    padding: 10px;
-    transition: background-color 0.2s ease;
+    display: none;
 }
 
-.hamburger-btn:hover {
-    background-color: #333333;
-}
-
-.hamburger-btn:focus {
-    outline: 2px solid #007bff;
-    outline-offset: 2px;
-}
 
 .hamburger-icon {
     width: 30px;
@@ -153,9 +129,9 @@
     border-bottom-width: 0px;
 }
 
-/* Search styles */
+/* Legacy search styles (deprecated - now in navbar) */
 .search-container {
-    margin-top: 1rem;
+    display: none;
 }
 
 .search-results {
@@ -229,6 +205,54 @@
     margin-top: 1rem;
 }
 
+/* Top 100 View Styles */
+.top100-container {
+    padding: 20px 0;
+}
+
+.top100-table {
+    font-size: 0.9rem;
+}
+
+.top100-table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.rank-badge {
+    display: inline-block;
+    min-width: 30px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.trend-indicator {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.top100-nav button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 12px;
+    font-weight: 600;
+    transition: transform 0.2s;
+    color: white;
+}
+
+.top100-nav button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    color: white;
+}
+
+.top100-nav button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .sidebar {
@@ -266,5 +290,256 @@
 
     .main-content {
         padding-top: 70px;
+    }
+}
+
+/* ========================================
+   TOP NAVIGATION BAR
+   ======================================== */
+
+/* Fixed navbar at top */
+.top-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background-color: #000000;
+    z-index: 1070;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0 15px;
+    max-width: 100%;
+    gap: 15px;
+}
+
+/* Navbar sections */
+.navbar-left {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-center {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.navbar-right {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+}
+
+/* Hamburger button in navbar */
+.hamburger-btn-navbar {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    padding: 10px;
+    transition: background-color 0.2s ease;
+}
+
+.hamburger-btn-navbar:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.hamburger-btn-navbar:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+.hamburger-btn-navbar .hamburger-icon {
+    width: 30px;
+    height: 3px;
+    background-color: #ffffff;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* Animated X when menu open */
+.hamburger-btn-navbar[aria-expanded="true"] .hamburger-icon:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.hamburger-btn-navbar[aria-expanded="true"] .hamburger-icon:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-btn-navbar[aria-expanded="true"] .hamburger-icon:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+
+/* Search in navbar */
+.search-container-navbar {
+    width: 100%;
+}
+
+.search-container-navbar .form-control {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    padding: 10px 15px;
+    border-radius: 25px;
+    font-size: 0.95rem;
+}
+
+.search-container-navbar .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.search-container-navbar .form-control:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: #007bff;
+    color: #ffffff;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Search results dropdown in navbar */
+.search-results-navbar {
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1080;
+}
+
+.search-result-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.search-result-item:hover {
+    background-color: #f8f9fa;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+/* Top 100 button in navbar */
+.btn-navbar-top100 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 10px 20px;
+    font-weight: 600;
+    color: white;
+    border-radius: 25px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+
+.btn-navbar-top100:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+.btn-navbar-top100:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Main content adjustment for navbar */
+.main-content-with-navbar {
+    padding-top: 70px;
+}
+
+/* Update sidebar to account for navbar */
+.sidebar-sticky {
+    padding-top: 90px;
+}
+
+/* ========================================
+   RESPONSIVE NAVBAR STYLES
+   ======================================== */
+
+@media (max-width: 768px) {
+    .navbar-container {
+        padding: 0 10px;
+        gap: 10px;
+    }
+
+    .navbar-center {
+        max-width: 400px;
+    }
+
+    .btn-navbar-top100 {
+        padding: 8px 15px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .top-navbar {
+        height: 60px;
+    }
+
+    .navbar-container {
+        gap: 8px;
+        padding: 0 8px;
+    }
+
+    .hamburger-btn-navbar {
+        width: 45px;
+        height: 45px;
+    }
+
+    .hamburger-btn-navbar .hamburger-icon {
+        width: 25px;
+    }
+
+    .navbar-center {
+        max-width: 250px;
+    }
+
+    .btn-navbar-top100 {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+
+    .main-content-with-navbar {
+        padding-top: 60px;
+    }
+
+    .sidebar-sticky {
+        padding-top: 80px;
+    }
+}
+
+/* Ultra-small screens: hide Top 100 button */
+@media (max-width: 400px) {
+    .navbar-right {
+        display: none;
+    }
+
+    .navbar-center {
+        max-width: none;
+        flex: 1;
     }
 }

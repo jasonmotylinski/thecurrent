@@ -395,3 +395,32 @@ def get_station_hidden_gems(service_id):
     filename = 'station_hidden_gems.sql'
     params = {"service_id": service_id}
     return get_data(filename, tomorrow_at_105_am_est(), params)
+
+def get_top_100_songs_current_year(service_id):
+    """Get top 100 songs for current calendar year for a station.
+
+    Args:
+        service_id (int): The service/station ID
+
+    Returns:
+        DataFrame: Top 100 songs with artist, title, total_plays
+    """
+    filename = 'top_100_songs_current_year.sql'
+    params = {"service_id": service_id}
+    return get_data(filename, tomorrow_at_105_am_est(), params)
+
+def get_top_100_songs_timeseries(service_id):
+    """Get monthly play timeseries for top 100 songs of current year.
+
+    This batches the timeseries data for all top 100 songs in a single query,
+    reducing the number of database queries from 100 to 1.
+
+    Args:
+        service_id (int): The service/station ID
+
+    Returns:
+        DataFrame: Monthly play counts for each top song (artist, title, month, plays)
+    """
+    filename = 'top_100_songs_timeseries.sql'
+    params = {"service_id": service_id}
+    return get_data(filename, tomorrow_at_105_am_est(), params)
