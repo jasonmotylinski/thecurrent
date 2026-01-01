@@ -22,7 +22,9 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
         records=json.load(input)["results"]
         for s in records :
             if s["play_type"]=="trackplay":
-                yield [create_id(s["airdate"], s["artist"], s["song"], config.KEXP.SERVICE_ID), 
+                played_at_dt = datetime.fromisoformat(s["airdate"])
+                iso_year, iso_week, iso_weekday = played_at_dt.isocalendar()
+                yield [create_id(s["airdate"], s["artist"], s["song"], config.KEXP.SERVICE_ID),
                         s["artist"],
                         s["song"],
                         s["album"],
@@ -48,9 +50,9 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
                         '',
                         '',
                         '',
-                        datetime.fromisoformat(s["airdate"]).strftime("%Y"),
-                        datetime.fromisoformat(s["airdate"]).strftime("%m"),
-                        datetime.fromisoformat(s["airdate"]).strftime("%d"),
-                        datetime.fromisoformat(s["airdate"]).strftime("%A"),
-                        datetime.fromisoformat(s["airdate"]).strftime("%U"),
-                        datetime.fromisoformat(s["airdate"]).strftime("%H")]
+                        iso_year,
+                        played_at_dt.strftime("%m"),
+                        played_at_dt.strftime("%d"),
+                        played_at_dt.strftime("%A"),
+                        iso_week,
+                        played_at_dt.strftime("%H")]

@@ -30,38 +30,42 @@ class ConvertDayHtmlToCsv(luigi.Task):
                 writer.writerow(config.CSV_HEADER_ROW)
                 songs = get_songs(i.read())
 
-                list(writer.writerow([s["id"], 
-                                      s["artist"],
-                                      s["title"],
-                                      s["album"],
-                                      s["played_at"],
-                                      '', # Duration
-                                      config.THECURRENT.SERVICE_ID, # Service_id
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      s["played_at_dt"].strftime("%Y"),
-                                      s["played_at_dt"].strftime("%m"),
-                                      s["played_at_dt"].strftime("%d"),
-                                      s["played_at_dt"].strftime("%A"),
-                                      s["played_at_dt"].strftime("%U"),
-                                      s["played_at_dt"].strftime("%H")]) for s in songs)
+                def format_song_row(s):
+                    iso_year, iso_week, iso_weekday = s["played_at_dt"].isocalendar()
+                    return [s["id"],
+                            s["artist"],
+                            s["title"],
+                            s["album"],
+                            s["played_at"],
+                            '', # Duration
+                            config.THECURRENT.SERVICE_ID, # Service_id
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            iso_year,
+                            s["played_at_dt"].strftime("%m"),
+                            s["played_at_dt"].strftime("%d"),
+                            s["played_at_dt"].strftime("%A"),
+                            iso_week,
+                            s["played_at_dt"].strftime("%H")]
+
+                list(writer.writerow(format_song_row(s)) for s in songs)
 
     def requires(self):
         """Requires."""

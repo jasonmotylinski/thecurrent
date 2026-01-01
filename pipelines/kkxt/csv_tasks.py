@@ -21,7 +21,9 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
     def get_rows(self, input):
         records=json.load(input)["response"]
         for s in records :
-            yield [create_id(s["played_at"], s["artist"], s["song"], config.KKXT.SERVICE_ID), 
+            played_at_dt = datetime.fromisoformat(s["played_at"])
+            iso_year, iso_week, iso_weekday = played_at_dt.isocalendar()
+            yield [create_id(s["played_at"], s["artist"], s["song"], config.KKXT.SERVICE_ID),
                     s["artist"],
                     s["song"],
                     '', # album
@@ -47,9 +49,9 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
                     '',
                     '',
                     '',
-                    datetime.fromisoformat(s["played_at"]).strftime("%Y"),
-                    datetime.fromisoformat(s["played_at"]).strftime("%m"),
-                    datetime.fromisoformat(s["played_at"]).strftime("%d"),
-                    datetime.fromisoformat(s["played_at"]).strftime("%A"),
-                    datetime.fromisoformat(s["played_at"]).strftime("%U"),
-                    datetime.fromisoformat(s["played_at"]).strftime("%H")]
+                    iso_year,
+                    played_at_dt.strftime("%m"),
+                    played_at_dt.strftime("%d"),
+                    played_at_dt.strftime("%A"),
+                    iso_week,
+                    played_at_dt.strftime("%H")]

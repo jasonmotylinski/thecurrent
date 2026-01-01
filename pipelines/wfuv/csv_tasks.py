@@ -21,7 +21,8 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
         parser=WfuvParser(self.config)
 
         for song in parser.get_songs(input, self.date):
-            yield [create_id(song['played_at'], song['artist'], song['song'], self.config.SERVICE_ID), 
+            iso_year, iso_week, iso_weekday = song['played_at'].isocalendar()
+            yield [create_id(song['played_at'], song['artist'], song['song'], self.config.SERVICE_ID),
                     song['artist'],
                     song['song'],
                     '',
@@ -47,11 +48,11 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
                     '',
                     '',
                     '',
-                    song['played_at'].strftime("%Y"),
+                    iso_year,
                     song['played_at'].strftime("%m"),
                     song['played_at'].strftime("%d"),
                     song['played_at'].strftime("%A"),
-                    song['played_at'].strftime("%U"),
+                    iso_week,
                     song['played_at'].strftime("%H")]
         
 

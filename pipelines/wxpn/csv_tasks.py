@@ -25,8 +25,9 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
                 played_at=s['timeslice']
             if "air_date" in s:
                 played_at=s['air_date']
-            played_at=datetime.strptime(played_at+"-05:00", "%Y-%m-%d %H:%M:%S%z") 
-            yield [ create_id(played_at, s["artist"], s["song"], config.WXPN.SERVICE_ID), 
+            played_at=datetime.strptime(played_at+"-05:00", "%Y-%m-%d %H:%M:%S%z")
+            iso_year, iso_week, iso_weekday = played_at.isocalendar()
+            yield [ create_id(played_at, s["artist"], s["song"], config.WXPN.SERVICE_ID),
                     s["artist"],
                     s["song"],
                     s["album"],
@@ -52,11 +53,11 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
                     '',
                     '',
                     '',
-                    played_at.strftime("%Y"),
+                    iso_year,
                     played_at.strftime("%m"),
                     played_at.strftime("%d"),
                     played_at.strftime("%A"),
-                    played_at.strftime("%U"),
+                    iso_week,
                     played_at.strftime("%H")]
 
 

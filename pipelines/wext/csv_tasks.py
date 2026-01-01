@@ -26,6 +26,7 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
                 for s in records:
                     # WEXT uses Central Time timezone (-06:00)
                     played_at = datetime.strptime(s["_start_time"]+"-06:00", "%m-%d-%Y %H:%M:%S%z")
+                    iso_year, iso_week, iso_weekday = played_at.isocalendar()
                     album = None
                     if 'collectionName' in s:
                         album = s["collectionName"]
@@ -56,10 +57,10 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
                         '',
                         '',
                         '',
-                        played_at.strftime("%Y"),
+                        iso_year,
                         played_at.strftime("%m"),
                         played_at.strftime("%d"),
                         played_at.strftime("%A"),
-                        played_at.strftime("%U"),
+                        iso_week,
                         played_at.strftime("%H")
                     ]

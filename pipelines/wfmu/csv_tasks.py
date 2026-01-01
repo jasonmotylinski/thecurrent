@@ -24,6 +24,7 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
         for song in records :
             # Since played_at is already iso string, and we have album
             played_at_dt = datetime.fromisoformat(song['played_at'])
+            iso_year, iso_week, iso_weekday = played_at_dt.isocalendar()
             yield [
                 create_id(song['played_at'], song['artist'], song['song'], self.config.SERVICE_ID),
                 song['artist'],
@@ -51,10 +52,10 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
                 '',  # songs_by_artist
                 '',  # album_mbid
                 '',  # art_url
-                played_at_dt.strftime("%Y"),
+                iso_year,
                 played_at_dt.strftime("%m"),
                 played_at_dt.strftime("%d"),
                 played_at_dt.strftime("%w"),  # day_of_week (0=Sunday)
-                played_at_dt.strftime("%U"),  # week
+                iso_week,  # week
                 played_at_dt.strftime("%H")   # hour
             ]

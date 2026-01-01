@@ -22,7 +22,8 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
         """Run."""
         for s in json.load(input):
             played_at=datetime.fromisoformat(s["datetime"])
-            yield [ create_id(played_at, s["artist"], s["title"], self.config.SERVICE_ID), 
+            iso_year, iso_week, iso_weekday = played_at.isocalendar()
+            yield [ create_id(played_at, s["artist"], s["title"], self.config.SERVICE_ID),
                     s["artist"],
                     s["title"],
                     s["album"],
@@ -48,11 +49,11 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
                     '',
                     '',
                     '',
-                    played_at.strftime("%Y"),
+                    iso_year,
                     played_at.strftime("%m"),
                     played_at.strftime("%d"),
                     played_at.strftime("%A"),
-                    played_at.strftime("%U"),
+                    iso_week,
                     played_at.strftime("%H")]
 
 

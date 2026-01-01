@@ -25,13 +25,14 @@ class CreateCalendarCsv(luigi.Task):
 
             current=start
             while current < end:
+                iso_year, iso_week, iso_weekday = current.isocalendar()
                 writer.writerow([
-                    current.year,
-                    current.month, 
-                    current.day, 
-                    current.hour, 
+                    iso_year,
+                    current.month,
+                    current.day,
+                    current.hour,
                     current.strftime("%A"),
                     current.strftime("%w"),
-                    current.strftime("%U")
+                    iso_week
                 ])
                 current=current + timedelta(hours=1)

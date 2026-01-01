@@ -25,11 +25,12 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
                 records=p['playlist']
                 if records:
                     for s in records:
-                        played_at=datetime.strptime(s["_start_time"]+"-06:00", "%m-%d-%Y %H:%M:%S%z") 
+                        played_at=datetime.strptime(s["_start_time"]+"-06:00", "%m-%d-%Y %H:%M:%S%z")
+                        iso_year, iso_week, iso_weekday = played_at.isocalendar()
                         album=None
                         if 'collectionName' in s:
                             album=s["collectionName"]
-                        yield[ create_id(played_at, s["artistName"], s["trackName"], config.KUTX.SERVICE_ID), 
+                        yield[ create_id(played_at, s["artistName"], s["trackName"], config.KUTX.SERVICE_ID),
                                 s["artistName"],
                                 s["trackName"],
                                 album,
@@ -55,9 +56,9 @@ class ConvertDayJsonToCsv(BaseConvertDayJsonToCsv):
                                 '',
                                 '',
                                 '',
-                                played_at.strftime("%Y"),
+                                iso_year,
                                 played_at.strftime("%m"),
                                 played_at.strftime("%d"),
                                 played_at.strftime("%A"),
-                                played_at.strftime("%U"),
+                                iso_week,
                                 played_at.strftime("%H")]
