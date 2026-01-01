@@ -535,7 +535,7 @@
 /* Ultra-small screens: hide Top 100 button */
 @media (max-width: 400px) {
     .navbar-right {
-        display: none;
+     /*   display: none;*/
     }
 
     .navbar-center {

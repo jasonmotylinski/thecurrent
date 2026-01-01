@@ -7,7 +7,7 @@ SELECT
 FROM songs_day_of_week_hour
 WHERE
     service_id = %(service_id)s
-    AND EXTRACT(YEAR FROM played_at) = EXTRACT(YEAR FROM CURRENT_DATE)
+    AND year = 2025
     AND artist_lower != ''
     AND title_lower != ''
 GROUP BY

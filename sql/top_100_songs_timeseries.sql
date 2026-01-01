@@ -7,7 +7,7 @@ WITH top_songs AS (
         SUM(ct) AS total_plays
     FROM songs_day_of_week_hour
     WHERE service_id = %(service_id)s
-        AND EXTRACT(YEAR FROM played_at) = EXTRACT(YEAR FROM CURRENT_DATE)
+        AND year = 2025
         AND artist_lower != ''
         AND title_lower != ''
     GROUP BY artist_lower, title_lower
@@ -18,7 +18,7 @@ months AS (
     SELECT DISTINCT
         DATE_TRUNC('month', played_at) as month
     FROM songs_day_of_week_hour
-    WHERE EXTRACT(YEAR FROM played_at) = EXTRACT(YEAR FROM CURRENT_DATE)
+    WHERE year = 2025
     ORDER BY month
 )
 SELECT
@@ -33,6 +33,6 @@ LEFT JOIN songs_day_of_week_hour s
     AND s.title_lower = ts.title_lower
     AND DATE_TRUNC('month', s.played_at) = m.month
     AND s.service_id = %(service_id)s
-    AND EXTRACT(YEAR FROM s.played_at) = EXTRACT(YEAR FROM CURRENT_DATE)
+    AND s.year = 2025
 GROUP BY ts.artist, ts.title, ts.artist_lower, ts.title_lower, m.month
 ORDER BY ts.artist, ts.title, m.month
