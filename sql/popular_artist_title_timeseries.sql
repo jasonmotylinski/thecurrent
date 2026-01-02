@@ -19,7 +19,9 @@ weeks AS (
         year,
         week
     FROM songs_day_of_week_hour
-    WHERE played_at >= CURRENT_DATE - INTERVAL '90 DAY'
+    WHERE 
+        service_id = %(service_id)s
+        AND played_at >= CURRENT_DATE - INTERVAL '90 DAY'
         AND played_at <= CURRENT_DATE
     ORDER BY year, week
 )
