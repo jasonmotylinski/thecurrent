@@ -1,5 +1,5 @@
 CREATE TEMP TABLE blocklist AS
-  SELECT TRIM(artist) as blocked_artist FROM read_csv('data/artists_block_list.csv');
+  SELECT TRIM(artist) as blocked_artist FROM 'data/artists_block_list.csv';
 
 CREATE OR REPLACE TABLE postgres.songs_day_of_week_hour AS
 SELECT
