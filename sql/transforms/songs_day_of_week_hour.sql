@@ -1,27 +1,18 @@
 CREATE TEMP TABLE blocklist AS
   SELECT TRIM(artist) as blocked_artist FROM read_csv('data/artists_block_list.csv', header=true, delim = ',');
 
+CREATE TEMP TABLE artist_normalized AS
+  SELECT TRIM(artist) as artist, TRIM(artist_normalized) as artist_normalized FROM read_csv('data/artist_normalized.csv', header=true, delim = ',');
+
+
 CREATE OR REPLACE TABLE postgres.songs_day_of_week_hour AS
 SELECT
     CAST(service_id AS INT) as service_id,
-    artist,
-    LOWER(artist) AS artist_lower,
-    LOWER(
-        TRIM(
-            REGEXP_REPLACE(
-                REGEXP_REPLACE(
-                    REGEXP_REPLACE(
-                        REPLACE(artist, ' & ', ' and '),
-                        '\s+(featuring|ft\.?)\s+', ' feat. ', 'gi'
-                    ),
-                    '\s+', ' ', 'g'
-                ),
-                '^\s+|\s+$', '', 'g'
-            )
-        )
-    ) AS artist_normalized,
-    title,
-    LOWER(title) AS title_lower,
+    sqlite.songs.artist,
+    LOWER(sqlite.songs.artist) AS artist_lower,
+    LOWER(COALESCE(artist_norm.artist_normalized, sqlite.songs.artist)) AS artist_normalized,
+    sqlite.songs.title,
+    LOWER(sqlite.songs.title) AS title_lower,
     CAST(played_at AS DATE) as played_at,
     CAST(year AS INT) as year,
     CAST(month AS INT) as month,
@@ -40,19 +31,21 @@ SELECT
     CAST(hour AS INT) as hour,
     COUNT(*) as ct
 FROM sqlite.songs
+LEFT JOIN artist_normalized artist_norm
+    ON sqlite.songs.artist = artist_norm.artist
 ANTI JOIN blocklist
     ON sqlite.songs.artist = blocklist.blocked_artist
 GROUP BY
     service_id,
-    artist,
-    title,
+    sqlite.songs.artist,
+    sqlite.songs.title,
     CAST(played_at AS DATE),
     year,
     month,
     week,
     day_of_week,
     hour,
-    artist_normalized;
+    LOWER(COALESCE(artist_norm.artist_normalized, sqlite.songs.artist));
 
 -- Indexes for new_last_90_days query
 -- Optimizes filtering by service_id + played_at, then partitioning/ordering by artist/title
