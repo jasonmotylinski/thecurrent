@@ -35,7 +35,12 @@ if __name__=="__main__":
                 con.sql(sql.read())
     else:
         for t in transforms():
-            con.sql(t)
+            try:
+                con.sql(t)
+            except Exception as e:
+                print("Error executing transform:", e)
+                print("SQL:", t)
+                raise e
 
 
 
