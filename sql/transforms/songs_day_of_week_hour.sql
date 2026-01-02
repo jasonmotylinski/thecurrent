@@ -4,6 +4,9 @@ CREATE TEMP TABLE blocklist AS
 CREATE TEMP TABLE artist_normalized AS
   SELECT TRIM(artist) as artist, TRIM(artist_normalized) as artist_normalized FROM read_csv('data/artist_normalized.csv', header=true, delim = ',');
 
+CREATE TEMP TABLE title_normalized AS
+  SELECT TRIM(title) as title, TRIM(title_normalized) as title_normalized FROM read_csv('data/title_normalized.csv', header=true, delim = ',');
+
 
 CREATE OR REPLACE TABLE postgres.songs_day_of_week_hour AS
 SELECT
@@ -13,6 +16,7 @@ SELECT
     LOWER(COALESCE(artist_norm.artist_normalized, sqlite.songs.artist)) AS artist_normalized,
     sqlite.songs.title,
     LOWER(sqlite.songs.title) AS title_lower,
+    LOWER(COALESCE(title_norm.title_normalized, sqlite.songs.title)) AS title_normalized,
     CAST(played_at AS DATE) as played_at,
     CAST(year AS INT) as year,
     CAST(month AS INT) as month,
@@ -33,6 +37,8 @@ SELECT
 FROM sqlite.songs
 LEFT JOIN artist_normalized artist_norm
     ON sqlite.songs.artist = artist_norm.artist
+LEFT JOIN title_normalized title_norm
+    ON sqlite.songs.title = title_norm.title
 ANTI JOIN blocklist
     ON sqlite.songs.artist = blocklist.blocked_artist
 GROUP BY
@@ -45,7 +51,8 @@ GROUP BY
     week,
     day_of_week,
     hour,
-    LOWER(COALESCE(artist_norm.artist_normalized, sqlite.songs.artist));
+    LOWER(COALESCE(artist_norm.artist_normalized, sqlite.songs.artist)),
+    LOWER(COALESCE(title_norm.title_normalized, sqlite.songs.title));
 
 -- Indexes for new_last_90_days query
 -- Optimizes filtering by service_id + played_at, then partitioning/ordering by artist/title
@@ -67,10 +74,10 @@ CREATE INDEX IF NOT EXISTS played_at_artist_lower_service_idx ON postgres.songs_
 CREATE INDEX IF NOT EXISTS played_at_artist_lower_title_lower_idx
     ON postgres.songs_day_of_week_hour (played_at, artist_lower, title_lower);
 
--- Indexes for artist_normalized aggregations
+-- Indexes for artist_normalized and title_normalized aggregations
 CREATE INDEX IF NOT EXISTS played_at_artist_normalized_service_idx
     ON postgres.songs_day_of_week_hour (played_at, artist_normalized, service_id);
-CREATE INDEX IF NOT EXISTS played_at_artist_normalized_title_lower_idx
-    ON postgres.songs_day_of_week_hour (played_at, artist_normalized, title_lower);
-CREATE INDEX IF NOT EXISTS service_artist_normalized_title_idx
-    ON postgres.songs_day_of_week_hour (service_id, artist_normalized, title_lower);
+CREATE INDEX IF NOT EXISTS played_at_artist_normalized_title_normalized_idx
+    ON postgres.songs_day_of_week_hour (played_at, artist_normalized, title_normalized);
+CREATE INDEX IF NOT EXISTS service_artist_normalized_title_normalized_idx
+    ON postgres.songs_day_of_week_hour (service_id, artist_normalized, title_normalized);
