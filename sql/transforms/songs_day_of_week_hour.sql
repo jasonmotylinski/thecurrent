@@ -23,8 +23,9 @@ SELECT
     CAST(hour AS INT) as hour,
     COUNT(*) as ct
 FROM sqlite.songs
-ANTI JOIN (SELECT TRIM(artist) as blocked_artist FROM read_csv('data/artists_block_list.csv')) AS blocklist
+LEFT JOIN (SELECT TRIM(artist) as blocked_artist FROM read_csv('data/artists_block_list.csv')) AS blocklist
     ON sqlite.songs.artist = blocklist.blocked_artist
+WHERE blocklist.blocked_artist IS NULL
 GROUP BY
     service_id,
     artist,
