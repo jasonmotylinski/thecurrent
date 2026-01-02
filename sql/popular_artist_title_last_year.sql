@@ -35,34 +35,99 @@ LEFT OUTER JOIN
             FROM songs s1
             INNER JOIN
             (
-                SELECT 
+                SELECT
                     MAX(artist) AS artist,
                     MAX(title) AS title,
-                    LOWER(artist) AS artist_lower,
-                    LOWER(title) AS title_lower,
+                    LOWER(
+                        TRIM(
+                            REGEXP_REPLACE(
+                                REGEXP_REPLACE(
+                                    REGEXP_REPLACE(
+                                        REPLACE(artist, ' & ', ' and '),
+                                        '\s+(featuring|ft\.?)\s+', ' feat. ', 'gi'
+                                    ),
+                                    '\s+', ' ', 'g'
+                                ),
+                                '^\s+|\s+$', '', 'g'
+                            )
+                        )
+                    ) AS artist_normalized,
+                    LOWER(title) AS title_normalized,
                     COUNT(*) AS ct
-                FROM 
+                FROM
                     songs
-                WHERE 
+                WHERE
                     played_at >= DATETIME('now', '-1 year')
                     AND LOWER(artist) != ''
                     AND LOWER(title) != ''
                 GROUP BY
-                    LOWER(artist),
+                    LOWER(
+                        TRIM(
+                            REGEXP_REPLACE(
+                                REGEXP_REPLACE(
+                                    REGEXP_REPLACE(
+                                        REPLACE(artist, ' & ', ' and '),
+                                        '\s+(featuring|ft\.?)\s+', ' feat. ', 'gi'
+                                    ),
+                                    '\s+', ' ', 'g'
+                                ),
+                                '^\s+|\s+$', '', 'g'
+                            )
+                        )
+                    ),
                     LOWER(title)
                 ORDER BY
                     ct DESC
                 LIMIT 20
-            ) s2 ON LOWER(s1.artist)=s2.artist_lower AND LOWER(s1.title)=s2.title_lower
+            ) s2 ON LOWER(
+                TRIM(
+                    REGEXP_REPLACE(
+                        REGEXP_REPLACE(
+                            REGEXP_REPLACE(
+                                REPLACE(s1.artist, ' & ', ' and '),
+                                '\s+(featuring|ft\.?)\s+', ' feat. ', 'gi'
+                            ),
+                            '\s+', ' ', 'g'
+                        ),
+                        '^\s+|\s+$', '', 'g'
+                    )
+                )
+            )=s2.artist_normalized AND LOWER(s1.title)=s2.title_normalized
             WHERE
                 s1.played_at >= DATETIME('now', '-1 year')
-            GROUP BY    
-                LOWER(s1.artist),
+            GROUP BY
+                LOWER(
+                    TRIM(
+                        REGEXP_REPLACE(
+                            REGEXP_REPLACE(
+                                REGEXP_REPLACE(
+                                    REPLACE(s1.artist, ' & ', ' and '),
+                                    '\s+(featuring|ft\.?)\s+', ' feat. ', 'gi'
+                                ),
+                                '\s+', ' ', 'g'
+                            ),
+                            '^\s+|\s+$', '', 'g'
+                        )
+                    )
+                ),
                 LOWER(s1.title),
                 s1.year,
                 s1.week
             ORDER BY
-                LOWER(s1.artist) ASC,
+                LOWER(
+                    TRIM(
+                        REGEXP_REPLACE(
+                            REGEXP_REPLACE(
+                                REGEXP_REPLACE(
+                                    REPLACE(s1.artist, ' & ', ' and '),
+                                    '\s+(featuring|ft\.?)\s+', ' feat. ', 'gi'
+                                ),
+                                '\s+', ' ', 'g'
+                            ),
+                            '^\s+|\s+$', '', 'g'
+                        )
+                    )
+                ) ASC,
                 LOWER(s1.title) ASC,
                 ct DESC
         )

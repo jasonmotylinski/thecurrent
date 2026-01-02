@@ -2,15 +2,15 @@ WITH top_songs AS (
     SELECT
         MAX(artist) AS artist,
         MAX(title) AS title,
-        artist_lower,
-        title_lower,
+        artist_normalized,
+        title_normalized,
         SUM(ct) AS total_plays
     FROM songs_day_of_week_hour
     WHERE service_id = %(service_id)s
         AND year = 2025
-        AND artist_lower != ''
-        AND title_lower != ''
-    GROUP BY artist_lower, title_lower
+        AND artist_normalized != ''
+        AND title_normalized != ''
+    GROUP BY artist_normalized, title_normalized
     ORDER BY total_plays DESC, MAX(artist) ASC
     LIMIT 100
 ),
@@ -29,10 +29,10 @@ SELECT
 FROM top_songs ts
 CROSS JOIN months m
 LEFT JOIN songs_day_of_week_hour s
-    ON s.artist_lower = ts.artist_lower
-    AND s.title_lower = ts.title_lower
+    ON s.artist_normalized = ts.artist_normalized
+    AND s.title_normalized = ts.title_normalized
     AND DATE_TRUNC('month', s.played_at) = m.month
     AND s.service_id = %(service_id)s
     AND s.year = 2025
-GROUP BY ts.artist, ts.title, ts.artist_lower, ts.title_lower, m.month
+GROUP BY ts.artist, ts.title, ts.artist_normalized, ts.title_normalized, m.month
 ORDER BY ts.artist, ts.title, m.month

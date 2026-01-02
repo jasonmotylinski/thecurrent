@@ -5,15 +5,15 @@ FROM (
     SELECT
            MAX(artist) AS artist,
            MAX(title) AS title,
-           artist_lower,
-           title_lower,
+           artist_normalized,
+           title_normalized,
            SUM(CASE WHEN service_id = %(service_id)s THEN ct ELSE 0 END) as plays_here,
            SUM(CASE WHEN service_id != %(service_id)s THEN ct ELSE 0 END) as plays_elsewhere
     FROM songs_day_of_week_hour
     WHERE played_at >= CURRENT_DATE - INTERVAL '90 DAY'
-      AND artist_lower != ''
-      AND title_lower != ''
-    GROUP BY artist_lower, title_lower
+      AND artist_normalized != ''
+      AND title_normalized != ''
+    GROUP BY artist_normalized, title_normalized
 ) sub
 WHERE plays_here >= 3
   AND plays_elsewhere < 20

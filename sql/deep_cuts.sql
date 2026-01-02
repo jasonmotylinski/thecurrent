@@ -2,17 +2,17 @@ WITH song_stats AS (
     SELECT
         MAX(artist) AS artist,
         MAX(title) AS title,
-        artist_lower,
-        title_lower,
+        artist_normalized,
+        title_normalized,
         COUNT(DISTINCT service_id) as station_count,
         SUM(ct) as total_plays,
         MAX(ct) as max_station_plays
     FROM songs_day_of_week_hour
     WHERE
         played_at >= CURRENT_DATE - INTERVAL '90 DAY'
-        AND artist_lower != ''
-        AND title_lower != ''
-    GROUP BY artist_lower, title_lower
+        AND artist_normalized != ''
+        AND title_normalized != ''
+    GROUP BY artist_normalized, title_normalized
 )
 SELECT
     artist,
