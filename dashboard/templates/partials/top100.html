@@ -24,8 +24,8 @@
                             <th style="width: 30%;">Artist</th>
                             <th style="width: 30%;">Title</th>
                             <th style="width: 100px;">Plays</th>
-                            <th style="width: 50px; cursor: help;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="▲ = more plays in recent months, ▼ = fewer plays in recent months, ─ = stable">Trend</th>
-                            <th style="width: 200px; cursor: help;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Monthly play count sparkline for 2025. Shows how popularity has changed over the year.">2025 Trend</th>
+                            <th class="text-center" style="width: 50px; cursor: help;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="▲ = more plays in recent months, ▼ = fewer plays in recent months, ─ = stable">Trend</th>
+                            <th class="text-center" style="width: 200px; cursor: help;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Monthly play count sparkline for 2025. Shows how popularity has changed over the year.">2025 Trend</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,7 +49,7 @@
                                     t.artist === song.artist && t.title === song.title
                                 )) }
                             </td>
-                            <td>
+                            <td class="text-center">
                                 <div :id="'top100-sparkline-' + index" style="width: 200px; height: 30px;"></div>
                             </td>
                         </tr>

@@ -10,8 +10,8 @@
                     <tr>
                         <th>Artist</th>
                         <th>Title</th>
-                        <th data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="▲ = trending up, ▼ = trending down, ─ = stable. Compares first half vs second half of 90-day period." style="cursor: help;">Trend</th>
-                        <th data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Sparkline showing weekly play counts over the past 90 days. Number shows total plays in this period." style="cursor: help;">90-day Trend</th>
+                        <th class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="▲ = trending up, ▼ = trending down, ─ = stable. Compares first half vs second half of 90-day period." style="cursor: help;">Trend</th>
+                        <th class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Sparkline showing weekly play counts over the past 90 days. Number shows total plays in this period." style="cursor: help;">90-day Trend</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,7 +27,7 @@
                                 t.artist === song.artist && t.title === song.title
                             )) }
                         </td>
-                        <td>
+                        <td class="text-center">
                             <div :id="'graph-' + song.artist.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase() + '-' + song.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()" style="width: 200px;"></div>
                             ${ song.plays }
                         </td>

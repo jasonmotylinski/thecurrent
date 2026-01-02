@@ -5,12 +5,12 @@
 const createSparklineGraph = (graphId, timeseriesData) => {
     try {
         const trace = {
-            x: timeseriesData.map(d => d.yw),
+            x: Array.from({ length: timeseriesData.length }, (_, i) => i),
             y: timeseriesData.map(d => d.ct),
             type: 'scatter',
             mode: 'lines',
             line: { color: '#007bff', width: 2 },
-            hovertemplate: '<b>Week: %{x}</b><br>Plays: %{y}<br><i>90-day trend of song popularity</i><extra></extra>'
+            hovertemplate: '<b>Week %{x}</b><br>Plays: %{y}<br><i>90-day trend of song popularity</i><extra></extra>'
         };
 
         const layout = {
