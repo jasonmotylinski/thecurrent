@@ -1,3 +1,6 @@
+CREATE TEMP TABLE blocklist AS
+  SELECT TRIM(artist) as blocked_artist FROM read_csv('data/artists_block_list.csv');
+
 CREATE OR REPLACE TABLE postgres.songs_day_of_week_hour AS
 SELECT
     CAST(service_id AS INT) as service_id,
@@ -23,9 +26,8 @@ SELECT
     CAST(hour AS INT) as hour,
     COUNT(*) as ct
 FROM sqlite.songs
-LEFT JOIN (SELECT TRIM(artist) as blocked_artist FROM read_csv('data/artists_block_list.csv')) AS blocklist
+ANTI JOIN blocklist
     ON sqlite.songs.artist = blocklist.blocked_artist
-WHERE blocklist.blocked_artist IS NULL
 GROUP BY
     service_id,
     artist,
