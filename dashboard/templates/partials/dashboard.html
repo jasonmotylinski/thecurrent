@@ -3,15 +3,15 @@
 <!-- Popular Songs Table -->
 <div class="row">
     <div class="col-md-6">
-        <h3 class="text-center">Top 10 Most Popular Songs in the Last Week</h3>
+        <h3 class="text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="The most played songs across all stations in the past 7 days. Trend arrows compare the first half vs. second half of the 90-day period. Sparklines show weekly play counts over the past 90 days." style="cursor: help;">Top 10 Most Popular Songs in the Last Week</h3>
         <div class="table-responsive">
             <table class="table popular-songs-table">
                 <thead>
                     <tr>
                         <th>Artist</th>
                         <th>Title</th>
-                        <th>Trend</th>
-                        <th>90-day Trend</th>
+                        <th data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="▲ = trending up, ▼ = trending down, ─ = stable. Compares first half vs second half of 90-day period." style="cursor: help;">Trend</th>
+                        <th data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Sparkline showing weekly play counts over the past 90 days. Number shows total plays in this period." style="cursor: help;">90-day Trend</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,19 +38,19 @@
     </div>
 
     <div class="col-md-6">
-        <h3 class="text-center">Top 10 Most Popular Artists in the Last Week</h3>
+        <h3 class="text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Interactive treemap showing the most played artists. Block size represents total plays. Click an artist name to view detailed analytics." style="cursor: help;">Top 10 Most Popular Artists in the Last Week</h3>
         <div id="popular-artists-last-week">
         </div>
     </div>
 </div>
 <div class="row">
     <div class="col-md-6">
-        <h3 class="text-center">Time of Week New Music is Played</h3>
+        <h3 class="text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Shows when songs are played for the very first time on this station (never played before in our database). Darker cells indicate more 'new music discovery' during that time slot." style="cursor: help;">Time of Week New Music is Played</h3>
         <div id="popular-songs-last-90-days">
         </div>
     </div>
     <div class="col-md-6">
-        <h3 class="text-center">Top 5 Most Popular Artists Played on ${ dayOfWeek } at ${ hourLabel }</h3>
+        <h3 class="text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="The artists most frequently played during this specific day and hour throughout all time in our database. Based on your current local time." style="cursor: help;">Top 5 Most Popular Artists Played on ${ dayOfWeek } at ${ hourLabel }</h3>
         <div id="popular-day-hour">
             <table class="table table-sm">
                 <thead>
@@ -72,7 +72,7 @@
 <!-- Popular All Time Section -->
 <div class="row">
     <div class="col-12">
-        <h3 class="text-center">Top 5 Most Popular Artists of All-Time</h3>
+        <h3 class="text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="The artists with the highest total play counts since we started tracking data for this station. The line chart shows monthly trends over time." style="cursor: help;">Top 5 Most Popular Artists of All-Time</h3>
         <div class="row">
             <div class="col-md-6">
                 <div id="popular-all-time-table">
@@ -102,7 +102,7 @@
 <!-- Phase 1 New Analytics -->
 <div class="row mt-5">
     <div class="col-md-6">
-        <h3 class="text-center">Station Exclusives</h3>
+        <h3 class="text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Artists that were ONLY played on this station and never played on any of the other 10 stations in our network during the last 90 days. Highlights unique music curation." style="cursor: help;">Station Exclusives</h3>
         <p class="text-center text-muted">Artists played only on ${ stationDisplayName } (last 90 days)</p>
         <div class="table-responsive">
             <table class="table table-sm">
@@ -128,15 +128,15 @@
     </div>
 
     <div class="col-md-6">
-        <h3 class="text-center">Hidden Gems</h3>
+        <h3 class="text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Songs that this station plays significantly more than all other stations combined. 'Here' shows plays on this station, 'Elsewhere' shows total plays on all other stations. Reveals songs this station champions." style="cursor: help;">Hidden Gems</h3>
         <p class="text-center text-muted">Songs ${ stationDisplayName } champions that others aren't playing</p>
         <div class="table-responsive">
             <table class="table table-sm">
                 <thead>
                     <tr>
                         <th>Artist - Title</th>
-                        <th>Here</th>
-                        <th>Elsewhere</th>
+                        <th data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Total plays on this station" style="cursor: help;">Here</th>
+                        <th data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Combined total plays on all other 10 stations" style="cursor: help;">Elsewhere</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -159,7 +159,7 @@
 
 <div class="row mt-5">
     <div class="col-12">
-        <h3 class="text-center">What Time Do Genres Play?</h3>
+        <h3 class="text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Heatmap showing which genres are most played during each hour of the day. Top 15 genres by total plays. Darker colors indicate more plays. Based on the last 90 days." style="cursor: help;">What Time Do Genres Play?</h3>
         <p class="text-center text-muted">Genre patterns by hour of day on ${ stationDisplayName } (last 90 days)</p>
         <div id="genre-by-hour-heatmap"></div>
     </div>

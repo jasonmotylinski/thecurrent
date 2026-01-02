@@ -9,7 +9,8 @@ const createSparklineGraph = (graphId, timeseriesData) => {
             y: timeseriesData.map(d => d.ct),
             type: 'scatter',
             mode: 'lines',
-            line: { color: '#007bff', width: 2 }
+            line: { color: '#007bff', width: 2 },
+            hovertemplate: '<b>Week: %{x}</b><br>Plays: %{y}<br><i>90-day trend of song popularity</i><extra></extra>'
         };
 
         const layout = {
@@ -79,7 +80,7 @@ const createTreemap = (elementId, data) => {
             values,
             branchvalues: "total",
             textinfo: "label",
-            hovertemplate: "%{label}<br>Total Plays: %{value}<extra></extra>",
+            hovertemplate: "<b>%{label}</b><br>Total Plays: %{value}<br><i>Size represents total plays across all songs</i><extra></extra>",
             maxdepth: 2,
             root: { color: "lightgrey" }
         }];
@@ -118,7 +119,7 @@ const createDayHourHeatmap = (elementId, data) => {
             colorscale: HEATMAP_COLORSCALE,
             showscale: false,
             hoverongaps: false,
-            hovertemplate: 'Day: %{y}<br>Hour: %{x}<br>Plays: %{z}<extra></extra>',
+            hovertemplate: '<b>%{y} at %{x}:00</b><br>New Songs Played: %{z}<br><i>Songs played for the first time ever</i><extra></extra>',
             xgap: 1,
             ygap: 1
         };
@@ -172,7 +173,8 @@ const createAllTimeLineChart = (elementId, data) => {
             y: data.y,
             type: 'scatter',
             mode: 'lines',
-            name: artist
+            name: artist,
+            hovertemplate: '<b>%{fullData.name}</b><br>Month: %{x}<br>Plays: %{y}<br><i>Monthly play count trend</i><extra></extra>'
         }));
 
         const layout = {
@@ -214,7 +216,8 @@ const createAnalyticsTimeseries = (elementId, analytics) => {
         y: data.y,
         type: 'scatter',
         mode: 'lines',
-        name: station
+        name: station,
+        hovertemplate: '<b>%{fullData.name}</b><br>Month: %{x}<br>Plays: %{y}<br><i>Cross-station comparison of plays over time</i><extra></extra>'
     }));
 
     const layout = {
@@ -273,7 +276,8 @@ const createTopSongsTimeseries = (elementId, data) => {
         x: months,
         y: months.map(month => songMonthPlays[song][month]),
         type: 'bar',
-        name: song
+        name: song,
+        hovertemplate: '<b>%{fullData.name}</b><br>Month: %{x}<br>Plays: %{y}<br><i>Part of top 5 songs for this artist</i><extra></extra>'
     }));
 
     const layout = {
@@ -329,7 +333,7 @@ const createGenreByHourHeatmap = (elementId, data) => {
             y: genres,
             type: 'heatmap',
             colorscale: HEATMAP_COLORSCALE,
-            hovertemplate: 'Genre: %{y}<br>Hour: %{x}:00<br>Plays: %{z}<extra></extra>'
+            hovertemplate: '<b>%{y}</b><br>Hour: %{x}:00<br>Plays: %{z}<br><i>Darker colors = more plays at this time</i><extra></extra>'
         };
 
         const layout = {

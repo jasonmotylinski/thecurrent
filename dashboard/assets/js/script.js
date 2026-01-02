@@ -505,6 +505,14 @@ const app = createApp({
             }
         };
 
+        // Initialize Bootstrap tooltips
+        const initializeTooltips = () => {
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(
+                tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl)
+            );
+        };
+
         // Lifecycle hooks
         onMounted(async () => {
             // Listen for hash changes (browser back/forward)
@@ -522,6 +530,16 @@ const app = createApp({
 
             // Handle initial URL
             await handleRoute();
+
+            // Initialize tooltips after DOM is ready
+            await nextTick();
+            initializeTooltips();
+        });
+
+        // Reinitialize tooltips when view changes
+        watch(currentView, async () => {
+            await nextTick();
+            initializeTooltips();
         });
 
         return {

@@ -10,7 +10,7 @@
 
     <div class="row mb-4">
         <div class="col">
-            <p class="text-center text-muted">Most played songs on ${ stationDisplayName } this year</p>
+            <p class="text-center text-muted" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Ranked by total play count from January 1, 2025 to present. Trend arrows compare first half vs second half of 2025. Sparklines show monthly trends." style="cursor: help;">Most played songs on ${ stationDisplayName } this year</p>
         </div>
     </div>
 
@@ -24,8 +24,8 @@
                             <th style="width: 30%;">Artist</th>
                             <th style="width: 30%;">Title</th>
                             <th style="width: 100px;">Plays</th>
-                            <th style="width: 50px;">Trend</th>
-                            <th style="width: 200px;">2025 Trend</th>
+                            <th style="width: 50px; cursor: help;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="▲ = more plays in recent months, ▼ = fewer plays in recent months, ─ = stable">Trend</th>
+                            <th style="width: 200px; cursor: help;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Monthly play count sparkline for 2025. Shows how popularity has changed over the year.">2025 Trend</th>
                         </tr>
                     </thead>
                     <tbody>

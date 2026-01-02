@@ -26,7 +26,7 @@
     <!-- Plays Over Time Chart -->
     <div v-if="!analyticsLoading" class="row mb-4">
         <div class="col-12">
-            <h4 class="text-center">Plays Over Time by Station</h4>
+            <h4 class="text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Compare how different stations have played this artist/song over time. Each line represents one radio station. Based on monthly aggregates." style="cursor: help;">Plays Over Time by Station</h4>
             <div id="analytics-timeseries"></div>
         </div>
     </div>
@@ -34,7 +34,7 @@
     <!-- Top Songs (artist analytics only) -->
     <div class="row mb-4" v-if="analyticsType === 'artist' && analyticsTopSongs.length > 0">
         <div class="col-md-6 offset-md-3">
-            <h4 class="text-center">Top 5 Songs</h4>
+            <h4 class="text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="The most played songs by this artist across all stations in our database. Click a song to view its detailed analytics." style="cursor: help;">Top 5 Songs</h4>
             <table class="table table-sm">
                 <thead>
                     <tr>
@@ -59,7 +59,7 @@
     <!-- Top Songs Plays Over Time (artist analytics only) -->
     <div class="row mb-4" v-if="analyticsType === 'artist' && analyticsTopSongs.length > 0">
         <div class="col-12">
-            <h4 class="text-center">Top 5 Songs - Plays Over Time</h4>
+            <h4 class="text-center" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Stacked bar chart showing monthly play counts for the top 5 songs. Each color represents a different song. Total bar height shows combined plays for all 5 songs." style="cursor: help;">Top 5 Songs - Plays Over Time</h4>
             <div id="top-songs-timeseries"></div>
         </div>
     </div>
