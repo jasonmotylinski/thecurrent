@@ -6,6 +6,20 @@ SELECT
     CAST(service_id AS INT) as service_id,
     artist,
     LOWER(artist) AS artist_lower,
+    LOWER(
+        TRIM(
+            REGEXP_REPLACE(
+                REGEXP_REPLACE(
+                    REGEXP_REPLACE(
+                        REPLACE(artist, ' & ', ' and '),
+                        '\s+(featuring|ft\.?)\s+', ' feat. ', 'gi'
+                    ),
+                    '\s+', ' ', 'g'
+                ),
+                '^\s+|\s+$', '', 'g'
+            )
+        )
+    ) AS artist_normalized,
     title,
     LOWER(title) AS title_lower,
     CAST(played_at AS DATE) as played_at,
@@ -37,7 +51,8 @@ GROUP BY
     month,
     week,
     day_of_week,
-    hour;
+    hour,
+    artist_normalized;
 
 -- Indexes for new_last_90_days query
 -- Optimizes filtering by service_id + played_at, then partitioning/ordering by artist/title
@@ -58,3 +73,11 @@ CREATE INDEX IF NOT EXISTS played_at_artist_service_idx ON postgres.songs_day_of
 CREATE INDEX IF NOT EXISTS played_at_artist_lower_service_idx ON postgres.songs_day_of_week_hour (played_at, artist_lower, service_id);
 CREATE INDEX IF NOT EXISTS played_at_artist_lower_title_lower_idx
     ON postgres.songs_day_of_week_hour (played_at, artist_lower, title_lower);
+
+-- Indexes for artist_normalized aggregations
+CREATE INDEX IF NOT EXISTS played_at_artist_normalized_service_idx
+    ON postgres.songs_day_of_week_hour (played_at, artist_normalized, service_id);
+CREATE INDEX IF NOT EXISTS played_at_artist_normalized_title_lower_idx
+    ON postgres.songs_day_of_week_hour (played_at, artist_normalized, title_lower);
+CREATE INDEX IF NOT EXISTS service_artist_normalized_title_idx
+    ON postgres.songs_day_of_week_hour (service_id, artist_normalized, title_lower);
