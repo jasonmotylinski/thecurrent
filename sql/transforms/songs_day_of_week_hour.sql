@@ -12,7 +12,7 @@ SELECT
     CAST(service_id AS INT) as service_id,
     TRIM(sqlite.songs.artist) AS artist,
     (TRIM(sqlite.songs.artist)) AS artist_lower,
-    COALESCE(artist_norm.artist_normalized, TRIM(sqlite.songs.artist) AS artist_normalized,
+    COALESCE(artist_norm.artist_normalized, TRIM(sqlite.songs.artist)) AS artist_normalized,
     TRIM(sqlite.songs.title) AS title,
     LOWER(TRIM(sqlite.songs.title)) AS title_lower,
     COALESCE(title_norm.title_normalized, TRIM(sqlite.songs.title)) AS title_normalized,
