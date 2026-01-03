@@ -50,8 +50,8 @@ GROUP BY
     week,
     day_of_week,
     hour,
-    LOWER(COALESCE(artist_norm.artist_normalized, sqlite.songs.artist)),
-    LOWER(COALESCE(title_norm.title_normalized, sqlite.songs.title));
+    artist_normalized,
+    title_normalized;
 
 -- Indexes for new_last_90_days query
 -- Optimizes filtering by service_id + played_at, then partitioning/ordering by artist/title
