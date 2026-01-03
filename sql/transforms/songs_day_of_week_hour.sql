@@ -11,12 +11,12 @@ CREATE TEMP TABLE title_normalized AS
 CREATE OR REPLACE TABLE postgres.songs_day_of_week_hour AS
 SELECT
     CAST(service_id AS INT) as service_id,
-    sqlite.songs.artist,
-    LOWER(sqlite.songs.artist) AS artist_lower,
-    LOWER(COALESCE(artist_norm.artist_normalized, sqlite.songs.artist)) AS artist_normalized,
-    sqlite.songs.title,
-    LOWER(sqlite.songs.title) AS title_lower,
-    LOWER(COALESCE(title_norm.title_normalized, sqlite.songs.title)) AS title_normalized,
+    TRIM(sqlite.songs.artist) AS artist,
+    LOWER(TRIM(sqlite.songs.artist)) AS artist_lower,
+    LOWER(COALESCE(artist_norm.artist_normalized, TRIM(sqlite.songs.artist))) AS artist_normalized,
+    TRIM(sqlite.songs.title) AS title,
+    LOWER(TRIM(sqlite.songs.title)) AS title_lower,
+    LOWER(COALESCE(title_norm.title_normalized, TRIM(sqlite.songs.title))) AS title_normalized,
     CAST(played_at AS DATE) as played_at,
     CAST(year AS INT) as year,
     CAST(month AS INT) as month,

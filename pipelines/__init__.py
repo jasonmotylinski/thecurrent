@@ -19,7 +19,7 @@ def sub_import(x):
     return b 
 
 def clean_str(str):
-    newval= str.replace('"', '""')
+    newval= str.strip().replace('"', '""')
     if newval == '':
        return "NULL"
     if newval == 'True':
