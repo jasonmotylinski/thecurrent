@@ -44,6 +44,7 @@ def normalize_and_write(csv_path, choices, comparison_artists):
             f.flush()
 
         for artist in comparison_artists:
+            print(f"Processing artist: {artist}")
             if artist in existing_artists:
                 continue
 
