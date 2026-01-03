@@ -4,7 +4,7 @@ SELECT
     MAX(title) AS title,
     artist_normalized,
     title_normalized,
-    SUM(ct) as ct
+    COUNT(*) as ct
 FROM songs_day_of_week_hour
 WHERE
     service_id=%(service_id)s
@@ -14,5 +14,5 @@ WHERE
 GROUP BY
     artist_normalized,
     title_normalized
-ORDER BY SUM(ct) DESC, MAX(artist) ASC
+ORDER BY ct DESC, artist ASC
 LIMIT 10
