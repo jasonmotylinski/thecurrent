@@ -2,10 +2,10 @@ CREATE TEMP TABLE blocklist AS
   SELECT TRIM(artist) as blocked_artist FROM read_csv('data/artists_block_list.csv', header=true, delim = ',');
 
 CREATE TEMP TABLE artist_normalized AS
-  SELECT TRIM(artist) as artist, TRIM(artist_normalized) as artist_normalized FROM read_csv('data/artist_normalized.csv', header=true, delim = ',', quote='"');
+  SELECT TRIM(artist) as artist, TRIM(artist_normalized) as artist_normalized FROM read_csv('data/artist_normalized.csv', header=true, delim = ',', quote='"', strict_mode=false);
 
 CREATE TEMP TABLE title_normalized AS
-  SELECT TRIM(title) as title, TRIM(title_normalized) as title_normalized FROM read_csv('data/title_normalized.csv', header=true, delim = ',', quote='"');
+  SELECT TRIM(title) as title, TRIM(title_normalized) as title_normalized FROM read_csv('data/title_normalized.csv', header=true, delim = ',', quote='"',strict_mode=false);
 
 CREATE OR REPLACE TABLE postgres.songs_day_of_week_hour AS
 SELECT
