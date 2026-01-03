@@ -1,5 +1,5 @@
 SELECT
-    MAX(artist) AS artist,
+    artist_normalized,
     CAST(year AS INT) AS year,
     CAST(month AS INT) AS month,
     year || '-' || month AS year_month,
