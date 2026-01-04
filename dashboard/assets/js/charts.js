@@ -161,11 +161,11 @@ const createAllTimeLineChart = (elementId, data) => {
     try {
         const artistData = {};
         data.forEach(item => {
-            if (!artistData[item.artist]) {
-                artistData[item.artist] = { x: [], y: [] };
+            if (!artistData[item.artist_normalized]) {
+                artistData[item.artist_normalized] = { x: [], y: [] };
             }
-            artistData[item.artist].x.push(item.year_month);
-            artistData[item.artist].y.push(item.ct);
+            artistData[item.artist_normalized].x.push(item.year_month);
+            artistData[item.artist_normalized].y.push(item.ct);
         });
 
         const traces = Object.entries(artistData).map(([artist, data]) => ({
