@@ -13,11 +13,12 @@ def execute_query(query):
 
 
 def get_choices():
-    return execute_query("SELECT DISTINCT artist, title FROM songs_day_of_week_hour WHERE service_id = 1 ORDER BY artist, title")
-
+    print("Loading choice titles...")
+    return execute_query("SELECT DISTINCT artist, title FROM songs_day_of_week_hour WHERE service_id = 1 AND artist != '' AND title!='' ORDER BY artist, title")
 
 def get_comparison_titles():
-    return execute_query("SELECT DISTINCT artist, title FROM songs_day_of_week_hour WHERE service_id != 1 ORDER BY artist, title")
+    print("Loading comparison titles...")
+    return execute_query("SELECT DISTINCT artist, title FROM songs_day_of_week_hour WHERE service_id != 1 AND artist != '' AND title!='' ORDER BY artist, title")
 
 def create_choice_mapping(choices):
     """Create a dict mapping 'artist title' strings to their dict records."""
@@ -55,8 +56,9 @@ def normalize_and_write(csv_path, choice_mapping, comparison_titles):
 
             query = f"{record['artist']} {record['title']}"
             match = process.extractOne(query, choice_keys, scorer=fuzz.WRatio)
-            if 91 <= match[1] < 100:
+            if 92 <= match[1] < 100:
                 matched_record = choice_mapping[match[0]]
+                print(f"Matched: {record} to {matched_record}")
                 writer.writerow([record['title'], matched_record['title']])
                 f.flush()
 
