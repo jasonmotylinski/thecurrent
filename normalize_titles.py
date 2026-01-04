@@ -9,15 +9,19 @@ def execute_query(query):
     with get_engine().connect() as conn:
         import pandas as pd
         df = pd.read_sql(query, conn)
-        return df.iloc[:, 0].tolist()
+        return df.to_dict('records')
 
 
 def get_choices():
-    return execute_query("SELECT DISTINCT title FROM songs_day_of_week_hour WHERE service_id = 1 ORDER BY title")
+    return execute_query("SELECT DISTINCT artist, title FROM songs_day_of_week_hour WHERE service_id = 1 ORDER BY artist, title")
 
 
 def get_comparison_titles():
-    return execute_query("SELECT DISTINCT title FROM songs_day_of_week_hour WHERE service_id != 1 ORDER BY title")
+    return execute_query("SELECT DISTINCT artist, title FROM songs_day_of_week_hour WHERE service_id != 1 ORDER BY artist, title")
+
+def create_choice_mapping(choices):
+    """Create a dict mapping 'artist title' strings to their dict records."""
+    return {f"{record['artist']} {record['title']}": record for record in choices}
 
 
 def load_existing_titles(csv_path):
@@ -31,10 +35,11 @@ def load_existing_titles(csv_path):
     return existing
 
 
-def normalize_and_write(csv_path, choices, comparison_titles):
+def normalize_and_write(csv_path, choice_mapping, comparison_titles):
     """Find matching titles and write results to CSV."""
     existing_titles = load_existing_titles(csv_path)
     file_is_new = not existing_titles
+    choice_keys = list(choice_mapping.keys())
 
     with open(csv_path, "a", newline="") as f:
         writer = csv.writer(f, quoting=csv.QUOTE_ALL)
@@ -43,24 +48,27 @@ def normalize_and_write(csv_path, choices, comparison_titles):
             writer.writerow(["title", "title_normalized"])
             f.flush()
 
-        for title in comparison_titles:
-            print(f"Processing title: {title}")
-            if title in existing_titles:
+        for record in comparison_titles:
+            print(f"Processing record: {record}")
+            if record['title'] in existing_titles:
                 continue
 
-            match = process.extractOne(title, choices, scorer=fuzz.WRatio)
+            query = f"{record['artist']} {record['title']}"
+            match = process.extractOne(query, choice_keys, scorer=fuzz.WRatio)
             if 91 <= match[1] < 100:
-                writer.writerow([title, match[0]])
+                matched_record = choice_mapping[match[0]]
+                writer.writerow([record['title'], matched_record['title']])
                 f.flush()
 
 
 def main():
     """Main entry point."""
     choices = get_choices()
+    choice_mapping = create_choice_mapping(choices)
     comparison_titles = get_comparison_titles()
     csv_path = "data/title_normalized.csv"
 
-    normalize_and_write(csv_path, choices, comparison_titles)
+    normalize_and_write(csv_path, choice_mapping, comparison_titles)
 
 
 if __name__ == "__main__":
