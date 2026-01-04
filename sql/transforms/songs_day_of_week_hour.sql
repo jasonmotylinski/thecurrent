@@ -1,7 +1,7 @@
 CREATE TEMP TABLE blocklist AS
   SELECT TRIM(artist) as blocked_artist FROM read_csv('data/artists_block_list.csv', header=true, delim = ',');
 
-/-- DO NOT trim artist as it's intended to match dirty data in sqlite.songs --/
+-- DO NOT trim artist as it's intended to match dirty data in sqlite.songs --
 CREATE TEMP TABLE artist_normalized AS
   SELECT artist as artist, TRIM(artist_normalized) as artist_normalized FROM read_csv('data/artist_normalized.csv', header=true, delim = ',', quote='"', strict_mode=false);
 
