@@ -58,6 +58,8 @@ def normalize_and_write(csv_path, choice_mapping, comparison_titles):
             match = process.extractOne(query, choice_keys, scorer=fuzz.WRatio)
             if 92 <= match[1] < 100:
                 matched_record = choice_mapping[match[0]]
+                if matched_record['title'] == record['title']:
+                    continue  # Skip if titles are identical
                 print(f"Matched: {record} to {matched_record}")
                 writer.writerow([record['title'], matched_record['title']])
                 f.flush()
