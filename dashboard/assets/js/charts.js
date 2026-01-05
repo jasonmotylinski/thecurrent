@@ -43,16 +43,16 @@ const createTreemap = (elementId, data) => {
     try {
         const artistMap = new Map();
         data.forEach(item => {
-            if (!artistMap.has(item.artist)) {
-                artistMap.set(item.artist, {
+            if (!artistMap.has(item.artist_normalized)) {
+                artistMap.set(item.artist_normalized, {
                     plays: item.ct,
                     songs: []
                 });
             } else {
-                artistMap.get(item.artist).plays += item.ct;
+                artistMap.get(item.artist_normalized).plays += item.ct;
             }
-            artistMap.get(item.artist).songs.push({
-                title: item.title,
+            artistMap.get(item.artist_normalized).songs.push({
+                title: item.title_normalized,
                 plays: item.ct
             });
         });

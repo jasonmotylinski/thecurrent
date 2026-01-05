@@ -1,8 +1,6 @@
 SELECT 
     a.artist_normalized,
     a.title_normalized,
-    MAX(a.artist) AS artist,
-    MAX(a.title) AS title,
     COUNT(*) AS ct
 FROM
     songs_day_of_week_hour AS a
