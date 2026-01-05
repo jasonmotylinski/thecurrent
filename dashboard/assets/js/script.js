@@ -460,6 +460,26 @@ const app = createApp({
                     const title = decodeURIComponent(parts.slice(1).join('/'));
                     await loadSongAnalytics(artist, title, false);
                 }
+            } else if (hash.length > 1) {
+                // Check if hash is a station ID (e.g., #wfuv)
+                const stationId = hash.substring(1).toLowerCase();
+                const isValidStation = STATIONS.some(station => station.id === stationId);
+
+                if (isValidStation) {
+                    currentStation.value = stationId;
+                    currentView.value = 'dashboard';
+                    analyticsView.value = false;
+                } else {
+                    // Unrecognized hash - show dashboard with default station
+                    if (currentView.value !== 'dashboard') {
+                        currentView.value = 'dashboard';
+                        analyticsView.value = false;
+                        analyticsType.value = '';
+                        analyticsTitle.value = '';
+                        analyticsArtist.value = '';
+                        analyticsTopSongs.value = [];
+                    }
+                }
             } else {
                 // No hash or unrecognized - show dashboard
                 if (currentView.value !== 'dashboard') {
@@ -525,10 +545,21 @@ const app = createApp({
                 }
             });
 
+            // Check URL hash to determine initial station before loading data
+            const hash = window.location.hash;
+            if (hash.length > 1 && !hash.startsWith('#/artist/') && !hash.startsWith('#/song/')) {
+                // Potential station ID hash - validate and set it
+                const stationId = hash.substring(1).toLowerCase();
+                const isValidStation = STATIONS.some(station => station.id === stationId);
+                if (isValidStation) {
+                    currentStation.value = stationId;
+                }
+            }
+
             // Load initial station data
             await setCurrentStation(currentStation.value);
 
-            // Handle initial URL
+            // Handle initial URL (for analytics routes)
             await handleRoute();
 
             // Initialize tooltips after DOM is ready
