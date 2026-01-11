@@ -7,6 +7,14 @@ import re
 from datetime import datetime
 from hashlib import sha256
 
+headers = {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:146.0) Gecko/20100101 Firefox/146.0",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.5",
+    "Referer": "https://www.thecurrent.org/",
+    "Connection": "keep-alive",
+}
+
 
 def create_id(played_at, artist, title): 
     key = "{0}{1}{2}".format(played_at, artist, title)
@@ -35,12 +43,13 @@ def get_songs(html):
 def get_hour_html(year:int, month:int, day:int, hour:int):
     url=config.THECURRENT_HOUR_URL.format(year=year, month=month, day=day, hour=hour)
     logging.info("get_hour_html: url: {0}".format(url))
-    r=requests.get(url)
+    r=requests.get(url, headers=headers, timeout=10)
+
     return r.text
 
 
 def get_day_html(year:int, month:int, day:int):
     url=config.THECURRENT_DAY_URL.format(year=year, month=month, day=day)
     logging.info("get_day_html: url: {0}".format(url))
-    r=requests.get(url)
+    r=requests.get(url, headers=headers, timeout=10)
     return r.text
