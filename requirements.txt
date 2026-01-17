@@ -1,6 +1,6 @@
 beautifulsoup4
 luigi
-elasticsearch-dsl==8.17.1
+elasticsearch-dsl==8.18.0
 requests
 dash==3.3.0
 pandas>=2.2.1
