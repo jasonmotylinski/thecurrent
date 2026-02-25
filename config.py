@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-DEBUG=os.getenv("DEBUG", False)
+DEBUG=os.getenv("DEBUG", "false").lower() in ("1", "true", "yes")
 LOGGER_NAME=os.getenv("LOGGER_NAME", "root")
 DB="thecurrent.sqlite3"
 

@@ -2,7 +2,7 @@ import config
 import logging
 import pandas as pd
 from io import StringIO
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from db import get_cache, get_engine
 
 log = logging.getLogger(config.LOGGER_NAME)
@@ -14,7 +14,7 @@ def get_yesterday():
     Returns:
         datetime: yesterday
     """
-    return datetime.utcnow() - timedelta(days=1)
+    return datetime.now(timezone.utc) - timedelta(days=1)
 
 def get_last_week_range():
     """Calculates the date range for last week. 
@@ -22,8 +22,8 @@ def get_last_week_range():
     Returns:
         dict: contains 'start_date' and 'end_date' of last week
     """
-    end_date=datetime.utcnow() - timedelta(days=1)
-    start_date=datetime.utcnow() - timedelta(days=7)
+    end_date=datetime.now(timezone.utc) - timedelta(days=1)
+    start_date=datetime.now(timezone.utc) - timedelta(days=7)
     return {"start_date": start_date.date(), "end_date": end_date.date()}
 
 def tomorrow_at_105_am_est():
@@ -32,9 +32,9 @@ def tomorrow_at_105_am_est():
     Returns:
         float: Seconds until expiry
     """
-    tomorrow_utc=datetime.utcnow() + timedelta(days=1)
-    dt=datetime(tomorrow_utc.year, tomorrow_utc.month,tomorrow_utc.day, 6, 5)
-    return (dt - datetime.utcnow()).total_seconds()
+    tomorrow_utc=datetime.now(timezone.utc) + timedelta(days=1)
+    dt=datetime(tomorrow_utc.year, tomorrow_utc.month,tomorrow_utc.day, 6, 5, tzinfo=timezone.utc)
+    return (dt - datetime.now(timezone.utc)).total_seconds()
 
 def in_5_minutes():
     """Returns 5 minutes in seconds. Used to expire the cache in 5 minutes.
@@ -84,18 +84,18 @@ def get_data(filename, cache_expire_secs, params={}):
     key=filename + "_".join([str(v) for v in params.values()])
 
     if key not in cache or config.DEBUG:
-        log.info("get_data:INFO:cache miss:key:{0}".format(key))
+        log.info(f"get_data:INFO:cache miss:key:{key}")
         t=get_sql(filename) % (params)
         with get_engine().connect() as conn:
-            log.info("get_data:INFO:executing SQL:{0}".format(t))
+            log.info(f"get_data:INFO:executing SQL:{t}")
             value=pd.read_sql(t, conn).to_json()
             cache.set(key, value, expire=cache_expire_secs)
-            log.info("get_data:INFO:set key:{0} expire_secs: {1}".format(key, cache_expire_secs))
+            log.info(f"get_data:INFO:set key:{key} value:{value[:100]} expire_secs:{cache_expire_secs}")
     try:
-        log.info("get_data:INFO:reading key from cache:key:{0}".format(key))
+        log.info(f"get_data:INFO:reading key from cache:key:{key}")
         return pd.read_json(StringIO(cache[key]))
     except Exception as e:
-        log.error("get_data:ERROR:key:{0}: {1}".format(key, e))
+        log.error(f"get_data:ERROR:key:{key}: {e}")
         return pd.DataFrame([])
 
 def get_last_updated():
@@ -200,20 +200,20 @@ def _execute_sql_with_wildcards(filename, params, cache_expire_secs):
     key = filename + "_".join([str(v) for v in params.values()])
 
     if key not in cache or config.DEBUG:
-        log.info("_execute_sql_with_wildcards:INFO:cache miss:key:{0}".format(key))
+        log.info(f"_execute_sql_with_wildcards:INFO:cache miss:key:{key}")
         t = get_sql(filename) % params
         # Escape % for psycopg by doubling them (after Python formatting is done)
         t = t.replace('%', '%%')
         with get_engine().connect() as conn:
-            log.info("_execute_sql_with_wildcards:INFO:executing SQL:{0}".format(t))
+            log.info(f"_execute_sql_with_wildcards:INFO:executing SQL:{t}")
             value = pd.read_sql(t, conn).to_json()
             cache.set(key, value, expire=cache_expire_secs)
-            log.info("_execute_sql_with_wildcards:INFO:set key:{0} expire_secs: {1}".format(key, cache_expire_secs))
+            log.info(f"_execute_sql_with_wildcards:INFO:set key:{key} expire_secs:{cache_expire_secs}")
     try:
-        log.info("_execute_sql_with_wildcards:INFO:reading key from cache:key:{0}".format(key))
+        log.info(f"_execute_sql_with_wildcards:INFO:reading key from cache:key:{key}")
         return pd.read_json(StringIO(cache[key]))
     except Exception as e:
-        log.error("_execute_sql_with_wildcards:ERROR:key:{0}: {1}".format(key, e))
+        log.error(f"_execute_sql_with_wildcards:ERROR:key:{key}: {e}")
         return pd.DataFrame([])
 
 def search_songs(query):
