@@ -1,21 +1,21 @@
-import redis
+import diskcache
 from sqlalchemy import create_engine
 import config
 
-redis_client = None
+_cache = None
 _engine = None
 
 
-def get_redis():
-    """Returns the active redis client. Creates a client if one does not exist
+def get_cache():
+    """Returns the active disk cache. Creates a cache instance if one does not exist.
 
     Returns:
-        Redis: The active Redis client
+        diskcache.Cache: The active disk cache
     """
-    global redis_client
-    if redis_client is None:
-        redis_client = redis.Redis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.REDIS_DB)
-    return redis_client
+    global _cache
+    if _cache is None:
+        _cache = diskcache.Cache(config.CACHE_DIR)
+    return _cache
 
 
 def get_engine():

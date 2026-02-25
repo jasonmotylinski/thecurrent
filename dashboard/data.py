@@ -1,10 +1,9 @@
 import config
 import logging
 import pandas as pd
-import time
 from io import StringIO
 from datetime import datetime, timedelta
-from db import get_redis, get_engine
+from db import get_cache, get_engine
 
 log = logging.getLogger(config.LOGGER_NAME)
 SQL_ROOT ="sql/"
@@ -28,32 +27,30 @@ def get_last_week_range():
     return {"start_date": start_date.date(), "end_date": end_date.date()}
 
 def tomorrow_at_105_am_est():
-    """Calculates tomorrow at 1:05am eastern time. Used to expire the Redis cache at night.
+    """Calculates seconds until tomorrow at 1:05am eastern time. Used to expire the cache at night.
 
     Returns:
-        int: The datetime as an integer used by Redis to expire the cache at
+        float: Seconds until expiry
     """
     tomorrow_utc=datetime.utcnow() + timedelta(days=1)
     dt=datetime(tomorrow_utc.year, tomorrow_utc.month,tomorrow_utc.day, 6, 5)
-    return int(time.mktime(dt.timetuple()))
+    return (dt - datetime.utcnow()).total_seconds()
 
 def in_5_minutes():
-    """Calculates the time in 5 minutes. Used to expire the Redis cache in 5 minutes.
+    """Returns 5 minutes in seconds. Used to expire the cache in 5 minutes.
 
     Returns:
-        int: The datetime as an integer used by Redis to expire the cache at
+        float: Seconds until expiry
     """
-    dt=datetime.utcnow() + timedelta(minutes=5)
-    return int(time.mktime(dt.timetuple()))
+    return timedelta(minutes=5).total_seconds()
 
 def in_30_seconds():
-    """Calculates the time in 30 seconds. Used for short-lived cache for search queries.
+    """Returns 30 seconds. Used for short-lived cache for search queries.
 
     Returns:
-        int: The datetime as an integer used by Redis to expire the cache at
+        float: Seconds until expiry
     """
-    dt=datetime.utcnow() + timedelta(seconds=30)
-    return int(time.mktime(dt.timetuple()))
+    return 30.0
 
 def get_sql(filename):
     """Retrieves the given SQL file contains from disk.
@@ -69,34 +66,34 @@ def get_sql(filename):
         sql=f.read()
     return sql
 
-def get_data(filename, cache_expire_at, params={}):
-    """Retrieves the requested data from either Redis cache or Postgres. If the data 
+def get_data(filename, cache_expire_secs, params={}):
+    """Retrieves the requested data from either disk cache or Postgres. If the data
        is not in cache it queries the database, puts the data in cache with the given expiration time,
        and returns the data
 
     Args:
         filename (string): The name of the query file.
         params (dict, optional): A dictionary of parameters used in the SQL statement. Defaults to {}.
-        cache_expire_at (_type_): The datetime as an integer to expire the cache at. Defaults to tomorrow_at_105_am_est().
+        cache_expire_secs (float): Seconds until the cache entry expires.
 
     Returns:
         DataFrame: A dataframe of the data from the query
     """
-    r=get_redis()
-    
+    cache = get_cache()
+
     key=filename + "_".join([str(v) for v in params.values()])
 
-    if not r.exists(key) or config.DEBUG:
+    if key not in cache or config.DEBUG:
         log.info("get_data:INFO:cache miss:key:{0}".format(key))
         t=get_sql(filename) % (params)
         with get_engine().connect() as conn:
             log.info("get_data:INFO:executing SQL:{0}".format(t))
             value=pd.read_sql(t, conn).to_json()
-            r.set(key, value, exat=cache_expire_at)
-            log.info("get_data:INFO:set key:{0} exat: {1}".format(key, cache_expire_at))
+            cache.set(key, value, expire=cache_expire_secs)
+            log.info("get_data:INFO:set key:{0} expire_secs: {1}".format(key, cache_expire_secs))
     try:
         log.info("get_data:INFO:reading key from cache:key:{0}".format(key))
-        return pd.read_json(StringIO(r.get(key).decode()))
+        return pd.read_json(StringIO(cache[key]))
     except Exception as e:
         log.error("get_data:ERROR:key:{0}: {1}".format(key, e))
         return pd.DataFrame([])
@@ -193,16 +190,16 @@ def get_new_last_90_days(service_id=1):
     filename='new_last_90_days.sql'
     return get_data(filename,tomorrow_at_105_am_est(), params)
 
-def _execute_sql_with_wildcards(filename, params, cache_expire_at):
+def _execute_sql_with_wildcards(filename, params, cache_expire_secs):
     """Execute SQL that contains ILIKE wildcards (% characters).
 
     This is needed because psycopg interprets % as format specifiers,
     so we need to double them after Python string formatting.
     """
-    r = get_redis()
+    cache = get_cache()
     key = filename + "_".join([str(v) for v in params.values()])
 
-    if not r.exists(key) or config.DEBUG:
+    if key not in cache or config.DEBUG:
         log.info("_execute_sql_with_wildcards:INFO:cache miss:key:{0}".format(key))
         t = get_sql(filename) % params
         # Escape % for psycopg by doubling them (after Python formatting is done)
@@ -210,11 +207,11 @@ def _execute_sql_with_wildcards(filename, params, cache_expire_at):
         with get_engine().connect() as conn:
             log.info("_execute_sql_with_wildcards:INFO:executing SQL:{0}".format(t))
             value = pd.read_sql(t, conn).to_json()
-            r.set(key, value, exat=cache_expire_at)
-            log.info("_execute_sql_with_wildcards:INFO:set key:{0} exat: {1}".format(key, cache_expire_at))
+            cache.set(key, value, expire=cache_expire_secs)
+            log.info("_execute_sql_with_wildcards:INFO:set key:{0} expire_secs: {1}".format(key, cache_expire_secs))
     try:
         log.info("_execute_sql_with_wildcards:INFO:reading key from cache:key:{0}".format(key))
-        return pd.read_json(StringIO(r.get(key).decode()))
+        return pd.read_json(StringIO(cache[key]))
     except Exception as e:
         log.error("_execute_sql_with_wildcards:ERROR:key:{0}: {1}".format(key, e))
         return pd.DataFrame([])
