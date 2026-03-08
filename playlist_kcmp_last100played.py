@@ -38,7 +38,7 @@ spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 user = spotify.current_user()["id"]
 
 def get_recent_songs():
-    timezone = pytz.timezone('America/Chicago')
+    timezone = pytz.timezone('America/New York')
     dte = datetime.now(timezone)
     year=dte.year
     month=dte.month
