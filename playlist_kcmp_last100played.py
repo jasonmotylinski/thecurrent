@@ -37,25 +37,13 @@ spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 # user ID for all user parameters in future functions
 user = spotify.current_user()["id"]
 
-def get_timezone_offset():
-    timezone_name = 'America/New_York'  
-    timezone = pytz.timezone(timezone_name)
-    local_time = datetime.now(timezone)
-    is_dst = bool(local_time.dst())
-    
-    logger.info("get_timezone_offset: is_dst: {0}".format(is_dst))
-    if is_dst:
-        return -1
-    else:
-        return -1
-
-
 def get_recent_songs():
-    dte=datetime.now()
+    timezone = pytz.timezone('America/Chicago')
+    dte = datetime.now(timezone)
     year=dte.year
     month=dte.month
     day=dte.day
-    hour=dte.hour + get_timezone_offset()
+    hour=dte.hour
 
     html=get_hour_html(year, month, day, hour)
     return get_songs(html)
