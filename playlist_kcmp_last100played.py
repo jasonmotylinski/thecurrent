@@ -38,15 +38,18 @@ spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 user = spotify.current_user()["id"]
 
 def get_recent_songs():
-    timezone = pytz.timezone('America/New York')
+    timezone = pytz.timezone('America/Chicago')
     dte = datetime.now(timezone)
     year=dte.year
     month=dte.month
     day=dte.day
     hour=dte.hour
 
-    html=get_hour_html(year, month, day, hour)
-    return get_songs(html)
+    songs = list(get_songs(get_hour_html(year, month, day, hour)))
+    if not songs and hour > 0:
+        # Current hour may not have plays yet; fall back to previous hour
+        songs = list(get_songs(get_hour_html(year, month, day, hour - 1)))
+    return iter(songs)
 
 def prune_playlist(pl):
     max_playlist_length=100
