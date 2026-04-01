@@ -2,7 +2,7 @@ beautifulsoup4
 luigi
 elasticsearch-dsl==8.18.0
 requests
-dash==4.0.0
+dash==4.1.0
 pandas>=2.2.1
 dash-bootstrap-components==2.0.4
 gunicorn==25.1.0
