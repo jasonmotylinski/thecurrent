@@ -20,6 +20,6 @@ pytz
 feedparser
 git+https://github.com/jasonmotylinski/rawkit-playlist.git#egg=rawkit_playlist
 pytest
-gevent==25.9.1
+gevent==26.4.0
 rapidfuzz
 tqdm
