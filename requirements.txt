@@ -6,7 +6,7 @@ dash==4.1.0
 pandas>=2.2.1
 dash-bootstrap-components==2.0.4
 gunicorn==25.3.0
-sqlalchemy>=2.0.27
+sqlalchemy>=2.0.49
 diskcache
 colour
 musicbrainzngs
