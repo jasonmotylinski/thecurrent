@@ -2,10 +2,10 @@ beautifulsoup4
 luigi
 elasticsearch-dsl==8.18.0
 requests
-dash==4.0.0
+dash==4.1.0
 pandas>=2.2.1
 dash-bootstrap-components==2.0.4
-gunicorn==25.1.0
+gunicorn==25.3.0
 sqlalchemy>=2.0.27
 diskcache
 colour
@@ -15,11 +15,11 @@ spotipy>=2.24.0
 mysql-connector-python
 python-dotenv
 psycopg[binary,pool]
-duckdb==1.4.4
+duckdb==1.5.2
 pytz
 feedparser
 git+https://github.com/jasonmotylinski/rawkit-playlist.git#egg=rawkit_playlist
 pytest
-gevent==25.9.1
+gevent==26.4.0
 rapidfuzz
 tqdm
